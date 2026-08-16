@@ -1,0 +1,113 @@
+@page
+@model AboutModel
+@{
+    ViewData["Title"] = "About - Gift of the Givers Disaster Relief";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/navbar.css" />
+    <link rel="stylesheet" href="~/css/pages.css" />
+</head>
+<body>
+    <partial name="Shared/_Navigation" />
+
+    <main>
+        <section class="page-header">
+            <h1>About Gift of the Givers</h1>
+            <p>Coordinated disaster relief and community support</p>
+        </section>
+
+        <section class="content-section">
+            <div class="section-group">
+                <h2 class="section-title">Our Purpose</h2>
+                <div class="section-content">
+                    <p>
+                        The Gift of the Givers Disaster Relief System is designed to coordinate rapid and effective 
+                        response to disasters affecting our communities. We mobilise volunteers, resources, and donations 
+                        to provide immediate relief and support to affected populations.
+                    </p>
+                    <p>
+                        This system serves as the operational hub for managing relief activities, coordinating volunteer 
+                        efforts, and tracking community support. Whether responding to floods, droughts, medical emergencies, 
+                        or other crises, we work to deliver aid quickly and efficiently.
+                    </p>
+                </div>
+            </div>
+
+            <div class="section-group">
+                <h2 class="section-title">What We Do</h2>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">💧</div>
+                        <div class="feature-title">Emergency Response</div>
+                        <div class="feature-desc">Rapid deployment of resources to disaster-affected areas within hours of an emergency.</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">👥</div>
+                        <div class="feature-title">Volunteer Coordination</div>
+                        <div class="feature-desc">Mobilise skilled volunteers to support relief operations and community assistance.</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">❤️</div>
+                        <div class="feature-title">Charitable Giving</div>
+                        <div class="feature-desc">Accept donations in multiple currencies to fund relief activities sustainably.</div>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h4>Our Commitment</h4>
+                    <p>
+                        We are committed to transparency, efficiency, and compassion in our work. Every donation and volunteer 
+                        hour contributes directly to saving lives and rebuilding communities.
+                    </p>
+                </div>
+            </div>
+
+            <div class="section-group">
+                <h2 class="section-title">How This System Works</h2>
+                <div class="section-content">
+                    <p>
+                        <strong>For Donors:</strong> You can make one-time or recurring donations in your preferred currency 
+                        (ZAR, USD, or EUR). Each donation is tracked and you receive a tax certificate for record-keeping.
+                    </p>
+                    <p>
+                        <strong>For Volunteers:</strong> Register your skills and availability. Our team reviews applications 
+                        and connects you with relief activities that match your capabilities.
+                    </p>
+                    <p>
+                        <strong>For Employees:</strong> Team members access a dashboard to manage volunteer registrations, 
+                        track relief projects, and post operational updates to the community.
+                    </p>
+                </div>
+            </div>
+
+            <div class="section-group">
+                <h2 class="section-title">Our Impact</h2>
+                <div class="section-content">
+                    <p>
+                        Since our establishment, we have coordinated relief efforts across multiple regions, serving 
+                        thousands of affected individuals and families. Our response model ensures that help reaches those 
+                        who need it most, when they need it most.
+                    </p>
+                </div>
+            </div>
+
+            <div class="cta-button-group">
+                <h3>Get Involved</h3>
+                <p>Whether you want to help through donations or volunteering, we welcome your support.</p>
+                <a href="/Donate" class="btn btn-primary">Make a Donation</a>
+                <a href="/Volunteer" class="btn btn-secondary">Volunteer With Us</a>
+            </div>
+        </section>
+    </main>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+@page
+@model AccessDeniedModel
+@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <style>
+        .error-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .error-content {
+            text-align: center;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+        }
+        .error-icon {
+            font-size: 4rem;
+            color: #dc3545;
+            margin-bottom: 1rem;
+        }
+        .error-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 0.5rem;
+        }
+        .error-message {
+            color: #6c757d;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-content">
+            <div class="error-icon">⛔</div>
+            <h1 class="error-title">Access Denied</h1>
+            <p class="error-message">
+                You do not have permission to access this resource. 
+                <br/>
+                <small>If you believe this is a mistake, please contact support.</small>
+            </p>
+            <a href="/" class="btn btn-primary">Return to Home</a>
+            <a href="javascript:history.back()" class="btn btn-secondary">Go Back</a>
+        </div>
+    </div>
+</body>
+</html>

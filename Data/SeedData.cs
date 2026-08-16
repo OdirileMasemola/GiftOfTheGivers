@@ -1,0 +1,95 @@
+using Microsoft.AspNetCore.Identity;
+
+namespace GiftOfTheGivers.Data
+{
+    public class SeedData
+    {
+        public static async Task Initialize(IServiceProvider serviceProvider)
+        {
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+            // Ensure roles exist
+            string[] roleNames = { "Employee", "Donor" };
+            foreach (var roleName in roleNames)
+            {
+                if (!await roleManager.RoleExistsAsync(roleName))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(roleName));
+                }
+            }
+
+            // Create test Employee user
+            var employeeEmail = "employee@test.local";
+            var employeeUser = await userManager.FindByEmailAsync(employeeEmail);
+            if (employeeUser == null)
+            {
+                employeeUser = new IdentityUser
+                {
+                    UserName = employeeEmail,
+                    Email = employeeEmail,
+                    EmailConfirmed = true
+                };
+                await userManager.CreateAsync(employeeUser, "Employee@123");
+                await userManager.AddToRoleAsync(employeeUser, "Employee");
+            }
+
+            // Create test Donor user
+            var donorEmail = "donor@test.local";
+            var donorUser = await userManager.FindByEmailAsync(donorEmail);
+            if (donorUser == null)
+            {
+                donorUser = new IdentityUser
+                {
+                    UserName = donorEmail,
+                    Email = donorEmail,
+                    EmailConfirmed = true
+                };
+                await userManager.CreateAsync(donorUser, "Donor@123");
+                await userManager.AddToRoleAsync(donorUser, "Donor");
+            }
+
+            // Create sample relief projects
+            var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
+            if (!context.ReliefProjects.Any())
+            {
+                var projects = new[]
+                {
+                    new ReliefProject
+                    {
+                        Name = "Flood Relief - KwaZulu-Natal",
+                        Location = "KwaZulu-Natal",
+                        Description = "Emergency relief efforts for flood-affected communities.",
+                        Status = "Active",
+                        StartDate = DateTime.Now.AddMonths(-2),
+                        CreatedDate = DateTime.Now.AddMonths(-2)
+                    },
+                    new ReliefProject
+                    {
+                        Name = "Drought Assistance Program",
+                        Location = "Limpopo",
+                        Description = "Water supply and food distribution in drought-stricken areas.",
+                        Status = "Active",
+                        StartDate = DateTime.Now.AddMonths(-1),
+                        CreatedDate = DateTime.Now.AddMonths(-1)
+                    },
+                    new ReliefProject
+                    {
+                        Name = "Emergency Medical Support",
+                        Location = "Eastern Cape",
+                        Description = "Medical supplies and healthcare support for affected regions.",
+                        Status = "Planning",
+                        StartDate = DateTime.Now.AddDays(7),
+                        CreatedDate = DateTime.Now
+                    }
+                };
+
+                foreach (var project in projects)
+                {
+                    context.ReliefProjects.Add(project);
+                }
+                await context.SaveChangesAsync();
+            }
+        }
+    }
+}

@@ -1,5 +1,91 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Home - Gift of the Givers Disaster Relief";
 }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/navbar.css" />
+    <link rel="stylesheet" href="~/css/pages.css" />
+</head>
+<body>
+    <partial name="Shared/_Navigation" />
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <h1>Disaster Relief & Community Support</h1>
+            <p>Gift of the Givers coordinates rapid response to disasters, mobilising volunteers and resources to support affected communities.</p>
+            <div class="hero-actions">
+                <a href="/Donate" class="btn btn-accent">Make a Donation</a>
+                <a href="/Volunteer" class="btn btn-light-outline">Become a Volunteer</a>
+            </div>
+        </section>
+
+        <!-- Statistics Section -->
+        <section class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">@Model.ActiveProjects</div>
+                    <div class="stat-label">Active Relief Operations</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">@Model.RegisteredVolunteers</div>
+                    <div class="stat-label">Registered Volunteers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">@Model.TotalDonations.ToString("C0")</div>
+                    <div class="stat-label">Funds Received</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">@Model.CommunitiesSupported</div>
+                    <div class="stat-label">Communities Served</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Current Relief Activities -->
+        <section class="activities-section">
+            <div class="activities-container">
+                <div class="activities-header">
+                    <h2>Current Relief Activities</h2>
+                    <p>Active disaster relief and community assistance projects</p>
+                </div>
+
+                <div class="activity-grid">
+                    @foreach (var project in Model.RecentProjects)
+                    {
+                        <div class="activity-card">
+                            <div class="activity-header">
+                                <div class="activity-icon">🚨</div>
+                                <h3 class="activity-title">@project.Name</h3>
+                            </div>
+                            <div class="activity-location">📍 @project.Location</div>
+                            <p class="activity-description">@project.Description</p>
+                            <span class="activity-status">@project.Status</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="cta-section">
+            <div class="cta-content">
+                <h2>Make a Difference Today</h2>
+                <p>Every donation helps us provide immediate relief to affected communities. Your support saves lives.</p>
+                <a href="/Donate" class="btn btn-primary btn-large">Donate Now</a>
+            </div>
+        </section>
+    </main>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
