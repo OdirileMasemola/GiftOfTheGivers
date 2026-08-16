@@ -1,7 +1,7 @@
 @page
 @model DonateModel
 @{
-    ViewData["Title"] = "Donate - Gift of the Givers Disaster Relief";
+    ViewData["Title"] = "Donate - Gift of the Givers";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -9,7 +9,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"]</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/css/navbar.css" />
     <link rel="stylesheet" href="~/css/pages.css" />
@@ -18,31 +17,30 @@
     <partial name="Shared/_Navigation" />
 
     <main>
-        <div class="donate-container">
-            <div class="donate-header">
+        <div class="form-container">
+            <div class="page-header">
                 <h1>Make a Donation</h1>
                 <p>Your support helps us provide relief to affected communities.</p>
             </div>
 
-            <div class="info-box">
-                <strong>Note:</strong> This is a prototype donation system for demonstration purposes. No real payment processing occurs. Donations are recorded for tracking purposes only.
+            <div class="alert alert-info">
+                <strong>Prototype Notice:</strong> This is a demonstration system. No real payment processing occurs. Donations are recorded for tracking purposes only.
             </div>
 
             <form method="post" id="donationForm">
                 <!-- Donation Type Section -->
                 <div class="form-section">
                     <div class="form-section-title">Donation Type</div>
-
-                    <div class="radio-group">
-                        <div class="radio-option">
-                            <input type="radio" id="donationType_OneTime" name="DonationType" value="OneTime" 
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" id="donationType_OneTime" name="DonationType" value="OneTime" 
                                    checked asp-for="DonationType" onchange="handleDonationTypeChange()">
-                            <label for="donationType_OneTime">One-Time Donation</label>
+                            <label class="form-check-label" for="donationType_OneTime">One-Time Donation</label>
                         </div>
-                        <div class="radio-option">
-                            <input type="radio" id="donationType_Recurring" name="DonationType" value="Recurring" 
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" id="donationType_Recurring" name="DonationType" value="Recurring" 
                                    asp-for="DonationType" onchange="handleDonationTypeChange()">
-                            <label for="donationType_Recurring">Recurring Donation</label>
+                            <label class="form-check-label" for="donationType_Recurring">Recurring Donation</label>
                         </div>
                     </div>
                 </div>
@@ -60,16 +58,18 @@
                 </div>
 
                 <!-- Currency & Amount Section -->
-                <div class="form-section mt-3">
+                <div class="form-section">
                     <div class="form-section-title">Amount & Currency</div>
 
-                    <div class="form-group">
-                        <label class="form-label" for="Currency">Currency</label>
-                        <select class="form-control" id="Currency" name="Currency" asp-for="Currency">
-                            <option value="ZAR">South African Rand (ZAR)</option>
-                            <option value="USD">US Dollar (USD)</option>
-                            <option value="EUR">Euro (EUR)</option>
-                        </select>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="Currency">Currency</label>
+                            <select class="form-control" id="Currency" name="Currency" asp-for="Currency">
+                                <option value="ZAR">South African Rand (ZAR)</option>
+                                <option value="USD">US Dollar (USD)</option>
+                                <option value="EUR">Euro (EUR)</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -92,7 +92,7 @@
                 </div>
 
                 <!-- Donor Information Section -->
-                <div class="form-section mt-3">
+                <div class="form-section">
                     <div class="form-section-title">Your Information</div>
 
                     <div class="form-group">
@@ -118,11 +118,11 @@
         </div>
     </main>
 
+    <script src="~/js/site.js"></script>
     <script>
         function handleDonationTypeChange() {
             const isRecurring = document.getElementById('donationType_Recurring').checked;
             const recurringOptions = document.getElementById('recurringOptions');
-
             if (isRecurring) {
                 recurringOptions.classList.add('show');
             } else {
@@ -131,16 +131,22 @@
         }
 
         function selectAmount(button, amount) {
-            // Remove active class from all buttons
-            document.querySelectorAll('.amount-button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-
-            // Add active class to clicked button
+            document.querySelectorAll('.amount-button').forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
-
-            // Set the amount input
             document.getElementById('Amount').value = amount;
+        }
+
+        document.getElementById('donationForm').addEventListener('submit', function(e) {
+            const amount = parseFloat(document.getElementById('Amount').value);
+            if (!amount || amount <= 0) {
+                e.preventDefault();
+                document.getElementById('amountError').textContent = 'Please enter a valid amount greater than 0';
+                document.getElementById('Amount').classList.add('is-invalid');
+            }
+        });
+    </script>
+</body>
+</html>
         }
 
         // Form validation
@@ -155,5 +161,4 @@
             }
         });
     </script>
-</body>
 </html>

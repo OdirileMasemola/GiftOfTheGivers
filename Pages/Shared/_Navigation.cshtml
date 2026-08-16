@@ -6,12 +6,12 @@
     <div class="navbar-container">
         <div class="navbar-brand">
             <a href="/" class="brand-logo">
-                <span class="brand-icon">🔴</span>
+                <span class="brand-mark">G</span>
                 <span class="brand-text">Gift of the Givers</span>
             </a>
         </div>
 
-        <button class="navbar-toggle" id="navbarToggle">
+        <button class="navbar-toggle" id="navbarToggle" aria-label="Toggle navigation menu">
             <span></span>
             <span></span>
             <span></span>
@@ -34,49 +34,30 @@
 
                 @if (SignInManager.IsSignedIn(User))
                 {
-                    <li class="nav-divider"></li>
-
                     @if (User.IsInRole("Employee"))
                     {
                         <li class="nav-item">
-                            <a href="/Employee/Dashboard" class="nav-link nav-link-employee">
-                                <span class="badge-label">Employee</span>
-                                Dashboard
-                            </a>
+                            <a href="/Employee/Dashboard" class="nav-link nav-link-employee">Dashboard</a>
                         </li>
                     }
+                }
+            </ul>
 
-                    @if (User.IsInRole("Donor"))
-                    {
-                        <li class="nav-item">
-                            <span class="nav-label">
-                                <span class="badge badge-info">Donor</span>
-                            </span>
-                        </li>
-                    }
-
-                    <li class="nav-item nav-user-section">
+            <div class="nav-auth">
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <div class="nav-user">
                         <span class="nav-username">@User.Identity?.Name</span>
-                        <form id="logout-form" method="post" action="/Identity/Account/Logout" style="display: none;">
-                        </form>
-                        <a href="javascript:document.getElementById('logout-form').submit();" class="nav-link nav-link-logout">
-                            Logout
-                        </a>
-                    </li>
+                        <form id="logout-form" method="post" action="/Identity/Account/Logout" style="display: none;"></form>
+                        <a href="javascript:document.getElementById('logout-form').submit();" class="nav-logout">Logout</a>
+                    </div>
                 }
                 else
                 {
-                    <li class="nav-divider"></li>
-                    <li class="nav-item">
-                        <a href="/Identity/Account/Login" class="nav-link">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/Identity/Account/Register" class="nav-link btn btn-primary btn-small" style="margin-left: 0.5rem;">
-                            Register
-                        </a>
-                    </li>
+                    <a href="/Identity/Account/Login" class="nav-auth-link">Login</a>
+                    <a href="/Identity/Account/Register" class="nav-auth-register">Register</a>
                 }
-            </ul>
+            </div>
         </div>
     </div>
 </nav>
@@ -86,18 +67,20 @@
         const toggle = document.getElementById('navbarToggle');
         const menu = document.getElementById('navbarMenu');
 
-        toggle.addEventListener('click', function () {
-            toggle.classList.toggle('active');
-            menu.classList.toggle('active');
-        });
-
-        // Close menu when a link is clicked
-        const links = menu.querySelectorAll('.nav-link');
-        links.forEach(link => {
-            link.addEventListener('click', function () {
-                toggle.classList.remove('active');
-                menu.classList.remove('active');
+        if (toggle) {
+            toggle.addEventListener('click', function () {
+                toggle.classList.toggle('active');
+                menu.classList.toggle('active');
             });
-        });
+
+            // Close menu when a link is clicked
+            const links = menu.querySelectorAll('.nav-link, .nav-auth-link, .nav-logout');
+            links.forEach(link => {
+                link.addEventListener('click', function () {
+                    toggle.classList.remove('active');
+                    menu.classList.remove('active');
+                });
+            });
+        }
     });
 </script>
