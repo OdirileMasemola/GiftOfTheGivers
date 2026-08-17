@@ -80,10 +80,15 @@ body {
     line-height: var(--line-height-normal);
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 main {
-    display: block;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 *,
@@ -161,6 +166,7 @@ a:focus {
     line-height: 1.5;
     font-family: inherit;
     gap: var(--spacing-sm);
+    position: relative;
 }
 
 .btn:disabled {
@@ -168,13 +174,13 @@ a:focus {
     cursor: not-allowed;
 }
 
-.btn:focus {
+.btn:focus-visible {
     outline: 2px solid var(--color-red);
     outline-offset: 2px;
 }
 
-.btn:focus:not(:focus-visible) {
-    outline: none;
+.btn:active:not(:disabled) {
+    transform: translateY(1px);
 }
 
 .btn-primary {
@@ -189,8 +195,9 @@ a:focus {
     box-shadow: var(--shadow-md);
 }
 
-.btn-primary:active:not(:disabled) {
-    transform: translateY(1px);
+.btn-primary:focus-visible {
+    outline: 2px solid var(--color-red);
+    outline-offset: 2px;
 }
 
 .btn-secondary {
@@ -475,15 +482,16 @@ select.form-control {
 .card {
     background: var(--color-white);
     border: 1px solid var(--color-grey-200);
-    border-radius: var(--spacing-md);
+    border-radius: var(--radius-md);
     overflow: hidden;
     box-shadow: var(--shadow-sm);
-    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    transition: box-shadow var(--transition-base), border-color var(--transition-base), transform var(--transition-base);
 }
 
 .card:hover {
     box-shadow: var(--shadow-md);
     border-color: var(--color-grey-300);
+    transform: translateY(-2px);
 }
 
 .card-header {
@@ -517,6 +525,41 @@ select.form-control {
         padding-left: var(--spacing-md);
         padding-right: var(--spacing-md);
     }
+}
+
+/* Page Common Structure */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Page Content Wrapper */
+.page-wrapper {
+    flex: 1;
+    padding: var(--spacing-2xl) 0;
+}
+
+/* Page Header Styling */
+.page-header {
+    text-align: center;
+    margin-bottom: var(--spacing-2xl);
+    padding-bottom: var(--spacing-lg);
+}
+
+.page-header h1 {
+    margin-bottom: var(--spacing-md);
+}
+
+.page-header p {
+    font-size: 1.05rem;
+    color: var(--color-grey-600);
 }
 
 /* Form Containers */

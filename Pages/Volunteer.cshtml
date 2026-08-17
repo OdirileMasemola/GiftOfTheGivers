@@ -9,7 +9,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"]</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/css/navbar.css" />
     <link rel="stylesheet" href="~/css/pages.css" />
@@ -18,14 +17,14 @@
     <partial name="Shared/_Navigation" />
 
     <main>
-        <div class="volunteer-container">
-            <div class="volunteer-header">
+        <div class="form-container">
+            <section class="page-header">
                 <h1>Volunteer With Us</h1>
                 <p>Join our team and help make a difference in disaster relief efforts.</p>
-            </div>
+            </section>
 
-            <div class="info-box">
-                ✓ We're always looking for dedicated volunteers. After you register, our team will review your application and contact you with opportunities.
+            <div class="alert alert-info">
+                <strong>Get Involved:</strong> We're always looking for dedicated volunteers. After you register, our team will review your application and contact you with opportunities that match your skills and availability.
             </div>
 
             <form method="post" id="volunteerForm">
@@ -49,41 +48,41 @@
                 </div>
 
                 <!-- Skills -->
-                <div class="form-section mt-3">
+                <div class="form-section">
                     <div class="form-section-title">Skills & Experience</div>
 
-                    <p style="color: #666; margin-bottom: 1rem;">Select all that apply:</p>
+                    <p class="form-help-text">Select all that apply:</p>
 
                     <div class="skill-checkboxes">
-                        <div class="skill-checkbox">
-                            <input type="checkbox" id="skill_medical" name="SelectedSkills" value="Medical" />
-                            <label for="skill_medical">Medical/Healthcare</label>
+                        <div class="form-check">
+                            <input type="checkbox" id="skill_medical" name="SelectedSkills" value="Medical" class="form-check-input" />
+                            <label for="skill_medical" class="form-check-label">Medical / Healthcare</label>
                         </div>
-                        <div class="skill-checkbox">
-                            <input type="checkbox" id="skill_logistics" name="SelectedSkills" value="Logistics" />
-                            <label for="skill_logistics">Logistics</label>
+                        <div class="form-check">
+                            <input type="checkbox" id="skill_logistics" name="SelectedSkills" value="Logistics" class="form-check-input" />
+                            <label for="skill_logistics" class="form-check-label">Logistics</label>
                         </div>
-                        <div class="skill-checkbox">
-                            <input type="checkbox" id="skill_communications" name="SelectedSkills" value="Communications" />
-                            <label for="skill_communications">Communications</label>
+                        <div class="form-check">
+                            <input type="checkbox" id="skill_communications" name="SelectedSkills" value="Communications" class="form-check-input" />
+                            <label for="skill_communications" class="form-check-label">Communications</label>
                         </div>
-                        <div class="skill-checkbox">
-                            <input type="checkbox" id="skill_construction" name="SelectedSkills" value="Construction" />
-                            <label for="skill_construction">Construction</label>
+                        <div class="form-check">
+                            <input type="checkbox" id="skill_construction" name="SelectedSkills" value="Construction" class="form-check-input" />
+                            <label for="skill_construction" class="form-check-label">Construction</label>
                         </div>
-                        <div class="skill-checkbox">
-                            <input type="checkbox" id="skill_counselling" name="SelectedSkills" value="Counselling" />
-                            <label for="skill_counselling">Counselling</label>
+                        <div class="form-check">
+                            <input type="checkbox" id="skill_counselling" name="SelectedSkills" value="Counselling" class="form-check-input" />
+                            <label for="skill_counselling" class="form-check-label">Counselling</label>
                         </div>
-                        <div class="skill-checkbox">
-                            <input type="checkbox" id="skill_administration" name="SelectedSkills" value="Administration" />
-                            <label for="skill_administration">Administration</label>
+                        <div class="form-check">
+                            <input type="checkbox" id="skill_administration" name="SelectedSkills" value="Administration" class="form-check-input" />
+                            <label for="skill_administration" class="form-check-label">Administration</label>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="Skills">Other Skills or Experience *</label>
-                        <textarea class="form-control" id="Skills" name="Skills" rows="3"
+                        <textarea class="form-control" id="Skills" name="Skills" rows="4"
                                   placeholder="Describe any other relevant skills, certifications, or experience (e.g., First Aid, Heavy Equipment Operation, etc.)"
                                   asp-for="Skills" required></textarea>
                         <span asp-validation-for="Skills" class="invalid-feedback"></span>
@@ -91,31 +90,31 @@
                 </div>
 
                 <!-- Availability -->
-                <div class="form-section mt-3">
+                <div class="form-section">
                     <div class="form-section-title">Availability</div>
 
-                    <p style="color: #666; margin-bottom: 1rem;">How often can you volunteer? *</p>
+                    <p class="form-help-text">How often can you volunteer? *</p>
 
                     <div class="availability-options">
-                        <div class="availability-radio">
+                        <div class="form-check">
                             <input type="radio" id="avail_fulltime" name="Availability" value="Full-time" 
-                                   asp-for="Availability" required />
-                            <label for="avail_fulltime">Full-time</label>
+                                   asp-for="Availability" class="form-check-input" required />
+                            <label for="avail_fulltime" class="form-check-label">Full-time</label>
                         </div>
-                        <div class="availability-radio">
+                        <div class="form-check">
                             <input type="radio" id="avail_parttime" name="Availability" value="Part-time" 
-                                   asp-for="Availability" required />
-                            <label for="avail_parttime">Part-time</label>
+                                   asp-for="Availability" class="form-check-input" required />
+                            <label for="avail_parttime" class="form-check-label">Part-time</label>
                         </div>
-                        <div class="availability-radio">
+                        <div class="form-check">
                             <input type="radio" id="avail_weekends" name="Availability" value="Weekends only" 
-                                   asp-for="Availability" required />
-                            <label for="avail_weekends">Weekends only</label>
+                                   asp-for="Availability" class="form-check-input" required />
+                            <label for="avail_weekends" class="form-check-label">Weekends only</label>
                         </div>
-                        <div class="availability-radio">
+                        <div class="form-check">
                             <input type="radio" id="avail_occasional" name="Availability" value="Occasional" 
-                                   asp-for="Availability" required />
-                            <label for="avail_occasional">Occasional</label>
+                                   asp-for="Availability" class="form-check-input" required />
+                            <label for="avail_occasional" class="form-check-label">Occasional</label>
                         </div>
                     </div>
 
@@ -130,21 +129,8 @@
         </div>
     </main>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <partial name="Shared/_Footer" />
 
-    <script>
-        document.getElementById('volunteerForm').addEventListener('submit', function(e) {
-            const selectedSkills = Array.from(document.querySelectorAll('input[name="SelectedSkills"]:checked')).map(cb => cb.value);
-            const otherSkills = document.getElementById('Skills').value.trim();
-
-            if (selectedSkills.length === 0 && !otherSkills) {
-                e.preventDefault();
-                alert('Please select at least one skill or describe your experience.');
-            }
-        });
-    </script>
+    <script src="~/js/site.js"></script>
 </body>
 </html>

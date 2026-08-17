@@ -1,0 +1,67 @@
+@* Professional footer component for Gift of the Givers *@
+
+<footer class="site-footer">
+    <div class="footer-container">
+        <!-- Footer Content Grid -->
+        <div class="footer-grid">
+            <!-- Brand Section -->
+            <div class="footer-section">
+                <div class="footer-brand">
+                    <span class="footer-brand-mark">G</span>
+                    <h3 class="footer-brand-name">Gift of the Givers</h3>
+                </div>
+                <p class="footer-brand-description">
+                    Supporting disaster relief, enabling donations, mobilizing volunteers, and serving affected communities in their time of greatest need.
+                </p>
+            </div>
+
+            <!-- Navigation Section -->
+            <div class="footer-section">
+                <h4 class="footer-section-title">Navigation</h4>
+                <ul class="footer-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/About">About</a></li>
+                    <li><a href="/Donate">Donate</a></li>
+                    <li><a href="/Volunteer">Volunteer</a></li>
+                </ul>
+            </div>
+
+            <!-- Get Involved Section -->
+            <div class="footer-section">
+                <h4 class="footer-section-title">Get Involved</h4>
+                <ul class="footer-links">
+                    <li><a href="/Donate">Make a Donation</a></li>
+                    <li><a href="/Volunteer">Become a Volunteer</a></li>
+                </ul>
+            </div>
+
+            <!-- Account Section -->
+            <div class="footer-section">
+                <h4 class="footer-section-title">Account</h4>
+                <ul class="footer-links">
+                    @if (SignInManager?.IsSignedIn(User) ?? false)
+                    {
+                        <li><a href="/Identity/Account/Manage">Manage Account</a></li>
+                        <li>
+                            <form id="logout-form-footer" method="post" action="/Identity/Account/Logout" style="display: none;"></form>
+                            <a href="javascript:document.getElementById('logout-form-footer').submit();">Logout</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li><a href="/Identity/Account/Login">Login</a></li>
+                        <li><a href="/Identity/Account/Register">Register</a></li>
+                    }
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer Bottom -->
+        <div class="footer-bottom">
+            <p class="footer-copyright">© 2026 Gift of the Givers Disaster Relief System. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
