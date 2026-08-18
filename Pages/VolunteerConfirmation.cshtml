@@ -3,67 +3,47 @@
 @{
     ViewData["Title"] = "Thank You - Gift of the Givers";
 }
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewData["Title"]</title>
-    <link rel="stylesheet" href="~/css/site.css" />
-    <link rel="stylesheet" href="~/css/navbar.css" />
-    <link rel="stylesheet" href="~/css/pages.css" />
-</head>
-<body>
-    <partial name="Shared/_Navigation" />
 
-    <main>
-        <div class="confirmation-container">
-            <div class="confirmation-box">
-                <div class="success-icon">✓</div>
-                <h1 class="confirmation-title">Thank You for Volunteering!</h1>
-                <p class="confirmation-subtitle">
-                    Your application has been received. We've recorded your registration and will review your information shortly.
-                </p>
+<div class="confirmation-container">
+    <div class="confirmation-box">
+        <div class="success-icon">✓</div>
+        <h1 class="confirmation-title">Thank You for Volunteering!</h1>
+        <p class="confirmation-subtitle">
+            Your application has been received. We've recorded your registration and will review your information shortly.
+        </p>
 
-                <div class="volunteer-details">
-                    <div class="detail-item">
-                        <span class="detail-label">Name:</span>
-                        <span class="detail-value">@Model.Volunteer?.Name</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Email:</span>
-                        <span class="detail-value">@Model.Volunteer?.Email</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Availability:</span>
-                        <span class="detail-value">@Model.Volunteer?.Availability</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Registration Date:</span>
-                        <span class="detail-value">@Model.Volunteer?.RegistrationDate.ToString("d MMMM yyyy")</span>
-                    </div>
-                </div>
-
-                <div class="next-steps">
-                    <h3>What Happens Next?</h3>
-                    <ol>
-                        <li>Our team reviews your application and skills</li>
-                        <li>We match you with suitable relief opportunities</li>
-                        <li>We contact you via email with volunteer opportunities</li>
-                        <li>You can accept or decline opportunities as they arise</li>
-                    </ol>
-                </div>
-
-                <div class="action-buttons">
-                    <a href="/" class="btn btn-primary btn-large">Return to Home</a>
-                    <a href="/Donate" class="btn btn-secondary btn-large">Make a Donation</a>
-                </div>
+        <div class="volunteer-details">
+            <div class="detail-item">
+                <span class="detail-label">Name:</span>
+                <span class="detail-value">@Model.Volunteer?.Name</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Email:</span>
+                <span class="detail-value">@Model.Volunteer?.Email</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Availability:</span>
+                <span class="detail-value">@Model.Volunteer?.Availability</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Registration Date:</span>
+                <span class="detail-value">@Model.Volunteer?.RegistrationDate.ToString("d MMMM yyyy")</span>
             </div>
         </div>
-    </main>
 
-    <partial name="Shared/_Footer" />
+        <div class="next-steps">
+            <h3>What Happens Next?</h3>
+            <ol>
+                <li>Our team reviews your application and skills</li>
+                <li>We match you with suitable relief opportunities</li>
+                <li>We contact you via email with volunteer opportunities</li>
+                <li>You can accept or decline opportunities as they arise</li>
+            </ol>
+        </div>
 
-    <script src="~/js/site.js"></script>
-</body>
-</html>
+        <div class="action-buttons">
+            <a href="/" class="btn btn-primary btn-large">Return to Home</a>
+            <a href="/Donate" class="btn btn-secondary btn-large">Make a Donation</a>
+        </div>
+    </div>
+</div>
