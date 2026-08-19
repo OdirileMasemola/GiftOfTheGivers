@@ -141,7 +141,6 @@ a {
 
 a:hover {
     color: var(--color-red-hover);
-    text-decoration: underline;
 }
 
 a:focus {
@@ -190,9 +189,9 @@ a:focus {
 }
 
 .btn-primary:hover:not(:disabled) {
-    background-color: var(--color-red-hover);
-    border-color: var(--color-red-hover);
-    box-shadow: var(--shadow-md);
+    background-color: var(--color-white);
+    color: var(--color-red);
+    border-color: var(--color-red);
 }
 
 .btn-primary:focus-visible {
@@ -207,8 +206,7 @@ a:focus {
 }
 
 .btn-secondary:hover:not(:disabled) {
-    background-color: var(--color-grey-200);
-    border-color: var(--color-grey-400);
+    opacity: 0.85;
 }
 
 .btn-outline {
@@ -218,7 +216,8 @@ a:focus {
 }
 
 .btn-outline:hover:not(:disabled) {
-    background-color: var(--color-grey-50);
+    background-color: var(--color-dark);
+    color: var(--color-white);
     border-color: var(--color-dark);
 }
 
@@ -229,7 +228,7 @@ a:focus {
 }
 
 .btn-ghost:hover:not(:disabled) {
-    background-color: var(--color-grey-100);
+    opacity: 0.85;
 }
 
 .btn-accent {
@@ -239,8 +238,9 @@ a:focus {
 }
 
 .btn-accent:hover:not(:disabled) {
-    background-color: var(--color-red-hover);
-    border-color: var(--color-red-hover);
+    background-color: var(--color-white);
+    color: var(--color-red);
+    border-color: var(--color-red);
 }
 
 .btn-light-outline {
@@ -250,7 +250,9 @@ a:focus {
 }
 
 .btn-light-outline:hover:not(:disabled) {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--color-white);
+    color: var(--color-dark);
+    border-color: var(--color-white);
 }
 
 .btn-small {

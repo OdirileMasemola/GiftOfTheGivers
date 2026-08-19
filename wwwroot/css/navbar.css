@@ -41,7 +41,7 @@
 }
 
 .brand-logo:hover {
-    opacity: 0.75;
+    opacity: 0.85;
 }
 
 .brand-logo:focus {
@@ -111,11 +111,10 @@
 }
 
 .nav-link:hover {
-    color: var(--color-dark);
-    background-color: var(--color-grey-50);
+    opacity: 0.75;
 }
 
-.nav-link:focus {
+.nav-link:focus-visible {
     outline: 2px solid var(--color-red);
     outline-offset: 2px;
 }
@@ -123,16 +122,6 @@
 .nav-link.active {
     color: var(--color-red);
     font-weight: 600;
-}
-
-.nav-link.active::after {
-    content: "";
-    position: absolute;
-    bottom: -9px;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background-color: var(--color-red);
 }
 
 .nav-link-employee {
@@ -158,11 +147,10 @@
 }
 
 .nav-auth-link:hover {
-    color: var(--color-dark);
-    background-color: var(--color-grey-50);
+    opacity: 0.75;
 }
 
-.nav-auth-link:focus {
+.nav-auth-link:focus-visible {
     outline: 2px solid var(--color-red);
     outline-offset: 2px;
 }
@@ -179,12 +167,12 @@
 }
 
 .nav-auth-register:hover {
-    background-color: var(--color-red-hover);
-    color: var(--color-white);
-    box-shadow: var(--shadow-md);
+    background-color: var(--color-white);
+    color: var(--color-red);
+    border: 1px solid var(--color-red);
 }
 
-.nav-auth-register:focus {
+.nav-auth-register:focus-visible {
     outline: 2px solid var(--color-red);
     outline-offset: 2px;
 }
