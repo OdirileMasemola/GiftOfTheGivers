@@ -3,115 +3,95 @@
 @{
     ViewData["Title"] = "Home - Gift of the Givers Disaster Relief";
 }
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewData["Title"]</title>
-    <link rel="stylesheet" href="~/css/site.css" />
-    <link rel="stylesheet" href="~/css/navbar.css" />
-    <link rel="stylesheet" href="~/css/pages.css" />
-</head>
-<body>
-    <partial name="Shared/_Navigation" />
 
-    <main>
-        <!-- Hero Section -->
-        <section class="hero-section">
-            <div class="container">
-                <div class="hero-content">
-                    <h1>Disaster Relief & Community Support</h1>
-                    <p class="hero-subtitle">Gift of the Givers coordinates rapid response to disasters, mobilising volunteers and resources to support affected communities in their time of greatest need.</p>
-                    <div class="hero-actions">
-                        <a href="/Donate" class="btn btn-primary btn-large">Make a Donation</a>
-                        <a href="/Volunteer" class="btn btn-light-outline">Become a Volunteer</a>
-                    </div>
-                </div>
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Disaster Relief & Community Support</h1>
+            <p class="hero-subtitle">Gift of the Givers coordinates rapid response to disasters, mobilising volunteers and resources to support affected communities in their time of greatest need.</p>
+            <div class="hero-actions">
+                <a href="/Donate" class="btn btn-primary btn-large">Make a Donation</a>
+                <a href="/Volunteer" class="btn btn-light-outline">Become a Volunteer</a>
             </div>
-        </section>
+        </div>
+    </div>
+</section>
 
-        <!-- Statistics Section -->
-        <section class="stats-section">
-            <div class="container">
-                <div class="stats-header">
-                    <h2>Our Impact</h2>
-                    <p>Real numbers reflecting our commitment to disaster relief and community support</p>
-                </div>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-number">@Model.ActiveProjects</div>
-                        <div class="stat-text">Active Relief Operations</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">@Model.RegisteredVolunteers</div>
-                        <div class="stat-text">Registered Volunteers</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">@Model.TotalDonations.ToString("C0")</div>
-                        <div class="stat-text">Funds Received</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">@Model.CommunitiesSupported</div>
-                        <div class="stat-text">Communities Served</div>
-                    </div>
-                </div>
+<!-- Statistics Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="stats-header">
+            <h2>Our Impact</h2>
+            <p>Real numbers reflecting our commitment to disaster relief and community support</p>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">@Model.ActiveProjects</div>
+                <div class="stat-text">Active Relief Operations</div>
             </div>
-        </section>
+            <div class="stat-card">
+                <div class="stat-number">@Model.RegisteredVolunteers</div>
+                <div class="stat-text">Registered Volunteers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">@Model.TotalDonations.ToString("C0")</div>
+                <div class="stat-text">Funds Received</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">@Model.CommunitiesSupported</div>
+                <div class="stat-text">Communities Served</div>
+            </div>
+        </div>
+    </div>
+</section>
 
-        <!-- Current Relief Activities -->
-        <section class="activities-section">
-            <div class="container">
-                <div class="section-header">
-                    <h2>Current Relief Activities</h2>
-                    <p>Active disaster relief and community assistance projects we are supporting</p>
-                </div>
+<!-- Current Relief Activities -->
+<section class="activities-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Current Relief Activities</h2>
+            <p>Active disaster relief and community assistance projects we are supporting</p>
+        </div>
 
-                @if (Model.RecentProjects != null && Model.RecentProjects.Any())
+        @if (Model.RecentProjects != null && Model.RecentProjects.Any())
+        {
+            <div class="activity-grid">
+                @foreach (var project in Model.RecentProjects)
                 {
-                    <div class="activity-grid">
-                        @foreach (var project in Model.RecentProjects)
-                        {
-                            <article class="activity-card">
-                                <div class="activity-header">
-                                    <div class="activity-icon">@project.Name.First().ToString().ToUpper()</div>
-                                    <h3 class="activity-title">@project.Name</h3>
-                                </div>
-                                <p class="activity-location">@project.Location</p>
-                                <p class="activity-description">@project.Description</p>
-                                <div class="activity-footer">
-                                    <span class="activity-status">@project.Status</span>
-                                </div>
-                            </article>
-                        }
-                    </div>
-                }
-                else
-                {
-                    <div class="empty-state">
-                        <p>No active relief operations at this time. Check back soon for updates.</p>
-                    </div>
+                    <article class="activity-card">
+                        <div class="activity-header">
+                            <div class="activity-icon">@project.Name.First().ToString().ToUpper()</div>
+                            <h3 class="activity-title">@project.Name</h3>
+                        </div>
+                        <p class="activity-location">@project.Location</p>
+                        <p class="activity-description">@project.Description</p>
+                        <div class="activity-footer">
+                            <span class="activity-status">@project.Status</span>
+                        </div>
+                    </article>
                 }
             </div>
-        </section>
-
-        <!-- Call to Action Section -->
-        <section class="cta-section">
-            <div class="container">
-                <div class="cta-content">
-                    <h2>Make a Difference Today</h2>
-                    <p>Every donation helps us provide immediate relief to affected communities. Your support saves lives and restores hope. Whether through financial contribution or volunteer work, you can help us respond to disasters and support communities in their time of greatest need.</p>
-                    <div class="cta-actions">
-                        <a href="/Donate" class="btn btn-primary btn-large">Donate Now</a>
-                        <a href="/Volunteer" class="btn btn-secondary btn-large">Become a Volunteer</a>
-                    </div>
-                </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <p>No active relief operations at this time. Check back soon for updates.</p>
             </div>
-        </section>
-    </main>
+        }
+    </div>
+</section>
 
-    <partial name="Shared/_Footer" />
-
-    <script src="~/js/site.js"></script>
-</body>
-</html>
+<!-- Call to Action Section -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Make a Difference Today</h2>
+            <p>Every donation helps us provide immediate relief to affected communities. Your support saves lives and restores hope. Whether through financial contribution or volunteer work, you can help us respond to disasters and support communities in their time of greatest need.</p>
+            <div class="cta-actions">
+                <a href="/Donate" class="btn btn-primary btn-large">Donate Now</a>
+                <a href="/Volunteer" class="btn btn-secondary btn-large">Become a Volunteer</a>
+            </div>
+        </div>
+    </div>
+</section>
