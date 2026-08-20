@@ -1,0 +1,214 @@
+@page "/Dashboards/Donor"
+@model GiftOfTheGivers.Pages.Dashboards.DonorModel
+@{
+    ViewData["Title"] = "Donor Dashboard - Gift of the Givers";
+}
+
+<link rel="stylesheet" href="~/css/dashboard.css" />
+
+<div class="dashboard-wrapper">
+    <!-- Sidebar -->
+    <partial name="Shared/_DashboardSidebar" />
+
+    <!-- Main Content -->
+    <div class="dashboard-main">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <h1 class="dashboard-header-title">Donor Dashboard</h1>
+            <p class="dashboard-header-subtitle">Manage your donations and support relief operations</p>
+        </div>
+
+        <!-- Content -->
+        <div class="dashboard-content">
+            <!-- Statistics Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">Total Donated</span>
+                    <span class="stat-value">ZAR 45k</span>
+                    <span class="stat-meta">All time</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Donations Made</span>
+                    <span class="stat-value">8</span>
+                    <span class="stat-meta">This year</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Active Recurring</span>
+                    <span class="stat-value">2</span>
+                    <span class="stat-meta">Monthly subscriptions</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Tax Certificates</span>
+                    <span class="stat-value">8</span>
+                    <span class="stat-meta">Available for download</span>
+                </div>
+            </div>
+
+            <!-- Donation Actions -->
+            <div class="dashboard-section">
+                <h2 class="dashboard-section-title">Quick Actions</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-lg); margin-bottom: var(--spacing-2xl);">
+                    <a href="/Donate" class="btn btn-primary" style="text-align: center; padding: var(--spacing-lg);">Make a Donation</a>
+                    <a href="#" class="btn btn-secondary" style="text-align: center; padding: var(--spacing-lg);">Start Recurring Donation</a>
+                    <a href="#" class="btn btn-outline" style="text-align: center; padding: var(--spacing-lg);">View Tax Certificates</a>
+                </div>
+            </div>
+
+            <!-- Recent Donations -->
+            <div class="dashboard-section">
+                <h2 class="dashboard-section-title">Recent Donations</h2>
+                <div class="dashboard-table">
+                    <div class="dashboard-table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Operation</th>
+                                    <th>Amount</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Reference</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2024-06-15</td>
+                                    <td>Flood Relief - Eastern Region</td>
+                                    <td>ZAR 5,000</td>
+                                    <td>One-time</td>
+                                    <td><span class="status-badge completed">Completed</span></td>
+                                    <td>GG-2024-001124</td>
+                                </tr>
+                                <tr>
+                                    <td>2024-06-01</td>
+                                    <td>General Relief Fund</td>
+                                    <td>ZAR 1,500</td>
+                                    <td>Monthly Recurring</td>
+                                    <td><span class="status-badge active">Active</span></td>
+                                    <td>GG-REC-00892</td>
+                                </tr>
+                                <tr>
+                                    <td>2024-05-28</td>
+                                    <td>Community Kitchen Initiative</td>
+                                    <td>ZAR 3,000</td>
+                                    <td>One-time</td>
+                                    <td><span class="status-badge completed">Completed</span></td>
+                                    <td>GG-2024-001098</td>
+                                </tr>
+                                <tr>
+                                    <td>2024-05-01</td>
+                                    <td>Medical Supply Distribution</td>
+                                    <td>ZAR 1,500</td>
+                                    <td>Monthly Recurring</td>
+                                    <td><span class="status-badge active">Active</span></td>
+                                    <td>GG-REC-00887</td>
+                                </tr>
+                                <tr>
+                                    <td>2024-04-20</td>
+                                    <td>Drought Support Program</td>
+                                    <td>USD 100</td>
+                                    <td>One-time</td>
+                                    <td><span class="status-badge completed">Completed</span></td>
+                                    <td>GG-2024-001052</td>
+                                </tr>
+                                <tr>
+                                    <td>2024-04-15</td>
+                                    <td>Emergency Response Fund</td>
+                                    <td>ZAR 2,500</td>
+                                    <td>One-time</td>
+                                    <td><span class="status-badge completed">Completed</span></td>
+                                    <td>GG-2024-001038</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Donation Impact Summary -->
+            <div class="dashboard-section">
+                <h2 class="dashboard-section-title">Your Donation Impact</h2>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-header">
+                            <h4 class="activity-title">Flood Relief - Eastern Region</h4>
+                            <span class="activity-date">Active project</span>
+                        </div>
+                        <p class="activity-description">Your donations have contributed to emergency supplies and volunteer support for 150+ families affected by recent flooding. Ongoing relief efforts continue.</p>
+                        <div class="activity-meta">
+                            <span>Your contribution: ZAR 5,000</span>
+                            <span>Total raised: ZAR 85,500</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-header">
+                            <h4 class="activity-title">Community Kitchen Initiative</h4>
+                            <span class="activity-date">Active project</span>
+                        </div>
+                        <p class="activity-description">Your monthly contributions help us provide nutritious meals to vulnerable community members. This month, 280 meals have been distributed.</p>
+                        <div class="activity-meta">
+                            <span>Your contribution: ZAR 3,000</span>
+                            <span>Total raised: ZAR 23,400</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-header">
+                            <h4 class="activity-title">Medical Supply Distribution</h4>
+                            <span class="activity-date">Ongoing program</span>
+                        </div>
+                        <p class="activity-description">Your recurring donations support our medical outreach program. Over ZAR 12,000 in supplies have been provided to 8 communities this quarter.</p>
+                        <div class="activity-meta">
+                            <span>Your contribution: ZAR 3,000</span>
+                            <span>Total raised: ZAR 42,100</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tax Certificate Section -->
+            <div class="dashboard-section">
+                <h2 class="dashboard-section-title">Tax Certificates</h2>
+                <div class="dashboard-table">
+                    <div class="dashboard-table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Year</th>
+                                    <th>Total Donated</th>
+                                    <th>Issued Date</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2024</td>
+                                    <td>ZAR 13,500</td>
+                                    <td>2024-01-15</td>
+                                    <td><span class="status-badge active">Ready</span></td>
+                                    <td><a href="#" style="color: var(--color-red); text-decoration: none; font-weight: 500;">Download PDF</a></td>
+                                </tr>
+                                <tr>
+                                    <td>2023</td>
+                                    <td>ZAR 28,400</td>
+                                    <td>2024-01-10</td>
+                                    <td><span class="status-badge completed">Issued</span></td>
+                                    <td><a href="#" style="color: var(--color-red); text-decoration: none; font-weight: 500;">Download PDF</a></td>
+                                </tr>
+                                <tr>
+                                    <td>2022</td>
+                                    <td>ZAR 15,200</td>
+                                    <td>2023-01-12</td>
+                                    <td><span class="status-badge completed">Issued</span></td>
+                                    <td><a href="#" style="color: var(--color-red); text-decoration: none; font-weight: 500;">Download PDF</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/site.js"></script>

@@ -4,6 +4,8 @@
     ViewData["Title"] = "About - Gift of the Givers";
 }
 
+<partial name="Shared/_Navigation" />
+
 <section class="page-header">
     <h1>About Gift of the Givers</h1>
     <p>Coordinated disaster relief and community support</p>
@@ -74,6 +76,44 @@
     </div>
 
     <div class="section-group">
+        <h2 class="section-title">Dashboard Preview</h2>
+        <p class="section-content">
+            Experience role-specific dashboards designed to help volunteers, employees, and donors manage their participation in relief operations. These prototype dashboards demonstrate the key features of each role's interface.
+        </p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--spacing-lg); margin-top: var(--spacing-2xl);">
+            <!-- Employee Dashboard Preview -->
+            <div style="background-color: var(--color-white); border: 1px solid var(--color-grey-200); border-radius: var(--radius-md); padding: var(--spacing-lg); display: flex; flex-direction: column; box-shadow: var(--shadow-xs); transition: all var(--transition-base);" onmouseover="this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.boxShadow='0 1px 3px 0 rgba(0, 0, 0, 0.1)'">
+                <div style="font-size: 1.75rem; font-weight: 700; color: var(--color-dark); margin-bottom: var(--spacing-md);">Dashboard Preview</div>
+                <h3 style="margin: 0 0 var(--spacing-md) 0; font-size: 1.2rem; color: var(--color-dark);">Employee Dashboard</h3>
+                <p style="margin: 0 0 var(--spacing-lg) 0; color: var(--color-grey-600); font-size: 0.9rem;">
+                    Manage relief operations, volunteer registrations and project updates.
+                </p>
+                <a href="/Dashboards/Employee" class="btn btn-primary" style="margin-top: auto;">Preview Employee Dashboard</a>
+            </div>
+
+            <!-- Donor Dashboard Preview -->
+            <div style="background-color: var(--color-white); border: 1px solid var(--color-grey-200); border-radius: var(--radius-md); padding: var(--spacing-lg); display: flex; flex-direction: column; box-shadow: var(--shadow-xs); transition: all var(--transition-base);" onmouseover="this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.boxShadow='0 1px 3px 0 rgba(0, 0, 0, 0.1)'">
+                <div style="font-size: 1.75rem; font-weight: 700; color: var(--color-dark); margin-bottom: var(--spacing-md);">Dashboard Preview</div>
+                <h3 style="margin: 0 0 var(--spacing-md) 0; font-size: 1.2rem; color: var(--color-dark);">Donor Dashboard</h3>
+                <p style="margin: 0 0 var(--spacing-lg) 0; color: var(--color-grey-600); font-size: 0.9rem;">
+                    View donation activity and access donation services.
+                </p>
+                <a href="/Dashboards/Donor" class="btn btn-primary" style="margin-top: auto;">Preview Donor Dashboard</a>
+            </div>
+
+            <!-- Volunteer Dashboard Preview -->
+            <div style="background-color: var(--color-white); border: 1px solid var(--color-grey-200); border-radius: var(--radius-md); padding: var(--spacing-lg); display: flex; flex-direction: column; box-shadow: var(--shadow-xs); transition: all var(--transition-base);" onmouseover="this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.boxShadow='0 1px 3px 0 rgba(0, 0, 0, 0.1)'">
+                <div style="font-size: 1.75rem; font-weight: 700; color: var(--color-dark); margin-bottom: var(--spacing-md);">Dashboard Preview</div>
+                <h3 style="margin: 0 0 var(--spacing-md) 0; font-size: 1.2rem; color: var(--color-dark);">Volunteer Dashboard</h3>
+                <p style="margin: 0 0 var(--spacing-lg) 0; color: var(--color-grey-600); font-size: 0.9rem;">
+                    Manage volunteer information, availability and participation.
+                </p>
+                <a href="/Dashboards/Volunteer" class="btn btn-primary" style="margin-top: auto;">Preview Volunteer Dashboard</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-group">
         <h2 class="section-title">Our Impact</h2>
         <div class="section-content">
             <p>
@@ -91,3 +131,7 @@
         <a href="/Volunteer" class="btn btn-secondary">Volunteer With Us</a>
     </div>
 </section>
+
+<partial name="Shared/_Footer" />
+
+<script src="~/js/site.js"></script>

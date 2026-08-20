@@ -1,0 +1,228 @@
+@page "/Dashboards/Employee"
+@model GiftOfTheGivers.Pages.Dashboards.EmployeeModel
+@{
+    ViewData["Title"] = "Employee Dashboard - Gift of the Givers";
+}
+
+<link rel="stylesheet" href="~/css/dashboard.css" />
+
+<div class="dashboard-wrapper">
+    <!-- Sidebar -->
+    <partial name="Shared/_DashboardSidebar" />
+
+    <!-- Main Content -->
+    <div class="dashboard-main">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <h1 class="dashboard-header-title">Employee Dashboard</h1>
+            <p class="dashboard-header-subtitle">Monitor relief operations, volunteers and donation activity</p>
+        </div>
+
+        <!-- Content -->
+        <div class="dashboard-content">
+            <!-- Statistics Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">Active Relief Operations</span>
+                    <span class="stat-value">5</span>
+                    <span class="stat-meta">+2 this month</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Volunteer Sign-ups</span>
+                    <span class="stat-value">43</span>
+                    <span class="stat-meta">Pending review</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Donations Received</span>
+                    <span class="stat-value">ZAR 125k</span>
+                    <span class="stat-meta">This month</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Communities Supported</span>
+                    <span class="stat-value">18</span>
+                    <span class="stat-meta">Active regions</span>
+                </div>
+            </div>
+
+            <!-- Active Relief Operations Section -->
+            <div class="dashboard-section">
+                <h2 class="dashboard-section-title">Active Relief Operations</h2>
+                <div class="dashboard-table">
+                    <div class="dashboard-table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Operation</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th>Volunteers</th>
+                                    <th>Last Update</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Flood Relief - Eastern Region</strong></td>
+                                    <td>Limpopo Province</td>
+                                    <td><span class="status-badge active">Active</span></td>
+                                    <td>12</td>
+                                    <td>2 hours ago</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Medical Supply Distribution</strong></td>
+                                    <td>Gauteng</td>
+                                    <td><span class="status-badge active">Active</span></td>
+                                    <td>8</td>
+                                    <td>4 hours ago</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Drought Support Program</strong></td>
+                                    <td>Northern Cape</td>
+                                    <td><span class="status-badge pending">Planning</span></td>
+                                    <td>5</td>
+                                    <td>1 day ago</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Community Kitchen Initiative</strong></td>
+                                    <td>Free State</td>
+                                    <td><span class="status-badge active">Active</span></td>
+                                    <td>15</td>
+                                    <td>6 hours ago</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Infrastructure Repair</strong></td>
+                                    <td>KwaZulu-Natal</td>
+                                    <td><span class="status-badge completed">Completed</span></td>
+                                    <td>20</td>
+                                    <td>3 days ago</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Volunteer Sign-ups Section -->
+            <div class="dashboard-section">
+                <h2 class="dashboard-section-title">Recent Volunteer Registrations</h2>
+                <div class="dashboard-table">
+                    <div class="dashboard-table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Skills</th>
+                                    <th>Availability</th>
+                                    <th>Registered</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Sarah Johnson</strong></td>
+                                    <td>Medical, First Aid</td>
+                                    <td>Weekends</td>
+                                    <td>Yesterday</td>
+                                    <td><span class="status-badge pending">Pending</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Marcus Chen</strong></td>
+                                    <td>Construction, Logistics</td>
+                                    <td>Full-time Available</td>
+                                    <td>2 days ago</td>
+                                    <td><span class="status-badge active">Active</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Emma Williams</strong></td>
+                                    <td>Education, Counseling</td>
+                                    <td>Evenings</td>
+                                    <td>3 days ago</td>
+                                    <td><span class="status-badge active">Active</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>David Okonkwo</strong></td>
+                                    <td>Translation, Admin</td>
+                                    <td>Weekends</td>
+                                    <td>4 days ago</td>
+                                    <td><span class="status-badge active">Active</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Post Relief Update Section -->
+            <div class="dashboard-section">
+                <h2 class="dashboard-section-title">Post a Relief Update</h2>
+                <div class="dashboard-form">
+                    <form method="post" class="dashboard-form-grid">
+                        <div class="form-group-dashboard">
+                            <label for="operation-select">Select Operation</label>
+                            <select id="operation-select" name="operation" required>
+                                <option value="">-- Choose an operation --</option>
+                                <option value="flood-relief">Flood Relief - Eastern Region</option>
+                                <option value="medical-supply">Medical Supply Distribution</option>
+                                <option value="drought-support">Drought Support Program</option>
+                                <option value="community-kitchen">Community Kitchen Initiative</option>
+                            </select>
+                        </div>
+                        <div class="form-group-dashboard">
+                            <label for="update-title">Update Title</label>
+                            <input type="text" id="update-title" name="title" placeholder="e.g., Supply Delivery Complete" required />
+                        </div>
+                        <div style="grid-column: 1 / -1;" class="form-group-dashboard">
+                            <label for="update-description">Update Description</label>
+                            <textarea id="update-description" name="description" placeholder="Describe the relief update, activities completed, volunteer feedback, and any announcements..." required></textarea>
+                        </div>
+                        <div style="grid-column: 1 / -1;" class="dashboard-actions">
+                            <button type="submit" class="btn btn-primary">Post Update</button>
+                            <button type="reset" class="btn btn-secondary">Clear</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Recent Updates Feed -->
+            <div class="dashboard-section">
+                <h2 class="dashboard-section-title">Recent Relief Updates</h2>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-header">
+                            <h4 class="activity-title">Flood Relief - Supply Distribution Success</h4>
+                            <span class="activity-date">2 hours ago</span>
+                        </div>
+                        <p class="activity-description">Successfully distributed emergency supplies to 150 families in affected areas. Volunteers worked efficiently despite challenging weather conditions.</p>
+                        <div class="activity-meta">
+                            <span>Operation: Flood Relief - Eastern Region</span>
+                            <span>Volunteers: 12</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-header">
+                            <h4 class="activity-title">Medical Team Deployment</h4>
+                            <span class="activity-date">6 hours ago</span>
+                        </div>
+                        <p class="activity-description">Medical team assessed 85 residents and provided first aid treatment. 2 cases referred to local hospital for further care.</p>
+                        <div class="activity-meta">
+                            <span>Operation: Medical Supply Distribution</span>
+                            <span>Volunteers: 8</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-header">
+                            <h4 class="activity-title">Community Kitchen - Daily Meal Distribution</h4>
+                            <span class="activity-date">1 day ago</span>
+                        </div>
+                        <p class="activity-description">Provided 200 meals to community members. Additional soup kitchen opened in satellite location due to demand.</p>
+                        <div class="activity-meta">
+                            <span>Operation: Community Kitchen Initiative</span>
+                            <span>Volunteers: 15</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/site.js"></script>

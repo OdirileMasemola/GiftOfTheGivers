@@ -1,0 +1,272 @@
+@page "/Dashboards/Volunteer"
+@model GiftOfTheGivers.Pages.Dashboards.VolunteerModel
+@{
+    ViewData["Title"] = "Volunteer Dashboard - Gift of the Givers";
+}
+
+<link rel="stylesheet" href="~/css/dashboard.css" />
+
+<div class="dashboard-wrapper">
+    <!-- Sidebar -->
+    <partial name="Shared/_DashboardSidebar" />
+
+    <!-- Main Content -->
+    <div class="dashboard-main">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <h1 class="dashboard-header-title">Volunteer Dashboard</h1>
+            <p class="dashboard-header-subtitle">Manage your volunteer profile, availability and relief participation</p>
+        </div>
+
+        <!-- Content -->
+        <div class="dashboard-content">
+            <!-- Statistics Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">Total Assignments</span>
+                    <span class="stat-value">6</span>
+                    <span class="stat-meta">All time</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Completed Operations</span>
+                    <span class="stat-value">4</span>
+                    <span class="stat-meta">Relief activities</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Available Hours</span>
+                    <span class="stat-value">20</span>
+                    <span class="stat-meta">Per week</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Volunteer Status</span>
+                    <span class="stat-value">Active</span>
+                    <span class="stat-meta">Ready for assignments</span>
+                </div>
+            </div>
+
+            <!-- Profile Summary -->
+            <div class="dashboard-section">
+                <h2 class="dashboard-section-title">Your Profile</h2>
+                <div class="profile-summary">
+                    <div class="profile-field">
+                        <span class="profile-label">Full Name</span>
+                        <span class="profile-value">Sarah Johnson</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="profile-label">Email Address</span>
+                        <span class="profile-value">sarah.johnson@email.com</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="profile-label">Phone Number</span>
+                        <span class="profile-value">+27 71 234 5678</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="profile-label">Primary Skills</span>
+                        <span class="profile-value">Medical, First Aid, Community Care</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="profile-label">Availability</span>
+                        <span class="profile-value">Weekends & Evenings</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="profile-label">Member Since</span>
+                        <span class="profile-value">2023-06-15</span>
+                    </div>
+                    <div style="grid-column: 1 / -1; border-top: 1px solid var(--color-grey-200); padding-top: var(--spacing-lg); margin-top: var(--spacing-lg);">
+                        <button class="btn btn-secondary">Edit Profile</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Assignments -->
+            <div class="dashboard-section">
+                <h2 class="dashboard-section-title">Current Assignments</h2>
+                <div class="dashboard-table">
+                    <div class="dashboard-table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Operation</th>
+                                    <th>Location</th>
+                                    <th>Start Date</th>
+                                    <th>Status</th>
+                                    <th>Hours</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Flood Relief - Eastern Region</strong></td>
+                                    <td>Limpopo</td>
+                                    <td>2024-06-10</td>
+                                    <td><span class="status-badge active">Active</span></td>
+                                    <td>16 hours</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Medical Supply Distribution</strong></td>
+                                    <td>Gauteng</td>
+                                    <td>2024-06-12</td>
+                                    <td><span class="status-badge active">Active</span></td>
+                                    <td>12 hours</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Availability Management -->
+            <div class="dashboard-section">
+                <h2 class="dashboard-section-title">Manage Your Availability</h2>
+                <div class="dashboard-form">
+                    <form method="post">
+                        <div class="dashboard-form-grid">
+                            <div class="form-group-dashboard">
+                                <label for="availability-hours">Available Hours Per Week</label>
+                                <input type="number" id="availability-hours" name="availableHours" value="20" min="0" max="168" required />
+                            </div>
+                            <div class="form-group-dashboard">
+                                <label for="availability-type">Availability Type</label>
+                                <select id="availability-type" name="availabilityType" required>
+                                    <option value="weekends">Weekends Only</option>
+                                    <option value="evenings">Evenings Only</option>
+                                    <option value="weekdays">Weekdays Only</option>
+                                    <option value="flexible">Flexible / Full-time Available</option>
+                                    <option value="limited">Limited Availability</option>
+                                </select>
+                            </div>
+                            <div style="grid-column: 1 / -1;" class="form-group-dashboard">
+                                <label for="preferred-roles">Preferred Relief Operations</label>
+                                <div style="display: flex; flex-direction: column; gap: var(--spacing-md); margin-top: var(--spacing-md);">
+                                    <label style="display: flex; align-items: center; gap: var(--spacing-md); font-weight: 400;">
+                                        <input type="checkbox" name="preferredRoles" value="medical" checked />
+                                        Medical & First Aid Support
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: var(--spacing-md); font-weight: 400;">
+                                        <input type="checkbox" name="preferredRoles" value="community" checked />
+                                        Community Care & Support
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: var(--spacing-md); font-weight: 400;">
+                                        <input type="checkbox" name="preferredRoles" value="logistics" />
+                                        Logistics & Supply
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: var(--spacing-md); font-weight: 400;">
+                                        <input type="checkbox" name="preferredRoles" value="education" />
+                                        Education & Counseling
+                                    </label>
+                                </div>
+                            </div>
+                            <div style="grid-column: 1 / -1;" class="dashboard-actions">
+                                <button type="submit" class="btn btn-primary">Update Availability</button>
+                                <button type="reset" class="btn btn-secondary">Reset</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Relief Opportunities -->
+            <div class="dashboard-section">
+                <h2 class="dashboard-section-title">Available Relief Opportunities</h2>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-header">
+                            <h4 class="activity-title">Flood Relief - Supply Distribution Team</h4>
+                            <span class="activity-date">Limpopo Province</span>
+                        </div>
+                        <p class="activity-description">Help distribute emergency supplies to affected families. Please bring sturdy footwear and be prepared for outdoor work in challenging weather.</p>
+                        <div class="activity-meta">
+                            <span>Skills needed: Physical fitness, basic organizational skills</span>
+                            <span>Start date: June 20</span>
+                            <span>Duration: 3-5 days</span>
+                        </div>
+                        <div style="margin-top: var(--spacing-md);">
+                            <a href="#" class="btn btn-primary" style="font-size: 0.9rem; padding: 0.5rem 1rem;">View Details & Apply</a>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-header">
+                            <h4 class="activity-title">Medical Outreach Program</h4>
+                            <span class="activity-date">Gauteng Province</span>
+                        </div>
+                        <p class="activity-description">Join our medical team providing health assessments and basic first aid. Ideal for healthcare professionals or those with medical training.</p>
+                        <div class="activity-meta">
+                            <span>Skills needed: Medical/First Aid certification</span>
+                            <span>Start date: June 18</span>
+                            <span>Duration: Weekly commitment</span>
+                        </div>
+                        <div style="margin-top: var(--spacing-md);">
+                            <a href="#" class="btn btn-primary" style="font-size: 0.9rem; padding: 0.5rem 1rem;">View Details & Apply</a>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-header">
+                            <h4 class="activity-title">Community Kitchen - Meal Preparation</h4>
+                            <span class="activity-date">Free State Province</span>
+                        </div>
+                        <p class="activity-description">Assist with meal preparation and serving meals to vulnerable community members. No experience necessary, but enthusiasm and compassion are essential.</p>
+                        <div class="activity-meta">
+                            <span>Skills needed: None required, but kitchen experience helpful</span>
+                            <span>Start date: Ongoing</span>
+                            <span>Duration: 4-hour shifts</span>
+                        </div>
+                        <div style="margin-top: var(--spacing-md);">
+                            <a href="#" class="btn btn-primary" style="font-size: 0.9rem; padding: 0.5rem 1rem;">View Details & Apply</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Completed Assignments -->
+            <div class="dashboard-section">
+                <h2 class="dashboard-section-title">Completed Assignments</h2>
+                <div class="dashboard-table">
+                    <div class="dashboard-table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Operation</th>
+                                    <th>Location</th>
+                                    <th>Completed</th>
+                                    <th>Hours</th>
+                                    <th>Feedback</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Community Kitchen Initiative</strong></td>
+                                    <td>Free State</td>
+                                    <td>2024-04-22</td>
+                                    <td>8 hours</td>
+                                    <td><span class="status-badge active">Excellent</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Medical Clinic - Outreach</strong></td>
+                                    <td>KwaZulu-Natal</td>
+                                    <td>2024-03-15</td>
+                                    <td>12 hours</td>
+                                    <td><span class="status-badge active">Excellent</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Drought Support Program</strong></td>
+                                    <td>Northern Cape</td>
+                                    <td>2024-02-10</td>
+                                    <td>6 hours</td>
+                                    <td><span class="status-badge active">Very Good</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Emergency Response - Flood Relief</strong></td>
+                                    <td>Limpopo</td>
+                                    <td>2024-01-28</td>
+                                    <td>14 hours</td>
+                                    <td><span class="status-badge active">Excellent</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/site.js"></script>

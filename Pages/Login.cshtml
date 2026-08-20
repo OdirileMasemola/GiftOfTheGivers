@@ -1,0 +1,104 @@
+@page "/Login"
+@model GiftOfTheGivers.Pages.LoginModel
+@{
+    ViewData["Title"] = "Login - Gift of the Givers";
+}
+
+<section class="page-header">
+    <h1>Login to Your Account</h1>
+    <p>Access your personalized dashboard and manage your relief participation</p>
+</section>
+
+<section class="page-content">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-2xl); align-items: start; margin-bottom: var(--spacing-3xl);">
+        <!-- Login Form Column -->
+        <div>
+            <div class="form-container" style="background-color: var(--color-white); border: 1px solid var(--color-grey-200); border-radius: var(--radius-md); padding: var(--spacing-2xl); box-shadow: var(--shadow-xs);">
+                <h2 style="margin: 0 0 var(--spacing-lg) 0; font-size: 1.5rem; color: var(--color-dark);">Sign In</h2>
+                <form method="post" action="/Identity/Account/Login">
+                    <div class="form-group">
+                        <label class="form-label" for="Input_Email">Email Address</label>
+                        <input class="form-control" id="Input_Email" type="email" name="Input.Email" placeholder="your@email.com" required autofocus />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="Input_Password">Password</label>
+                        <input class="form-control" id="Input_Password" type="password" name="Input.Password" placeholder="Enter your password" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-check">
+                            <input type="checkbox" name="Input.RememberMe" class="form-check-input" />
+                            <span>Remember me</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: var(--spacing-md);">Sign In</button>
+
+                    <div style="text-align: center; color: var(--color-grey-600); font-size: 0.9rem;">
+                        <p style="margin: var(--spacing-md) 0;">
+                            Don't have an account? <a href="/Identity/Account/Register" style="color: var(--color-red); font-weight: 500;">Create one</a>
+                        </p>
+                        <p style="margin: var(--spacing-md) 0;">
+                            <a href="/Identity/Account/ForgotPassword" style="color: var(--color-grey-600); text-decoration: none;">Forgot your password?</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dashboard Preview Column -->
+        <div>
+            <h2 style="margin: 0 0 var(--spacing-lg) 0; font-size: 1.5rem; color: var(--color-dark);">Dashboard Preview</h2>
+            <p style="color: var(--color-grey-600); margin-bottom: var(--spacing-lg);">
+                Get a preview of the role-specific dashboards available after login.
+            </p>
+
+            <div style="display: flex; flex-direction: column; gap: var(--spacing-lg);">
+                <!-- Employee Dashboard Preview -->
+                <div style="background-color: var(--color-white); border: 1px solid var(--color-grey-200); border-radius: var(--radius-md); padding: var(--spacing-lg); box-shadow: var(--shadow-xs); transition: all var(--transition-base);" onmouseover="this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.boxShadow='0 1px 3px 0 rgba(0, 0, 0, 0.1)'">
+                    <h3 style="margin: 0 0 var(--spacing-sm) 0; font-size: 1rem; color: var(--color-dark);">Employee Dashboard</h3>
+                    <p style="margin: 0 0 var(--spacing-md) 0; color: var(--color-grey-600); font-size: 0.85rem;">
+                        Manage relief operations, volunteer registrations and project updates.
+                    </p>
+                    <a href="/Dashboards/Employee" class="btn btn-primary" style="font-size: 0.9rem; padding: 0.5rem 1rem;">Preview</a>
+                </div>
+
+                <!-- Donor Dashboard Preview -->
+                <div style="background-color: var(--color-white); border: 1px solid var(--color-grey-200); border-radius: var(--radius-md); padding: var(--spacing-lg); box-shadow: var(--shadow-xs); transition: all var(--transition-base);" onmouseover="this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.boxShadow='0 1px 3px 0 rgba(0, 0, 0, 0.1)'">
+                    <h3 style="margin: 0 0 var(--spacing-sm) 0; font-size: 1rem; color: var(--color-dark);">Donor Dashboard</h3>
+                    <p style="margin: 0 0 var(--spacing-md) 0; color: var(--color-grey-600); font-size: 0.85rem;">
+                        View donation activity and access donation services.
+                    </p>
+                    <a href="/Dashboards/Donor" class="btn btn-primary" style="font-size: 0.9rem; padding: 0.5rem 1rem;">Preview</a>
+                </div>
+
+                <!-- Volunteer Dashboard Preview -->
+                <div style="background-color: var(--color-white); border: 1px solid var(--color-grey-200); border-radius: var(--radius-md); padding: var(--spacing-lg); box-shadow: var(--shadow-xs); transition: all var(--transition-base);" onmouseover="this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.boxShadow='0 1px 3px 0 rgba(0, 0, 0, 0.1)'">
+                    <h3 style="margin: 0 0 var(--spacing-sm) 0; font-size: 1rem; color: var(--color-dark);">Volunteer Dashboard</h3>
+                    <p style="margin: 0 0 var(--spacing-md) 0; color: var(--color-grey-600); font-size: 0.85rem;">
+                        Manage volunteer information, availability and participation.
+                    </p>
+                    <a href="/Dashboards/Volunteer" class="btn btn-primary" style="font-size: 0.9rem; padding: 0.5rem 1rem;">Preview</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Info Section -->
+    <div style="background-color: var(--color-grey-50); border: 1px solid var(--color-grey-200); border-radius: var(--radius-md); padding: var(--spacing-2xl); text-align: center;">
+        <h3 style="margin: 0 0 var(--spacing-lg) 0; color: var(--color-dark);">Not ready to sign in?</h3>
+        <p style="color: var(--color-grey-600); margin-bottom: var(--spacing-lg);">
+            Explore how you can get involved with Gift of the Givers relief operations.
+        </p>
+        <div style="display: flex; gap: var(--spacing-lg); justify-content: center; flex-wrap: wrap;">
+            <a href="/About" class="btn btn-secondary">Learn More</a>
+            <a href="/Donate" class="btn btn-primary">Make a Donation</a>
+            <a href="/Volunteer" class="btn btn-secondary">Become a Volunteer</a>
+        </div>
+    </div>
+</section>
+
+<partial name="Shared/_Footer" />
+
+<script src="~/js/site.js"></script>

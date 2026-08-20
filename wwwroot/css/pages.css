@@ -785,3 +785,10 @@ body > main > .row {
 .col-md-10 {
     margin-top: var(--spacing-md);
 }
+
+/* Login Page Responsive */
+@media (max-width: 1024px) {
+    section > div[style*="grid-template-columns: 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+    }
+}

@@ -1,0 +1,116 @@
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+    var roles = currentUser != null ? await UserManager.GetRolesAsync(currentUser) : new List<string>();
+}
+
+<aside class="dashboard-sidebar">
+    <!-- Brand -->
+    <a href="/" class="sidebar-brand">
+        <div class="sidebar-brand-icon">G</div>
+        <div class="sidebar-brand-text">Gift of the Givers</div>
+    </a>
+
+    <!-- Navigation -->
+    <nav class="sidebar-nav">
+        <!-- Dashboard Link (All Roles) -->
+        <li class="sidebar-nav-item">
+            <a href="#" class="sidebar-nav-link active">
+                <span class="sidebar-nav-icon">─</span>
+                <span>Dashboard</span>
+            </a>
+        </li>
+
+        <!-- Employee Navigation -->
+        @if (roles.Contains("Employee"))
+        {
+            <li class="sidebar-nav-item">
+                <a href="#" class="sidebar-nav-link">
+                    <span class="sidebar-nav-icon">⬤</span>
+                    <span>Relief Operations</span>
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="#" class="sidebar-nav-link">
+                    <span class="sidebar-nav-icon">□</span>
+                    <span>Volunteers</span>
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="#" class="sidebar-nav-link">
+                    <span class="sidebar-nav-icon">◆</span>
+                    <span>Donations</span>
+                </a>
+            </li>
+        }
+
+        <!-- Donor Navigation -->
+        @if (roles.Contains("Donor"))
+        {
+            <li class="sidebar-nav-item">
+                <a href="#" class="sidebar-nav-link">
+                    <span class="sidebar-nav-icon">◈</span>
+                    <span>My Donations</span>
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="/Donate" class="sidebar-nav-link">
+                    <span class="sidebar-nav-icon">⊕</span>
+                    <span>Make a Donation</span>
+                </a>
+            </li>
+        }
+
+        <!-- Volunteer Navigation -->
+        @if (roles.Contains("Volunteer"))
+        {
+            <li class="sidebar-nav-item">
+                <a href="#" class="sidebar-nav-link">
+                    <span class="sidebar-nav-icon">○</span>
+                    <span>My Profile</span>
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="#" class="sidebar-nav-link">
+                    <span class="sidebar-nav-icon">◇</span>
+                    <span>Availability</span>
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="#" class="sidebar-nav-link">
+                    <span class="sidebar-nav-icon">✓</span>
+                    <span>My Assignments</span>
+                </a>
+            </li>
+        }
+
+        <!-- Common Settings -->
+        <li class="sidebar-nav-item">
+            <a href="#" class="sidebar-nav-link">
+                <span class="sidebar-nav-icon">⚙</span>
+                <span>Settings</span>
+            </a>
+        </li>
+    </nav>
+
+    <!-- User Profile Section -->
+    <div class="sidebar-profile">
+        @if (currentUser != null)
+        {
+            <div class="sidebar-profile-name">@currentUser.UserName</div>
+            <div class="sidebar-profile-role">@(roles.Count > 0 ? string.Join(", ", roles) : "User")</div>
+        }
+
+        <!-- Sign Out Form -->
+        <form method="post" action="/Identity/Account/Logout">
+            <input type="hidden" name="returnUrl" value="/Login" />
+            <button type="submit" class="sidebar-sign-out">
+                <span style="font-size: 0.95rem;">⤴</span>
+                <span>Sign Out</span>
+            </button>
+        </form>
+    </div>
+</aside>
