@@ -1,0 +1,110 @@
+@page
+@model GiftOfTheGivers.Areas.Identity.Pages.Account.RegisterModel
+@{
+    ViewData["Title"] = "Register - Gift of the Givers Disaster Relief";
+}
+
+<section class="page-header">
+    <h1>Create Your Account</h1>
+    <p>Join our relief efforts and make a real difference in your community</p>
+</section>
+
+<section class="page-content">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-2xl); align-items: start; margin-bottom: var(--spacing-3xl);">
+        <!-- Registration Form Column -->
+        <div>
+            <div class="form-container" style="background-color: var(--color-white); border: 1px solid var(--color-grey-200); border-radius: var(--radius-md); padding: var(--spacing-2xl); box-shadow: var(--shadow-xs);">
+                <h2 style="margin: 0 0 var(--spacing-lg) 0; font-size: 1.5rem; color: var(--color-dark);">Sign Up</h2>
+                <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                    <div class="form-group">
+                        <label asp-for="Input.Email" class="form-label"></label>
+                        <input asp-for="Input.Email" class="form-control" placeholder="your@email.com" />
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Input.Password" class="form-label"></label>
+                        <input asp-for="Input.Password" type="password" class="form-control" placeholder="Create a strong password" />
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Input.ConfirmPassword" class="form-label"></label>
+                        <input asp-for="Input.ConfirmPassword" type="password" class="form-control" placeholder="Confirm your password" />
+                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: var(--spacing-md);">Create Account</button>
+
+                    <div style="text-align: center; color: var(--color-grey-600); font-size: 0.9rem;">
+                        <p style="margin: var(--spacing-md) 0;">
+                            Already have an account? <a href="/Login" style="color: var(--color-red); font-weight: 500;">Sign in</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Information Column -->
+        <div>
+            <h2 style="margin: 0 0 var(--spacing-lg) 0; font-size: 1.5rem; color: var(--color-dark);">What You'll Get</h2>
+            <p style="color: var(--color-grey-600); margin-bottom: var(--spacing-lg);">
+                By registering with Gift of the Givers, you'll gain access to tools and resources to help you contribute effectively to our relief efforts.
+            </p>
+
+            <div style="display: flex; flex-direction: column; gap: var(--spacing-lg);">
+                <!-- Volunteer Opportunities -->
+                <div style="background-color: var(--color-white); border: 1px solid var(--color-grey-200); border-radius: var(--radius-md); padding: var(--spacing-lg); box-shadow: var(--shadow-xs); transition: all var(--transition-base);" onmouseover="this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.boxShadow='0 1px 3px 0 rgba(0, 0, 0, 0.1)'">
+                    <h3 style="margin: 0 0 var(--spacing-sm) 0; font-size: 1rem; color: var(--color-dark);">Volunteer Portal</h3>
+                    <p style="margin: 0 0 var(--spacing-md) 0; color: var(--color-grey-600); font-size: 0.85rem;">
+                        Access exclusive volunteer opportunities and manage your participation in relief operations.
+                    </p>
+                    <a href="/Volunteer" class="btn btn-primary" style="font-size: 0.9rem; padding: 0.5rem 1rem;">Explore Opportunities</a>
+                </div>
+
+                <!-- Donor Dashboard -->
+                <div style="background-color: var(--color-white); border: 1px solid var(--color-grey-200); border-radius: var(--radius-md); padding: var(--spacing-lg); box-shadow: var(--shadow-xs); transition: all var(--transition-base);" onmouseover="this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.boxShadow='0 1px 3px 0 rgba(0, 0, 0, 0.1)'">
+                    <h3 style="margin: 0 0 var(--spacing-sm) 0; font-size: 1rem; color: var(--color-dark);">Make a Donation</h3>
+                    <p style="margin: 0 0 var(--spacing-md) 0; color: var(--color-grey-600); font-size: 0.85rem;">
+                        Contribute financially to support our disaster relief and community support initiatives.
+                    </p>
+                    <a href="/Donate" class="btn btn-primary" style="font-size: 0.9rem; padding: 0.5rem 1rem;">Donate Now</a>
+                </div>
+
+                <!-- Account Dashboard -->
+                <div style="background-color: var(--color-white); border: 1px solid var(--color-grey-200); border-radius: var(--radius-md); padding: var(--spacing-lg); box-shadow: var(--shadow-xs); transition: all var(--transition-base);" onmouseover="this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.boxShadow='0 1px 3px 0 rgba(0, 0, 0, 0.1)'">
+                    <h3 style="margin: 0 0 var(--spacing-sm) 0; font-size: 1rem; color: var(--color-dark);">Manage Your Account</h3>
+                    <p style="margin: 0 0 var(--spacing-md) 0; color: var(--color-grey-600); font-size: 0.85rem;">
+                        Access your secure account dashboard to track your activities and preferences.
+                    </p>
+                    <a href="/Login" class="btn btn-primary" style="font-size: 0.9rem; padding: 0.5rem 1rem;">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Info Section -->
+    <div style="background-color: var(--color-grey-50); border: 1px solid var(--color-grey-200); border-radius: var(--radius-md); padding: var(--spacing-2xl); text-align: center;">
+        <h3 style="margin: 0 0 var(--spacing-lg) 0; color: var(--color-dark);">Questions About Registration?</h3>
+        <p style="color: var(--color-grey-600); margin-bottom: var(--spacing-lg);">
+            Learn more about how Gift of the Givers works and how you can contribute to our relief efforts.
+        </p>
+        <div style="display: flex; gap: var(--spacing-lg); justify-content: center; flex-wrap: wrap;">
+            <a href="/About" class="btn btn-secondary">Learn More</a>
+            <a href="/Donate" class="btn btn-primary">Make a Donation</a>
+            <a href="/Volunteer" class="btn btn-secondary">Become a Volunteer</a>
+        </div>
+    </div>
+</section>
+
+<div style="margin-bottom: 3rem;"></div>
+
+<partial name="Shared/_Footer" />
+
+<script src="~/js/site.js"></script>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

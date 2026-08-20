@@ -4,7 +4,9 @@
     ViewData["Title"] = "Volunteer - Gift of the Givers Disaster Relief";
 }
 
-<div class="form-container">
+<partial name="Shared/_Navigation" />
+
+<div class="form-container" style="margin-top: 3rem;">
     <section class="page-header">
         <h1>Volunteer With Us</h1>
         <p>Join our team and help make a difference in disaster relief efforts.</p>
@@ -114,6 +116,12 @@
         </div>
     </form>
 </div>
+
+<div style="margin-bottom: 3rem;"></div>
+
+<partial name="Shared/_Footer" />
+
+<script src="~/js/site.js"></script>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
