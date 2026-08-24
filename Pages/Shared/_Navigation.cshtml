@@ -1,86 +1,183 @@
-@using Microsoft.AspNetCore.Identity
+﻿@using Microsoft.AspNetCore.Identity
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
 
 <nav class="navbar">
+
     <div class="navbar-container">
+
+        <!-- BRAND -->
         <div class="navbar-brand">
             <a href="/" class="brand-logo">
-                <span class="brand-mark">G</span>
+                <img src="~/images/logo.png"
+                     alt="Gift of the Givers"
+                     class="brand-logo-image" />
+
                 <span class="brand-text">Gift of the Givers</span>
             </a>
         </div>
 
-        <button class="navbar-toggle" id="navbarToggle" aria-label="Toggle navigation menu">
+
+        <!-- MOBILE MENU BUTTON -->
+        <button class="navbar-toggle"
+                id="navbarToggle"
+                aria-label="Toggle navigation menu"
+                type="button">
+
             <span></span>
             <span></span>
             <span></span>
+
         </button>
 
+
+        <!-- NAVIGATION -->
         <div class="navbar-menu" id="navbarMenu">
+
             <ul class="navbar-nav">
+
                 <li class="nav-item">
-                    <a href="/" class="nav-link">Home</a>
+                    <a href="/" class="nav-link">
+                        Home
+                    </a>
                 </li>
+
                 <li class="nav-item">
-                    <a href="/About" class="nav-link">About</a>
+                    <a href="/About" class="nav-link">
+                        About
+                    </a>
                 </li>
+
                 <li class="nav-item">
-                    <a href="/Donate" class="nav-link">Donate</a>
+                    <a href="/Donate" class="nav-link">
+                        Donate
+                    </a>
                 </li>
+
                 <li class="nav-item">
-                    <a href="/Volunteer" class="nav-link">Volunteer</a>
+                    <a href="/Volunteer" class="nav-link">
+                        Volunteer
+                    </a>
                 </li>
+
 
                 @if (SignInManager.IsSignedIn(User))
                 {
                     @if (User.IsInRole("Employee"))
                     {
                         <li class="nav-item">
-                            <a href="/Employee/Dashboard" class="nav-link nav-link-employee">Dashboard</a>
+                            <a href="/Employee/Dashboard"
+                               class="nav-link nav-link-employee">
+                                Dashboard
+                            </a>
                         </li>
                     }
                 }
+
             </ul>
 
+
+            <!-- AUTHENTICATION -->
             <div class="nav-auth">
+
                 @if (SignInManager.IsSignedIn(User))
                 {
                     <div class="nav-user">
-                        <span class="nav-username">@User.Identity?.Name</span>
-                        <form id="logout-form" method="post" action="/Identity/Account/Logout" style="display: none;"></form>
-                        <a href="javascript:document.getElementById('logout-form').submit();" class="nav-logout">Logout</a>
+
+                        <div class="nav-user-info">
+
+                            <span class="nav-user-icon">
+                                👤
+                            </span>
+
+                            <span class="nav-username">
+                                @User.Identity?.Name
+                            </span>
+
+                        </div>
+
+                        <form id="logout-form"
+                              method="post"
+                              action="/Identity/Account/Logout"
+                              style="display:none;">
+                        </form>
+
+                        <a href="javascript:document.getElementById('logout-form').submit();"
+                           class="nav-logout">
+                            Logout
+                        </a>
+
                     </div>
                 }
                 else
                 {
-                    <a href="/Login" class="nav-auth-link">Login</a>
-                    <a href="/Identity/Account/Register" class="nav-auth-register">Register</a>
+                    <a href="/Login"
+                       class="nav-auth-link">
+                        Login
+                    </a>
+
+                    <a href="/Identity/Account/Register"
+                       class="nav-auth-register">
+                        Register
+                    </a>
                 }
+
             </div>
+
         </div>
+
     </div>
+
 </nav>
 
+
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const toggle = document.getElementById('navbarToggle');
-        const menu = document.getElementById('navbarMenu');
+    document.addEventListener("DOMContentLoaded", function () {
 
-        if (toggle) {
-            toggle.addEventListener('click', function () {
-                toggle.classList.toggle('active');
-                menu.classList.toggle('active');
+        const toggle = document.getElementById("navbarToggle");
+        const menu = document.getElementById("navbarMenu");
+
+        if (toggle && menu) {
+
+            toggle.addEventListener("click", function () {
+
+                toggle.classList.toggle("active");
+                menu.classList.toggle("active");
+
             });
 
-            // Close menu when a link is clicked
-            const links = menu.querySelectorAll('.nav-link, .nav-auth-link, .nav-logout');
-            links.forEach(link => {
-                link.addEventListener('click', function () {
-                    toggle.classList.remove('active');
-                    menu.classList.remove('active');
+
+            // Close menu when navigation link is clicked
+            const links = menu.querySelectorAll(
+                ".nav-link, .nav-auth-link, .nav-auth-register, .nav-logout"
+            );
+
+            links.forEach(function (link) {
+
+                link.addEventListener("click", function () {
+
+                    toggle.classList.remove("active");
+                    menu.classList.remove("active");
+
                 });
+
             });
+
+
+            // Close menu when clicking outside
+            document.addEventListener("click", function (event) {
+
+                if (!menu.contains(event.target) &&
+                    !toggle.contains(event.target)) {
+
+                    toggle.classList.remove("active");
+                    menu.classList.remove("active");
+
+                }
+
+            });
+
         }
+
     });
 </script>

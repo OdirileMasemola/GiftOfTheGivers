@@ -6,96 +6,508 @@
 
 <partial name="Shared/_Navigation" />
 
-<!-- Hero Section -->
+<!-- HERO SECTION -->
 <section class="hero-section">
-    <div class="container">
+
+    <div class="container hero-container">
+
+        <!-- HERO CONTENT -->
         <div class="hero-content">
-            <h1>Disaster Relief & Community Support</h1>
-            <p class="hero-subtitle">Gift of the Givers coordinates rapid response to disasters, mobilising volunteers and resources to support affected communities in their time of greatest need.</p>
+
+            <span class="hero-label">
+                DISASTER RELIEF & COMMUNITY SUPPORT
+            </span>
+
+            <h1>
+                Together, We Can<br />
+                Make a Difference.
+            </h1>
+
+            <p class="hero-subtitle">
+                Responding to disasters, restoring hope and supporting
+                communities when they need it most.
+            </p>
+
             <div class="hero-actions">
-                <a href="/Donate" class="btn btn-primary btn-large">Make a Donation</a>
-                <a href="/Volunteer" class="btn btn-light-outline">Become a Volunteer</a>
+
+                <a href="/Donate" class="btn btn-primary btn-large">
+                    Donate Now
+                </a>
+
+                <a href="/Volunteer" class="btn btn-light-outline btn-large">
+                    Become a Volunteer
+                </a>
+
             </div>
+
+            <div class="hero-trust">
+
+                <div class="trust-item">
+                    <strong>Rapid Response</strong>
+                    <span>When communities need us</span>
+                </div>
+
+                <div class="trust-divider"></div>
+
+                <div class="trust-item">
+                    <strong>Community Focused</strong>
+                    <span>Helping those who need it most</span>
+                </div>
+
+            </div>
+
         </div>
+
+        <!-- HERO IMAGE -->
+        <div class="hero-image-wrapper">
+
+            <img src="/images/hero-relief.jpg"
+                 alt="Gift of the Givers volunteers providing disaster relief"
+                 class="hero-image" />
+
+            <div class="hero-image-card">
+
+                <div class="hero-image-icon">
+                    ❤
+                </div>
+
+                <div>
+                    <strong>Making an Impact</strong>
+                    <span>One community at a time</span>
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
+
 </section>
 
-<!-- Statistics Section -->
+
+<!-- SERVICES SECTION -->
+<section class="services-section">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <span>OUR WORK</span>
+
+            <h2>
+                How We Make a Difference
+            </h2>
+
+            <p>
+                We provide practical humanitarian assistance to communities
+                facing disasters, poverty and emergencies.
+            </p>
+
+        </div>
+
+
+        <div class="services-grid">
+
+            <div class="service-card">
+
+                <div class="service-icon">
+                    🚨
+                </div>
+
+                <h3>
+                    Disaster Relief
+                </h3>
+
+                <p>
+                    Providing emergency assistance and essential supplies
+                    to communities affected by disasters.
+                </p>
+
+            </div>
+
+
+            <div class="service-card">
+
+                <div class="service-icon">
+                    🍲
+                </div>
+
+                <h3>
+                    Food & Water
+                </h3>
+
+                <p>
+                    Delivering food, clean water and other necessities
+                    to people experiencing hardship.
+                </p>
+
+            </div>
+
+
+            <div class="service-card">
+
+                <div class="service-icon">
+                    ❤️
+                </div>
+
+                <h3>
+                    Community Support
+                </h3>
+
+                <p>
+                    Supporting communities through sustainable humanitarian
+                    projects and recovery initiatives.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- IMPACT SECTION -->
 <section class="stats-section">
+
     <div class="container">
+
         <div class="stats-header">
-            <h2>Our Impact</h2>
-            <p>Real numbers reflecting our commitment to disaster relief and community support</p>
+
+            <span class="section-label">
+                OUR IMPACT
+            </span>
+
+            <h2>
+                Helping Communities<br />
+                When It Matters Most
+            </h2>
+
+            <p>
+                Every number represents real people, real communities
+                and real support delivered where it is needed.
+            </p>
+
         </div>
+
+
         <div class="stats-grid">
+
             <div class="stat-card">
-                <div class="stat-number">@Model.ActiveProjects</div>
-                <div class="stat-text">Active Relief Operations</div>
+
+                <div class="stat-icon">
+                    +
+                </div>
+
+                <div class="stat-number">
+                    @Model.ActiveProjects
+                </div>
+
+                <div class="stat-text">
+                    Active Relief Operations
+                </div>
+
             </div>
+
+
             <div class="stat-card">
-                <div class="stat-number">@Model.RegisteredVolunteers</div>
-                <div class="stat-text">Registered Volunteers</div>
+
+                <div class="stat-icon">
+                    👥
+                </div>
+
+                <div class="stat-number">
+                    @Model.RegisteredVolunteers
+                </div>
+
+                <div class="stat-text">
+                    Registered Volunteers
+                </div>
+
             </div>
+
+
             <div class="stat-card">
-                <div class="stat-number">@Model.TotalDonations.ToString("C0")</div>
-                <div class="stat-text">Funds Received</div>
+
+                <div class="stat-icon">
+                    R
+                </div>
+
+                <div class="stat-number">
+                    @Model.TotalDonations.ToString("C0")
+                </div>
+
+                <div class="stat-text">
+                    Funds Received
+                </div>
+
             </div>
+
+
             <div class="stat-card">
-                <div class="stat-number">@Model.CommunitiesSupported</div>
-                <div class="stat-text">Communities Served</div>
+
+                <div class="stat-icon">
+                    ⌂
+                </div>
+
+                <div class="stat-number">
+                    @Model.CommunitiesSupported
+                </div>
+
+                <div class="stat-text">
+                    Communities Served
+                </div>
+
             </div>
+
         </div>
+
     </div>
+
 </section>
 
-<!-- Current Relief Activities -->
+
+<!-- CURRENT RELIEF ACTIVITIES -->
 <section class="activities-section">
+
     <div class="container">
+
         <div class="section-header">
-            <h2>Current Relief Activities</h2>
-            <p>Active disaster relief and community assistance projects we are supporting</p>
+
+            <div>
+
+                <span class="section-label">
+                    WHAT WE ARE DOING
+                </span>
+
+                <h2>
+                    Current Relief Activities
+                </h2>
+
+                <p>
+                    Active disaster relief and community assistance
+                    projects we are currently supporting.
+                </p>
+
+            </div>
+
+            <a href="/Donate" class="section-link">
+                Support Our Work →
+            </a>
+
         </div>
+
 
         @if (Model.RecentProjects != null && Model.RecentProjects.Any())
         {
             <div class="activity-grid">
+
                 @foreach (var project in Model.RecentProjects)
                 {
                     <article class="activity-card">
-                        <div class="activity-header">
-                            <div class="activity-icon">@project.Name.First().ToString().ToUpper()</div>
-                            <h3 class="activity-title">@project.Name</h3>
+
+                        <div class="activity-image">
+
+                            <div class="activity-image-placeholder">
+                                @project.Name.First().ToString().ToUpper()
+                            </div>
+
+                            <span class="activity-status">
+                                @project.Status
+                            </span>
+
                         </div>
-                        <p class="activity-location">@project.Location</p>
-                        <p class="activity-description">@project.Description</p>
-                        <div class="activity-footer">
-                            <span class="activity-status">@project.Status</span>
+
+
+                        <div class="activity-body">
+
+                            <span class="activity-location">
+                                📍 @project.Location
+                            </span>
+
+                            <h3 class="activity-title">
+                                @project.Name
+                            </h3>
+
+                            <p class="activity-description">
+                                @project.Description
+                            </p>
+
+                            <a href="/Donate" class="activity-link">
+                                Support this operation →
+                            </a>
+
                         </div>
+
                     </article>
                 }
+
             </div>
         }
         else
         {
             <div class="empty-state">
-                <p>No active relief operations at this time. Check back soon for updates.</p>
+
+                <div class="empty-state-icon">
+                    ❤
+                </div>
+
+                <h3>
+                    No Active Relief Operations
+                </h3>
+
+                <p>
+                    There are currently no active relief operations.
+                    Please check back soon for updates.
+                </p>
+
             </div>
         }
+
     </div>
+
 </section>
 
-<!-- Call to Action Section -->
-<section class="cta-section">
+
+<!-- HOW YOU CAN HELP -->
+<section class="help-section">
+
     <div class="container">
-        <div class="cta-content">
-            <h2>Make a Difference Today</h2>
-            <p>Every donation helps us provide immediate relief to affected communities. Your support saves lives and restores hope. Whether through financial contribution or volunteer work, you can help us respond to disasters and support communities in their time of greatest need.</p>
-            <div class="cta-actions">
-                <a href="/Donate" class="btn btn-primary btn-large">Donate Now</a>
-                <a href="/Volunteer" class="btn btn-secondary btn-large">Become a Volunteer</a>
-            </div>
+
+        <div class="section-header centered">
+
+            <span class="section-label">
+                GET INVOLVED
+            </span>
+
+            <h2>
+                There Are Many Ways to Help
+            </h2>
+
+            <p>
+                Whether you donate, volunteer or simply spread awareness,
+                your support can make a difference.
+            </p>
+
         </div>
+
+
+        <div class="help-grid">
+
+            <div class="help-card">
+
+                <div class="help-icon">
+                    R
+                </div>
+
+                <h3>
+                    Make a Donation
+                </h3>
+
+                <p>
+                    Your contribution helps provide essential resources
+                    and emergency support to affected communities.
+                </p>
+
+                <a href="/Donate">
+                    Donate Now →
+                </a>
+
+            </div>
+
+
+            <div class="help-card">
+
+                <div class="help-icon">
+                    👥
+                </div>
+
+                <h3>
+                    Become a Volunteer
+                </h3>
+
+                <p>
+                    Give your time and skills to support disaster relief
+                    operations and community initiatives.
+                </p>
+
+                <a href="/Volunteer">
+                    Volunteer →
+                </a>
+
+            </div>
+
+
+            <div class="help-card">
+
+                <div class="help-icon">
+                    ❤
+                </div>
+
+                <h3>
+                    Spread Awareness
+                </h3>
+
+                <p>
+                    Help us reach more people by sharing our mission
+                    and encouraging others to get involved.
+                </p>
+
+                <a href="/About">
+                    Learn More →
+                </a>
+
+            </div>
+
+        </div>
+
     </div>
+
 </section>
+
+
+<!-- CALL TO ACTION -->
+<section class="cta-section">
+
+    <div class="container">
+
+        <div class="cta-content">
+
+            <span class="section-label">
+                MAKE AN IMPACT
+            </span>
+
+            <h2>
+                Small Actions Can Create<br />
+                Big Change.
+            </h2>
+
+            <p>
+                Every donation and every helping hand brings us closer
+                to communities that need support. Join us in making
+                a meaningful difference today.
+            </p>
+
+            <div class="cta-actions">
+
+                <a href="/Donate"
+                   class="btn btn-primary btn-large">
+                    Donate Now
+                </a>
+
+                <a href="/Volunteer"
+                   class="btn btn-light-outline btn-large">
+                    Become a Volunteer
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
 
 <partial name="Shared/_Footer" />
