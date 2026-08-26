@@ -96,16 +96,9 @@
 
                         </div>
 
-                        <form id="logout-form"
-                              method="post"
-                              action="/Identity/Account/Logout"
-                              style="display:none;">
+                        <form method="post" asp-page="/Logout" asp-route-returnUrl="/">
+                            <button type="submit" class="nav-logout">Logout</button>
                         </form>
-
-                        <a href="javascript:document.getElementById('logout-form').submit();"
-                           class="nav-logout">
-                            Logout
-                        </a>
 
                     </div>
                 }

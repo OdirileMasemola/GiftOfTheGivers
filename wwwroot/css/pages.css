@@ -500,6 +500,21 @@
     text-decoration: none;
 }
 
+.footer-logout {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #a0a0a0;
+    font-size: 0.9rem;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: left;
+}
+
+.footer-logout:hover {
+    color: var(--color-red);
+}
+
 .footer-links a:focus {
     outline: 2px solid var(--color-red);
     outline-offset: 2px;
