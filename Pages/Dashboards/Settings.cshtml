@@ -1,0 +1,73 @@
+@page "/Dashboards/Settings"
+@model GiftOfTheGivers.Pages.Dashboards.SettingsModel
+@{
+    ViewData["Title"] = "Settings - Gift of the Givers";
+}
+
+<link rel="stylesheet" href="~/css/dashboard.css" />
+
+<div class="dashboard-wrapper">
+    <partial name="Shared/_DashboardSidebar" />
+
+    <div class="dashboard-main">
+        <div class="dashboard-header">
+            <h1 class="dashboard-header-title">Settings</h1>
+            <p class="dashboard-header-subtitle">Your account details and password</p>
+        </div>
+
+        <div class="dashboard-content">
+            @if (TempData["SettingsMessage"] is string successMessage)
+            {
+                <div class="alert alert-success" role="status">@successMessage</div>
+            }
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger" role="alert">
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <div>@error.ErrorMessage</div>
+                    }
+                </div>
+            }
+
+            <div class="settings-grid">
+                <div class="dashboard-section">
+                    <h2 class="dashboard-section-title">Account</h2>
+                    <div class="profile-summary">
+                        <div class="profile-field">
+                            <span class="profile-label">Email</span>
+                            <span class="profile-value">@Model.Email</span>
+                        </div>
+                        <div class="profile-field">
+                            <span class="profile-label">Role</span>
+                            <span class="profile-value">@Model.RoleLabel</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-section">
+                    <h2 class="dashboard-section-title">Change password</h2>
+                    <div class="dashboard-form">
+                        <form method="post" asp-page-handler="ChangePassword">
+                            <div class="form-group-dashboard">
+                                <label for="CurrentPassword">Current password</label>
+                                <input id="CurrentPassword" asp-for="CurrentPassword" type="password" autocomplete="current-password" required />
+                            </div>
+                            <div class="form-group-dashboard" style="margin-top: 1rem;">
+                                <label for="NewPassword">New password</label>
+                                <input id="NewPassword" asp-for="NewPassword" type="password" autocomplete="new-password" required />
+                            </div>
+                            <div class="form-group-dashboard" style="margin-top: 1rem;">
+                                <label for="ConfirmPassword">Confirm new password</label>
+                                <input id="ConfirmPassword" asp-for="ConfirmPassword" type="password" autocomplete="new-password" required />
+                            </div>
+                            <div class="dashboard-actions">
+                                <button type="submit" class="btn btn-primary">Update password</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

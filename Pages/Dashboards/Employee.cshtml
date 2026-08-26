@@ -34,12 +34,12 @@
                 </div>
                 <div class="stat-card">
                     <span class="stat-label">Donations Received</span>
-                    <span class="stat-value">ZAR 125k</span>
+                    <span class="stat-value">ZAR @Model.MonthDonationsZar.ToString("N0")</span>
                     <span class="stat-meta">This month</span>
                 </div>
                 <div class="stat-card">
                     <span class="stat-label">Communities Supported</span>
-                    <span class="stat-value">18</span>
+                    <span class="stat-value">@Model.CommunitiesSupported</span>
                     <span class="stat-meta">Active regions</span>
                 </div>
             </div>
@@ -138,6 +138,56 @@
                                             <td>@(string.IsNullOrWhiteSpace(volunteer.Availability) ? "—" : volunteer.Availability)</td>
                                             <td>@volunteer.RegistrationDate.ToString("d MMM yyyy")</td>
                                             <td><span class="status-badge @badge">@volunteer.Status</span></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Donations -->
+            <div class="dashboard-section">
+                <div class="dashboard-section-header">
+                    <h2 class="dashboard-section-title">Recent Donations</h2>
+                    <a href="/Dashboards/Donations" class="btn btn-secondary btn-compact">View donations</a>
+                </div>
+                <div class="dashboard-table">
+                    <div class="dashboard-table-wrapper">
+                        @if (Model.RecentDonations.Count == 0)
+                        {
+                            <div class="empty-state">
+                                <p class="empty-state-title">No donations yet</p>
+                                <p class="empty-state-text">Gifts from the Donate page will show up here.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Donor</th>
+                                        <th>Amount</th>
+                                        <th>Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var donation in Model.RecentDonations)
+                                    {
+                                        var typeLabel = donation.DonationType == "Recurring"
+                                            ? donation.RecurringFrequency ?? "Recurring"
+                                            : "One-time";
+                                        <tr>
+                                            <td>@donation.DonationDate.ToString("d MMM yyyy")</td>
+                                            <td><strong>@donation.DonorName</strong></td>
+                                            <td>@donation.Currency @donation.Amount.ToString("N0")</td>
+                                            <td>
+                                                <span class="status-badge @(donation.DonationType == "Recurring" ? "pending" : "completed")">
+                                                    @typeLabel
+                                                </span>
+                                            </td>
                                         </tr>
                                     }
                                 </tbody>

@@ -302,6 +302,25 @@
     border: 1px solid #fecaca;
 }
 
+.mono-ref {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.8rem;
+    color: var(--color-grey-600);
+}
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--spacing-2xl);
+    align-items: start;
+}
+
+@media (max-width: 900px) {
+    .settings-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Tables */
 .dashboard-table {
     background-color: var(--color-white);

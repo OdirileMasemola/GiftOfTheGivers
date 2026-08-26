@@ -21,11 +21,16 @@ namespace GiftOfTheGivers.Pages.Dashboards
         public int ActiveOperations { get; set; }
         public int PendingVolunteers { get; set; }
         public int TotalVolunteers { get; set; }
+        public decimal MonthDonationsZar { get; set; }
+        public int CommunitiesSupported { get; set; }
         public List<ReliefProject> Operations { get; set; } = new();
         public List<Volunteer> RecentVolunteers { get; set; } = new();
+        public List<Donation> RecentDonations { get; set; } = new();
 
         public async Task OnGetAsync()
         {
+            var monthStart = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+
             ActiveOperations = await _context.ReliefProjects
                 .CountAsync(p => p.Status == "Active" || p.Status == "Planning");
 
@@ -34,6 +39,12 @@ namespace GiftOfTheGivers.Pages.Dashboards
 
             TotalVolunteers = await _context.Volunteers.CountAsync();
 
+            MonthDonationsZar = await _context.Donations
+                .Where(d => d.Currency == "ZAR" && d.DonationDate >= monthStart)
+                .SumAsync(d => (decimal?)d.Amount) ?? 0;
+
+            CommunitiesSupported = await _context.ReliefProjects.CountAsync();
+
             Operations = await _context.ReliefProjects
                 .OrderByDescending(p => p.CreatedDate)
                 .Take(8)
@@ -41,6 +52,11 @@ namespace GiftOfTheGivers.Pages.Dashboards
 
             RecentVolunteers = await _context.Volunteers
                 .OrderByDescending(v => v.RegistrationDate)
+                .Take(8)
+                .ToListAsync();
+
+            RecentDonations = await _context.Donations
+                .OrderByDescending(d => d.DonationDate)
                 .Take(8)
                 .ToListAsync();
         }

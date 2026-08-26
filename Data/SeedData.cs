@@ -137,6 +137,55 @@ namespace GiftOfTheGivers.Data
                 );
                 await context.SaveChangesAsync();
             }
+
+            if (!context.Donations.Any())
+            {
+                context.Donations.AddRange(
+                    new Donation
+                    {
+                        DonorName = "Thandi Nkosi",
+                        DonorEmail = "donor@test.local",
+                        Amount = 5000,
+                        Currency = "ZAR",
+                        DonationType = "OneTime",
+                        DonationDate = DateTime.Now.AddDays(-1),
+                        CertificateNumber = $"CERT-{DateTime.Now:yyyyMMdd}-A1B2C3D4"
+                    },
+                    new Donation
+                    {
+                        DonorName = "James Peterson",
+                        DonorEmail = "james.peterson@test.local",
+                        Amount = 1500,
+                        Currency = "ZAR",
+                        DonationType = "Recurring",
+                        RecurringFrequency = "Monthly",
+                        DonationDate = DateTime.Now.AddDays(-3),
+                        CertificateNumber = $"CERT-{DateTime.Now.AddDays(-3):yyyyMMdd}-E5F6G7H8"
+                    },
+                    new Donation
+                    {
+                        DonorName = "Amina Patel",
+                        DonorEmail = "amina.patel@test.local",
+                        Amount = 2500,
+                        Currency = "ZAR",
+                        DonationType = "OneTime",
+                        DonationDate = DateTime.Now.AddDays(-8),
+                        CertificateNumber = $"CERT-{DateTime.Now.AddDays(-8):yyyyMMdd}-I9J0K1L2"
+                    },
+                    new Donation
+                    {
+                        DonorName = "Lerato Mokoena",
+                        DonorEmail = "lerato.mokoena@test.local",
+                        Amount = 750,
+                        Currency = "ZAR",
+                        DonationType = "Recurring",
+                        RecurringFrequency = "Quarterly",
+                        DonationDate = DateTime.Now.AddDays(-20),
+                        CertificateNumber = $"CERT-{DateTime.Now.AddDays(-20):yyyyMMdd}-M3N4O5P6"
+                    }
+                );
+                await context.SaveChangesAsync();
+            }
         }
     }
 }
