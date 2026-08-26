@@ -1,60 +1,5 @@
 /* Page Specific Styles */
 
-/* Hero Section */
-.hero-section {
-    background: linear-gradient(135deg, var(--color-dark) 0%, #1a254a 100%);
-    color: var(--color-white);
-    padding: var(--spacing-3xl) var(--spacing-lg);
-    text-align: center;
-}
-
-.hero-section h1 {
-    color: var(--color-white);
-    font-size: clamp(1.75rem, 5vw, 3rem);
-    margin-bottom: var(--spacing-md);
-}
-
-.hero-section p {
-    color: rgba(255, 255, 255, 0.85);
-    font-size: 1.1rem;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: var(--spacing-2xl);
-}
-
-.hero-actions {
-    display: flex;
-    gap: var(--spacing-md);
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.hero-actions .btn {
-    padding: var(--spacing-md) var(--spacing-xl);
-    font-size: 1rem;
-    font-weight: 600;
-}
-
-.btn-accent {
-    background-color: var(--color-red);
-    color: var(--color-white);
-}
-
-.btn-accent:hover {
-    background-color: var(--color-red-hover);
-}
-
-.btn-light-outline {
-    background-color: transparent;
-    color: var(--color-white);
-    border: 2px solid var(--color-white);
-}
-
-.btn-light-outline:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
 /* Stats Section */
 .stats-section {
     background-color: var(--color-grey-50);
@@ -674,10 +619,6 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-    .hero-section {
-        padding: var(--spacing-2xl) var(--spacing-md);
-    }
-
     .hero-actions {
         flex-direction: column;
     }

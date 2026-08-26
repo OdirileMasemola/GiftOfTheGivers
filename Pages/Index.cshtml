@@ -9,13 +9,19 @@
 <!-- hero section -->
 <section class="hero-section">
 
-    <div class="container hero-container">
+    <div class="hero-media" aria-hidden="true">
+        <img src="~/images/hero-relief.jpg"
+             alt=""
+             class="hero-image" />
+    </div>
 
-        <!-- hero content -->
+    <div class="hero-overlay"></div>
+
+    <div class="container hero-container">
         <div class="hero-content">
 
             <span class="hero-label">
-                DISASTER RELIEF & COMMUNITY SUPPORT
+                Disaster Relief &amp; Community Support
             </span>
 
             <h1>
@@ -29,64 +35,39 @@
             </p>
 
             <div class="hero-actions">
-
                 <a href="/Donate" class="btn btn-primary btn-large">
                     Donate Now
                 </a>
-
                 <a href="/Volunteer" class="btn btn-light-outline btn-large">
                     Become a Volunteer
                 </a>
-
             </div>
 
             <div class="hero-trust">
-
                 <div class="trust-item">
                     <strong>Rapid Response</strong>
                     <span>When communities need us</span>
                 </div>
-
                 <div class="trust-divider"></div>
-
                 <div class="trust-item">
                     <strong>Community Focused</strong>
                     <span>Helping those who need it most</span>
                 </div>
-
             </div>
 
         </div>
-
-        <!-- hero image -->
-        <div class="hero-image-wrapper">
-
-            <img src="/images/hero-relief.jpg"
-                 alt="Gift of the Givers volunteers providing disaster relief"
-                 class="hero-image" />
-
-            <div class="hero-image-card">
-
-                <div class="hero-image-icon">
-                    ❤
-                </div>
-
-                <div>
-                    <strong>Making an Impact</strong>
-                    <span>One community at a time</span>
-                </div>
-
-            </div>
-
-        </div>
-
     </div>
+
+    <a href="#our-work" class="hero-scroll-hint">
+        <span>Scroll</span>
+        <span class="hero-scroll-icon" aria-hidden="true"></span>
+    </a>
 
 </section>
 
 
 <!-- services section -->
-<section class="services-section">
+<section class="services-section" id="our-work" data-scroll-reveal>
 
     <div class="container">
 
@@ -111,7 +92,7 @@
             <div class="service-card">
 
                 <div class="service-icon">
-                    🚨
+                    <i class="bi bi-truck" aria-hidden="true"></i>
                 </div>
 
                 <h3>
@@ -129,7 +110,7 @@
             <div class="service-card">
 
                 <div class="service-icon">
-                    🍲
+                    <i class="bi bi-droplet" aria-hidden="true"></i>
                 </div>
 
                 <h3>
@@ -147,7 +128,7 @@
             <div class="service-card">
 
                 <div class="service-icon">
-                    ❤️
+                    <i class="bi bi-heart" aria-hidden="true"></i>
                 </div>
 
                 <h3>
@@ -169,343 +150,133 @@
 
 
 <!-- impact -->
-<section class="stats-section">
-
-    <div class="container">
-
-        <div class="stats-header">
-
-            <span class="section-label">
-                OUR IMPACT
-            </span>
-
-            <h2>
-                Helping Communities<br />
-                When It Matters Most
-            </h2>
-
-            <p>
-                Every number represents real people, real communities
-                and real support delivered where it is needed.
-            </p>
-
+<section class="impact-band">
+    <div class="container impact-band-inner">
+        <div class="impact-intro">
+            <span class="section-label">Our impact</span>
+            <h2>Real support, measured in people helped.</h2>
         </div>
 
-
-        <div class="stats-grid">
-
-            <div class="stat-card">
-
-                <div class="stat-icon">
-                    +
-                </div>
-
-                <div class="stat-number">
-                    @Model.ActiveProjects
-                </div>
-
-                <div class="stat-text">
-                    Active Relief Operations
-                </div>
-
+        <div class="impact-metrics">
+            <div class="impact-metric">
+                <span class="impact-number">@Model.ActiveProjects</span>
+                <span class="impact-label">Active operations</span>
             </div>
-
-
-            <div class="stat-card">
-
-                <div class="stat-icon">
-                    👥
-                </div>
-
-                <div class="stat-number">
-                    @Model.RegisteredVolunteers
-                </div>
-
-                <div class="stat-text">
-                    Registered Volunteers
-                </div>
-
+            <div class="impact-metric">
+                <span class="impact-number">@Model.RegisteredVolunteers</span>
+                <span class="impact-label">Registered volunteers</span>
             </div>
-
-
-            <div class="stat-card">
-
-                <div class="stat-icon">
-                    R
-                </div>
-
-                <div class="stat-number">
-                    @Model.TotalDonations.ToString("C0")
-                </div>
-
-                <div class="stat-text">
-                    Funds Received
-                </div>
-
+            <div class="impact-metric">
+                <span class="impact-number">@Model.TotalDonations.ToString("C0")</span>
+                <span class="impact-label">Funds received</span>
             </div>
-
-
-            <div class="stat-card">
-
-                <div class="stat-icon">
-                    ⌂
-                </div>
-
-                <div class="stat-number">
-                    @Model.CommunitiesSupported
-                </div>
-
-                <div class="stat-text">
-                    Communities Served
-                </div>
-
+            <div class="impact-metric">
+                <span class="impact-number">@Model.CommunitiesSupported</span>
+                <span class="impact-label">Communities served</span>
             </div>
-
         </div>
-
     </div>
-
 </section>
 
 
-<!-- current relief activities -->
-<section class="activities-section">
-
+<!-- current operations -->
+<section class="operations-section">
     <div class="container">
 
-        <div class="section-header">
-
+        <div class="operations-intro">
             <div>
-
-                <span class="section-label">
-                    WHAT WE ARE DOING
-                </span>
-
-                <h2>
-                    Current Relief Activities
-                </h2>
-
-                <p>
-                    Active disaster relief and community assistance
-                    projects we are currently supporting.
-                </p>
-
+                <span class="section-label">On the ground</span>
+                <h2>Current relief operations</h2>
             </div>
-
-            <a href="/Donate" class="section-link">
-                Support Our Work →
-            </a>
-
+            <p>
+                Live disaster response and community assistance
+                we are supporting right now.
+            </p>
         </div>
-
 
         @if (Model.RecentProjects != null && Model.RecentProjects.Any())
         {
-            <div class="activity-grid">
+            var featuredProject = Model.RecentProjects.First();
+            var otherProjects = Model.RecentProjects.Skip(1).ToList();
 
-                @foreach (var project in Model.RecentProjects)
-                {
-                    <article class="activity-card">
+            <article class="operation-featured">
+                <div class="operation-featured-media">
+                    <img src="~/images/hero-relief.jpg"
+                         alt=""
+                         class="operation-featured-image" />
+                    <span class="operation-status">@featuredProject.Status</span>
+                </div>
+                <div class="operation-featured-body">
+                    <span class="operation-location">
+                        <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
+                        @featuredProject.Location
+                    </span>
+                    <h3>@featuredProject.Name</h3>
+                    <p>@featuredProject.Description</p>
+                    <a href="/Donate" class="btn btn-primary">Support this operation</a>
+                </div>
+            </article>
 
-                        <div class="activity-image">
-
-                            <div class="activity-image-placeholder">
-                                @project.Name.First().ToString().ToUpper()
+            @if (otherProjects.Any())
+            {
+                <ol class="operation-list">
+                    @for (var i = 0; i < otherProjects.Count; i++)
+                    {
+                        var project = otherProjects[i];
+                        <li class="operation-row">
+                            <span class="operation-index">@((i + 2).ToString("00"))</span>
+                            <div class="operation-row-copy">
+                                <h3>@project.Name</h3>
+                                <p>
+                                    <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
+                                    @project.Location
+                                    <span class="operation-row-status">@project.Status</span>
+                                </p>
                             </div>
-
-                            <span class="activity-status">
-                                @project.Status
-                            </span>
-
-                        </div>
-
-
-                        <div class="activity-body">
-
-                            <span class="activity-location">
-                                📍 @project.Location
-                            </span>
-
-                            <h3 class="activity-title">
-                                @project.Name
-                            </h3>
-
-                            <p class="activity-description">
-                                @project.Description
-                            </p>
-
-                            <a href="/Donate" class="activity-link">
-                                Support this operation →
+                            <a href="/Donate" class="operation-row-link">
+                                Support
+                                <i class="bi bi-arrow-right" aria-hidden="true"></i>
                             </a>
-
-                        </div>
-
-                    </article>
-                }
-
-            </div>
+                        </li>
+                    }
+                </ol>
+            }
         }
         else
         {
             <div class="empty-state">
-
                 <div class="empty-state-icon">
-                    ❤
+                    <i class="bi bi-heart" aria-hidden="true"></i>
                 </div>
-
-                <h3>
-                    No Active Relief Operations
-                </h3>
-
-                <p>
-                    There are currently no active relief operations.
-                    Please check back soon for updates.
-                </p>
-
+                <h3>No active relief operations</h3>
+                <p>There are currently no active relief operations. Please check back soon.</p>
             </div>
         }
 
     </div>
-
 </section>
 
 
-<section class="help-section">
-
-    <div class="container">
-
-        <div class="section-header centered">
-
-            <span class="section-label">
-                GET INVOLVED
-            </span>
-
-            <h2>
-                There Are Many Ways to Help
-            </h2>
-
-            <p>
-                Whether you donate, volunteer or simply spread awareness,
-                your support can make a difference.
-            </p>
-
-        </div>
-
-
-        <div class="help-grid">
-
-            <div class="help-card">
-
-                <div class="help-icon">
-                    R
-                </div>
-
-                <h3>
-                    Make a Donation
-                </h3>
-
-                <p>
-                    Your contribution helps provide essential resources
-                    and emergency support to affected communities.
-                </p>
-
-                <a href="/Donate">
-                    Donate Now →
-                </a>
-
-            </div>
-
-
-            <div class="help-card">
-
-                <div class="help-icon">
-                    👥
-                </div>
-
-                <h3>
-                    Become a Volunteer
-                </h3>
-
-                <p>
-                    Give your time and skills to support disaster relief
-                    operations and community initiatives.
-                </p>
-
-                <a href="/Volunteer">
-                    Volunteer →
-                </a>
-
-            </div>
-
-
-            <div class="help-card">
-
-                <div class="help-icon">
-                    ❤
-                </div>
-
-                <h3>
-                    Spread Awareness
-                </h3>
-
-                <p>
-                    Help us reach more people by sharing our mission
-                    and encouraging others to get involved.
-                </p>
-
-                <a href="/About">
-                    Learn More →
-                </a>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- CTA -->
-<section class="cta-section">
-
-    <div class="container">
-
-        <div class="cta-content">
-
-            <span class="section-label">
-                MAKE AN IMPACT
-            </span>
-
-            <h2>
-                Small Actions Can Create<br />
-                Big Change.
-            </h2>
-
-            <p>
-                Every donation and every helping hand brings us closer
-                to communities that need support. Join us in making
-                a meaningful difference today.
-            </p>
-
-            <div class="cta-actions">
-
-                <a href="/Donate"
-                   class="btn btn-primary btn-large">
-                    Donate Now
-                </a>
-
-                <a href="/Volunteer"
-                   class="btn btn-light-outline btn-large">
-                    Become a Volunteer
-                </a>
-
-            </div>
-
-        </div>
-
-    </div>
-
+<!-- get involved -->
+<section class="involve-split">
+    <a href="/Donate" class="involve-panel involve-donate">
+        <span class="involve-kicker">Give</span>
+        <h2>Make a donation</h2>
+        <p>Fund food, water and emergency relief for communities that need it now.</p>
+        <span class="involve-link">
+            Donate now
+            <i class="bi bi-arrow-right" aria-hidden="true"></i>
+        </span>
+    </a>
+    <a href="/Volunteer" class="involve-panel involve-volunteer">
+        <span class="involve-kicker">Serve</span>
+        <h2>Become a volunteer</h2>
+        <p>Join response teams on the ground and put your skills where they matter most.</p>
+        <span class="involve-link">
+            Join the team
+            <i class="bi bi-arrow-right" aria-hidden="true"></i>
+        </span>
+    </a>
 </section>
 
 
