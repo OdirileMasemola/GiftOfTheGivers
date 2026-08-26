@@ -24,8 +24,8 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <span class="stat-label">Active Relief Operations</span>
-                    <span class="stat-value">5</span>
-                    <span class="stat-meta">+2 this month</span>
+                    <span class="stat-value">@Model.ActiveOperations</span>
+                    <span class="stat-meta">Active and planning</span>
                 </div>
                 <div class="stat-card">
                     <span class="stat-label">Volunteer Sign-ups</span>
@@ -46,57 +46,50 @@
 
             <!-- Active Relief Operations Section -->
             <div class="dashboard-section">
-                <h2 class="dashboard-section-title">Active Relief Operations</h2>
+                <div class="dashboard-section-header">
+                    <h2 class="dashboard-section-title">Relief Operations</h2>
+                    <a href="/Dashboards/Operations" class="btn btn-secondary btn-compact">Manage operations</a>
+                </div>
                 <div class="dashboard-table">
                     <div class="dashboard-table-wrapper">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Operation</th>
-                                    <th>Location</th>
-                                    <th>Status</th>
-                                    <th>Volunteers</th>
-                                    <th>Last Update</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><strong>Flood Relief - Eastern Region</strong></td>
-                                    <td>Limpopo Province</td>
-                                    <td><span class="status-badge active">Active</span></td>
-                                    <td>12</td>
-                                    <td>2 hours ago</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Medical Supply Distribution</strong></td>
-                                    <td>Gauteng</td>
-                                    <td><span class="status-badge active">Active</span></td>
-                                    <td>8</td>
-                                    <td>4 hours ago</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Drought Support Program</strong></td>
-                                    <td>Northern Cape</td>
-                                    <td><span class="status-badge pending">Planning</span></td>
-                                    <td>5</td>
-                                    <td>1 day ago</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Community Kitchen Initiative</strong></td>
-                                    <td>Free State</td>
-                                    <td><span class="status-badge active">Active</span></td>
-                                    <td>15</td>
-                                    <td>6 hours ago</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Infrastructure Repair</strong></td>
-                                    <td>KwaZulu-Natal</td>
-                                    <td><span class="status-badge completed">Completed</span></td>
-                                    <td>20</td>
-                                    <td>3 days ago</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        @if (Model.Operations.Count == 0)
+                        {
+                            <div class="empty-state">
+                                <p class="empty-state-title">No operations yet</p>
+                                <p class="empty-state-text">Add one from Relief Operations to see it here.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Operation</th>
+                                        <th>Location</th>
+                                        <th>Status</th>
+                                        <th>Started</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var project in Model.Operations)
+                                    {
+                                        var badge = project.Status switch
+                                        {
+                                            "Active" => "active",
+                                            "Planning" => "pending",
+                                            "Completed" => "completed",
+                                            _ => "inactive"
+                                        };
+                                        <tr>
+                                            <td><strong>@project.Name</strong></td>
+                                            <td>@project.Location</td>
+                                            <td><span class="status-badge @badge">@project.Status</span></td>
+                                            <td>@project.StartDate.ToString("d MMM yyyy")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
                     </div>
                 </div>
             </div>

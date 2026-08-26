@@ -2,6 +2,14 @@
 @model GiftOfTheGivers.Pages.Dashboards.OperationsModel
 @{
     ViewData["Title"] = "Relief Operations - Gift of the Givers";
+
+    string BadgeClass(string status) => status switch
+    {
+        "Active" => "active",
+        "Planning" => "pending",
+        "Completed" => "completed",
+        _ => "inactive"
+    };
 }
 
 <link rel="stylesheet" href="~/css/dashboard.css" />
@@ -16,13 +24,148 @@
         </div>
 
         <div class="dashboard-content">
-            <div class="dashboard-placeholder">
-                <div class="dashboard-placeholder-icon">
-                    <i class="bi bi-flag" aria-hidden="true"></i>
+            @if (TempData["OperationsMessage"] is string successMessage)
+            {
+                <div class="alert alert-success" role="status">@successMessage</div>
+            }
+            @if (TempData["OperationsError"] is string errorMessage)
+            {
+                <div class="alert alert-danger" role="alert">@errorMessage</div>
+            }
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger" role="alert">
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <div>@error.ErrorMessage</div>
+                    }
                 </div>
-                <h2>Operations workspace</h2>
-                <p>This page is ready for operation management. Use Overview for the current snapshot.</p>
-                <a href="/Dashboards/Employee" class="btn btn-primary">Back to overview</a>
+            }
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">Active</span>
+                    <span class="stat-value">@Model.ActiveCount</span>
+                    <span class="stat-meta">In the field now</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Planning</span>
+                    <span class="stat-value">@Model.PlanningCount</span>
+                    <span class="stat-meta">Being prepared</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Completed</span>
+                    <span class="stat-value">@Model.CompletedCount</span>
+                    <span class="stat-meta">Closed operations</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">All operations</span>
+                    <span class="stat-value">@Model.Projects.Count</span>
+                    <span class="stat-meta">On record</span>
+                </div>
+            </div>
+
+            <div class="dashboard-section">
+                <h2 class="dashboard-section-title">Add a relief operation</h2>
+                <div class="dashboard-form">
+                    <form method="post" asp-page-handler="Create" class="dashboard-form-grid">
+                        <div class="form-group-dashboard">
+                            <label for="Name">Operation name</label>
+                            <input id="Name" asp-for="Name" placeholder="e.g. Flood Relief - Eastern Region" required />
+                        </div>
+                        <div class="form-group-dashboard">
+                            <label for="Location">Location</label>
+                            <input id="Location" asp-for="Location" placeholder="e.g. KwaZulu-Natal" required />
+                        </div>
+                        <div class="form-group-dashboard">
+                            <label for="Status">Status</label>
+                            <select id="Status" asp-for="Status">
+                                <option value="Planning">Planning</option>
+                                <option value="Active">Active</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
+                        <div class="form-group-dashboard">
+                            <label for="StartDate">Start date</label>
+                            <input id="StartDate" asp-for="StartDate" type="date" asp-format="{0:yyyy-MM-dd}" />
+                        </div>
+                        <div class="form-group-dashboard" style="grid-column: 1 / -1;">
+                            <label for="Description">Description</label>
+                            <textarea id="Description" asp-for="Description" placeholder="What this operation is doing and who it supports"></textarea>
+                        </div>
+                        <div class="dashboard-actions" style="grid-column: 1 / -1;">
+                            <button type="submit" class="btn btn-primary">Create operation</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="dashboard-section">
+                <h2 class="dashboard-section-title">All operations</h2>
+                <div class="dashboard-table">
+                    <div class="dashboard-table-wrapper">
+                        @if (Model.Projects.Count == 0)
+                        {
+                            <div class="empty-state">
+                                <p class="empty-state-title">No operations yet</p>
+                                <p class="empty-state-text">Create one above to start tracking relief work.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Operation</th>
+                                        <th>Location</th>
+                                        <th>Status</th>
+                                        <th>Started</th>
+                                        <th>Update status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var project in Model.Projects)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@project.Name</strong>
+                                                @if (!string.IsNullOrWhiteSpace(project.Description))
+                                                {
+                                                    <div class="table-muted">@project.Description</div>
+                                                }
+                                            </td>
+                                            <td>@project.Location</td>
+                                            <td>
+                                                <span class="status-badge @BadgeClass(project.Status)">@project.Status</span>
+                                            </td>
+                                            <td>@project.StartDate.ToString("d MMM yyyy")</td>
+                                            <td>
+                                                <form method="post" asp-page-handler="UpdateStatus" class="status-form">
+                                                    <input type="hidden" name="id" value="@project.Id" />
+                                                    <label class="sr-only" for="status-@project.Id">Status for @project.Name</label>
+                                                    <select id="status-@project.Id" name="status">
+                                                        @foreach (var statusOption in new[] { "Planning", "Active", "Completed" })
+                                                        {
+                                                            if (project.Status == statusOption)
+                                                            {
+                                                                <option value="@statusOption" selected>@statusOption</option>
+                                                            }
+                                                            else
+                                                            {
+                                                                <option value="@statusOption">@statusOption</option>
+                                                            }
+                                                        }
+                                                    </select>
+                                                    <button type="submit" class="btn btn-secondary btn-compact">Save</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                </div>
             </div>
         </div>
     </div>
