@@ -1236,6 +1236,49 @@ tr:hover {
     line-height: 1.6;
 }
 
+.services-section[data-scroll-reveal].js-reveal .section-heading span,
+.services-section[data-scroll-reveal].js-reveal .section-heading h2,
+.services-section[data-scroll-reveal].js-reveal .section-heading p,
+.services-section[data-scroll-reveal].js-reveal .services-grid {
+    opacity: 0;
+    transform: translateY(32px);
+}
+
+.services-section[data-scroll-reveal].is-inview .section-heading span {
+    animation: servicesReveal 0.7s ease forwards;
+}
+
+.services-section[data-scroll-reveal].is-inview .section-heading h2,
+.services-section[data-scroll-reveal].is-inview .section-heading p {
+    animation: servicesReveal 0.75s ease 0.18s forwards;
+}
+
+.services-section[data-scroll-reveal].is-inview .services-grid {
+    animation: servicesReveal 0.8s ease 0.48s forwards;
+}
+
+@keyframes servicesReveal {
+    from {
+        opacity: 0;
+        transform: translateY(32px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .services-section[data-scroll-reveal].js-reveal .section-heading span,
+    .services-section[data-scroll-reveal].js-reveal .section-heading h2,
+    .services-section[data-scroll-reveal].js-reveal .section-heading p,
+    .services-section[data-scroll-reveal].js-reveal .services-grid {
+        opacity: 1;
+        transform: none;
+        animation: none;
+    }
+}
+
 
 /* =========================================================
    CTA
