@@ -90,8 +90,8 @@
 }
 
     .nav-link:hover {
-        color: #5f9f24;
-        background: #f1f8e9;
+        color: #ffffff;
+        background: #689f38;
     }
 
 .nav-link-employee {
@@ -116,8 +116,8 @@
 }
 
     .nav-auth-link:hover {
-        color: #5f9f24;
-        background: #f1f8e9;
+        color: #ffffff;
+        background: #689f38;
     }
 
 .nav-auth-register {
@@ -125,17 +125,17 @@
     align-items: center;
     justify-content: center;
     padding: 10px 18px;
-    background: #8fd14f;
+    background: #689f38;
     color: white;
     border-radius: 8px;
     font-weight: 700;
     text-decoration: none;
-    box-shadow: 0 4px 12px rgba(143, 209, 79, 0.25);
+    box-shadow: 0 4px 12px rgba(104, 159, 56, 0.25);
     transition: all 0.2s ease;
 }
 
     .nav-auth-register:hover {
-        background: #76b837;
+        background: #4a6d2a;
         color: white;
         transform: translateY(-1px);
     }

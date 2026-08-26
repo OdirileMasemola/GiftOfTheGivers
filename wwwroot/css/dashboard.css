@@ -119,9 +119,9 @@
 }
 
 .sidebar-nav-link.active {
-    background-color: rgba(139, 195, 74, 0.16);
+    background-color: rgba(104, 159, 56, 0.16);
     color: var(--color-white);
-    border-left-color: var(--color-green);
+    border-left-color: #689f38;
 }
 
 .sidebar-nav-icon {

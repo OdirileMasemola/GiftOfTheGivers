@@ -5,7 +5,7 @@
     --color-dark: #172016;
     --color-white: #ffffff;
     /* Green Theme */
-    --color-green: #8bc34a;
+    --color-green: #90BE6D;
     --color-green-dark: #689f38;
     --color-green-light: #f1f8e9;
     --color-green-lighter: #f7fbeF;
@@ -211,15 +211,15 @@ a {
 /* Primary */
 
 .btn-primary {
-    background-color: var(--color-green);
+    background-color: var(--color-green-dark);
     color: white;
-    border-color: var(--color-green);
+    border-color: var(--color-green-dark);
 }
 
     .btn-primary:hover:not(:disabled) {
-        background-color: var(--color-green-dark);
+        background-color: #4a6d2a;
         color: white;
-        border-color: var(--color-green-dark);
+        border-color: #4a6d2a;
     }
 
 
@@ -266,13 +266,13 @@ a {
 /* Accent */
 
 .btn-accent {
-    background-color: var(--color-green);
+    background-color: var(--color-green-dark);
     color: white;
-    border-color: var(--color-green);
+    border-color: var(--color-green-dark);
 }
 
     .btn-accent:hover:not(:disabled) {
-        background-color: var(--color-green-dark);
+        background-color: #4a6d2a;
     }
 
 
@@ -1961,8 +1961,8 @@ body:has(.involve-split) .site-footer {
 }
 
     .nav-link:hover {
-        color: #4d650c;
-        background: #f3fad9;
+        color: #ffffff;
+        background: #689f38;
     }
 
     .nav-link::after {
@@ -1972,7 +1972,7 @@ body:has(.involve-split) .site-footer {
         right: 14px;
         bottom: 4px;
         height: 2px;
-        background: #a8d632;
+        background: #689f38;
         transform: scaleX(0);
         transform-origin: center;
         transition: transform 0.2s ease;
@@ -1991,8 +1991,8 @@ body:has(.involve-split) .site-footer {
 }
 
     .nav-link-employee:hover {
-        background: #e6f4b8;
-        color: #3f5608;
+        background: #689f38;
+        color: #ffffff;
     }
 
 
@@ -2015,8 +2015,8 @@ body:has(.involve-split) .site-footer {
 }
 
     .nav-auth-link:hover {
-        color: #4d650c;
-        background: #f3fad9;
+        color: #ffffff;
+        background: #689f38;
     }
 
 
@@ -2027,23 +2027,23 @@ body:has(.involve-split) .site-footer {
     align-items: center;
     justify-content: center;
     padding: 10px 18px;
-    background: #b8e63e;
-    color: #17200f;
-    border: 1px solid #b8e63e;
+    background: #689f38;
+    color: #ffffff;
+    border: 1px solid #689f38;
     border-radius: 8px;
     font-size: 0.94rem;
     font-weight: 700;
     text-decoration: none;
-    box-shadow: 0 4px 12px rgba(184, 230, 62, 0.22);
+    box-shadow: 0 4px 12px rgba(104, 159, 56, 0.22);
     transition: all 0.2s ease;
 }
 
     .nav-auth-register:hover {
-        background: #a8d632;
-        border-color: #a8d632;
-        color: #17200f;
+        background: #4a6d2a;
+        border-color: #4a6d2a;
+        color: #ffffff;
         transform: translateY(-1px);
-        box-shadow: 0 6px 16px rgba(184, 230, 62, 0.3);
+        box-shadow: 0 6px 16px rgba(104, 159, 56, 0.3);
     }
 
 
