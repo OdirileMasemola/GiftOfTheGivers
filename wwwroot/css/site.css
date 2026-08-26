@@ -1151,19 +1151,38 @@ tr:hover {
     transition: transform 0.25s ease, filter 0.25s ease;
 }
 
-.involve-panel:hover {
+.involve-panel:hover,
+.involve-panel:focus {
     text-decoration: none;
     filter: brightness(1.05);
 }
 
-.involve-donate {
+.involve-donate,
+.involve-donate:hover,
+.involve-donate:focus {
     background: var(--color-green);
     color: #141c14;
 }
 
-.involve-volunteer {
+.involve-volunteer,
+.involve-volunteer:hover,
+.involve-volunteer:focus {
     background: #10160f;
-    color: white;
+    color: #ffffff;
+}
+
+.involve-donate .involve-kicker,
+.involve-donate h2,
+.involve-donate p,
+.involve-donate .involve-link {
+    color: #141c14;
+}
+
+.involve-volunteer .involve-kicker,
+.involve-volunteer h2,
+.involve-volunteer p,
+.involve-volunteer .involve-link {
+    color: #ffffff;
 }
 
 .involve-kicker {
@@ -1194,11 +1213,6 @@ tr:hover {
     align-items: center;
     gap: 0.5rem;
     font-weight: 700;
-}
-
-.involve-donate .involve-link,
-.involve-volunteer .involve-link {
-    color: inherit;
 }
 
 body:has(.involve-split) .site-footer {
