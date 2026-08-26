@@ -94,6 +94,49 @@ namespace GiftOfTheGivers.Data
                 }
                 await context.SaveChangesAsync();
             }
+
+            if (!context.Volunteers.Any())
+            {
+                context.Volunteers.AddRange(
+                    new Volunteer
+                    {
+                        Name = "Sarah Johnson",
+                        Email = "sarah.johnson@test.local",
+                        Skills = "Medical, First Aid",
+                        Availability = "Weekends",
+                        RegistrationDate = DateTime.Now.AddDays(-1),
+                        Status = "Pending"
+                    },
+                    new Volunteer
+                    {
+                        Name = "Marcus Chen",
+                        Email = "marcus.chen@test.local",
+                        Skills = "Construction, Logistics",
+                        Availability = "Full-time Available",
+                        RegistrationDate = DateTime.Now.AddDays(-2),
+                        Status = "Pending"
+                    },
+                    new Volunteer
+                    {
+                        Name = "Emma Williams",
+                        Email = "emma.williams@test.local",
+                        Skills = "Education, Counselling",
+                        Availability = "Evenings",
+                        RegistrationDate = DateTime.Now.AddDays(-3),
+                        Status = "Approved"
+                    },
+                    new Volunteer
+                    {
+                        Name = "David Okonkwo",
+                        Email = "david.okonkwo@test.local",
+                        Skills = "Translation, Administration",
+                        Availability = "Weekends",
+                        RegistrationDate = DateTime.Now.AddDays(-4),
+                        Status = "Active"
+                    }
+                );
+                await context.SaveChangesAsync();
+            }
         }
     }
 }

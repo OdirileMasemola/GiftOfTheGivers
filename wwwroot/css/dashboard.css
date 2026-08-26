@@ -277,6 +277,31 @@
     min-width: 0;
 }
 
+.row-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.btn-reject {
+    background-color: #fff;
+    color: #b71c1c;
+    border: 1px solid #ef9a9a;
+}
+
+.btn-reject:hover:not(:disabled) {
+    background-color: #fef2f2;
+    color: #b71c1c;
+    border-color: #fca5a5;
+}
+
+.status-badge.rejected {
+    background-color: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
 /* Tables */
 .dashboard-table {
     background-color: var(--color-white);

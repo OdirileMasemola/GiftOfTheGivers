@@ -19,15 +19,28 @@ namespace GiftOfTheGivers.Pages.Dashboards
         }
 
         public int ActiveOperations { get; set; }
+        public int PendingVolunteers { get; set; }
+        public int TotalVolunteers { get; set; }
         public List<ReliefProject> Operations { get; set; } = new();
+        public List<Volunteer> RecentVolunteers { get; set; } = new();
 
         public async Task OnGetAsync()
         {
             ActiveOperations = await _context.ReliefProjects
                 .CountAsync(p => p.Status == "Active" || p.Status == "Planning");
 
+            PendingVolunteers = await _context.Volunteers
+                .CountAsync(v => v.Status == "Pending");
+
+            TotalVolunteers = await _context.Volunteers.CountAsync();
+
             Operations = await _context.ReliefProjects
                 .OrderByDescending(p => p.CreatedDate)
+                .Take(8)
+                .ToListAsync();
+
+            RecentVolunteers = await _context.Volunteers
+                .OrderByDescending(v => v.RegistrationDate)
                 .Take(8)
                 .ToListAsync();
         }
