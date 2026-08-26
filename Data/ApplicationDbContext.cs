@@ -47,7 +47,7 @@ namespace GiftOfTheGivers.Data
         public string Skills { get; set; } = string.Empty;
         public string Availability { get; set; } = string.Empty;
         public DateTime RegistrationDate { get; set; }
-        public string Status { get; set; } = "Pending"; // Pending, Approved, Active
+        public string Status { get; set; } = "Pending"; // Pending, Approved, Active, Rejected
     }
 
     public class ReliefProject

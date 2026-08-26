@@ -44,10 +44,11 @@
                 <ul class="footer-links">
                     @if (SignInManager?.IsSignedIn(User) ?? false)
                     {
-                        <li><a href="/Identity/Account/Manage">Manage Account</a></li>
+                        <li><a href="/Dashboards/Settings">Manage Account</a></li>
                         <li>
-                            <form id="logout-form-footer" method="post" action="/Identity/Account/Logout" style="display: none;"></form>
-                            <a href="javascript:document.getElementById('logout-form-footer').submit();">Logout</a>
+                            <form method="post" asp-page="/Logout" asp-route-returnUrl="/">
+                                <button type="submit" class="footer-logout">Logout</button>
+                            </form>
                         </li>
                     }
                     else

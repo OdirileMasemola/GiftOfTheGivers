@@ -24,129 +24,175 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <span class="stat-label">Active Relief Operations</span>
-                    <span class="stat-value">5</span>
-                    <span class="stat-meta">+2 this month</span>
+                    <span class="stat-value">@Model.ActiveOperations</span>
+                    <span class="stat-meta">Active and planning</span>
                 </div>
                 <div class="stat-card">
                     <span class="stat-label">Volunteer Sign-ups</span>
-                    <span class="stat-value">43</span>
-                    <span class="stat-meta">Pending review</span>
+                    <span class="stat-value">@Model.TotalVolunteers</span>
+                    <span class="stat-meta">@(Model.PendingVolunteers == 0 ? "All reviewed" : Model.PendingVolunteers + " pending review")</span>
                 </div>
                 <div class="stat-card">
                     <span class="stat-label">Donations Received</span>
-                    <span class="stat-value">ZAR 125k</span>
+                    <span class="stat-value">ZAR @Model.MonthDonationsZar.ToString("N0")</span>
                     <span class="stat-meta">This month</span>
                 </div>
                 <div class="stat-card">
                     <span class="stat-label">Communities Supported</span>
-                    <span class="stat-value">18</span>
+                    <span class="stat-value">@Model.CommunitiesSupported</span>
                     <span class="stat-meta">Active regions</span>
                 </div>
             </div>
 
             <!-- Active Relief Operations Section -->
             <div class="dashboard-section">
-                <h2 class="dashboard-section-title">Active Relief Operations</h2>
+                <div class="dashboard-section-header">
+                    <h2 class="dashboard-section-title">Relief Operations</h2>
+                    <a href="/Dashboards/Operations" class="btn btn-secondary btn-compact">Manage operations</a>
+                </div>
                 <div class="dashboard-table">
                     <div class="dashboard-table-wrapper">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Operation</th>
-                                    <th>Location</th>
-                                    <th>Status</th>
-                                    <th>Volunteers</th>
-                                    <th>Last Update</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><strong>Flood Relief - Eastern Region</strong></td>
-                                    <td>Limpopo Province</td>
-                                    <td><span class="status-badge active">Active</span></td>
-                                    <td>12</td>
-                                    <td>2 hours ago</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Medical Supply Distribution</strong></td>
-                                    <td>Gauteng</td>
-                                    <td><span class="status-badge active">Active</span></td>
-                                    <td>8</td>
-                                    <td>4 hours ago</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Drought Support Program</strong></td>
-                                    <td>Northern Cape</td>
-                                    <td><span class="status-badge pending">Planning</span></td>
-                                    <td>5</td>
-                                    <td>1 day ago</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Community Kitchen Initiative</strong></td>
-                                    <td>Free State</td>
-                                    <td><span class="status-badge active">Active</span></td>
-                                    <td>15</td>
-                                    <td>6 hours ago</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Infrastructure Repair</strong></td>
-                                    <td>KwaZulu-Natal</td>
-                                    <td><span class="status-badge completed">Completed</span></td>
-                                    <td>20</td>
-                                    <td>3 days ago</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        @if (Model.Operations.Count == 0)
+                        {
+                            <div class="empty-state">
+                                <p class="empty-state-title">No operations yet</p>
+                                <p class="empty-state-text">Add one from Relief Operations to see it here.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Operation</th>
+                                        <th>Location</th>
+                                        <th>Status</th>
+                                        <th>Started</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var project in Model.Operations)
+                                    {
+                                        var badge = project.Status switch
+                                        {
+                                            "Active" => "active",
+                                            "Planning" => "pending",
+                                            "Completed" => "completed",
+                                            _ => "inactive"
+                                        };
+                                        <tr>
+                                            <td><strong>@project.Name</strong></td>
+                                            <td>@project.Location</td>
+                                            <td><span class="status-badge @badge">@project.Status</span></td>
+                                            <td>@project.StartDate.ToString("d MMM yyyy")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
                     </div>
                 </div>
             </div>
 
             <!-- Volunteer Sign-ups Section -->
             <div class="dashboard-section">
-                <h2 class="dashboard-section-title">Recent Volunteer Registrations</h2>
+                <div class="dashboard-section-header">
+                    <h2 class="dashboard-section-title">Recent Volunteer Registrations</h2>
+                    <a href="/Dashboards/Volunteers" class="btn btn-secondary btn-compact">Review volunteers</a>
+                </div>
                 <div class="dashboard-table">
                     <div class="dashboard-table-wrapper">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Skills</th>
-                                    <th>Availability</th>
-                                    <th>Registered</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><strong>Sarah Johnson</strong></td>
-                                    <td>Medical, First Aid</td>
-                                    <td>Weekends</td>
-                                    <td>Yesterday</td>
-                                    <td><span class="status-badge pending">Pending</span></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Marcus Chen</strong></td>
-                                    <td>Construction, Logistics</td>
-                                    <td>Full-time Available</td>
-                                    <td>2 days ago</td>
-                                    <td><span class="status-badge active">Active</span></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Emma Williams</strong></td>
-                                    <td>Education, Counseling</td>
-                                    <td>Evenings</td>
-                                    <td>3 days ago</td>
-                                    <td><span class="status-badge active">Active</span></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>David Okonkwo</strong></td>
-                                    <td>Translation, Admin</td>
-                                    <td>Weekends</td>
-                                    <td>4 days ago</td>
-                                    <td><span class="status-badge active">Active</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        @if (Model.RecentVolunteers.Count == 0)
+                        {
+                            <div class="empty-state">
+                                <p class="empty-state-title">No volunteer sign-ups yet</p>
+                                <p class="empty-state-text">Applications from the Volunteer page will show up here.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Skills</th>
+                                        <th>Availability</th>
+                                        <th>Registered</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var volunteer in Model.RecentVolunteers)
+                                    {
+                                        var badge = volunteer.Status switch
+                                        {
+                                            "Active" => "active",
+                                            "Approved" => "active",
+                                            "Pending" => "pending",
+                                            "Rejected" => "rejected",
+                                            _ => "inactive"
+                                        };
+                                        <tr>
+                                            <td><strong>@volunteer.Name</strong></td>
+                                            <td>@(string.IsNullOrWhiteSpace(volunteer.Skills) ? "—" : volunteer.Skills)</td>
+                                            <td>@(string.IsNullOrWhiteSpace(volunteer.Availability) ? "—" : volunteer.Availability)</td>
+                                            <td>@volunteer.RegistrationDate.ToString("d MMM yyyy")</td>
+                                            <td><span class="status-badge @badge">@volunteer.Status</span></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Donations -->
+            <div class="dashboard-section">
+                <div class="dashboard-section-header">
+                    <h2 class="dashboard-section-title">Recent Donations</h2>
+                    <a href="/Dashboards/Donations" class="btn btn-secondary btn-compact">View donations</a>
+                </div>
+                <div class="dashboard-table">
+                    <div class="dashboard-table-wrapper">
+                        @if (Model.RecentDonations.Count == 0)
+                        {
+                            <div class="empty-state">
+                                <p class="empty-state-title">No donations yet</p>
+                                <p class="empty-state-text">Gifts from the Donate page will show up here.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Donor</th>
+                                        <th>Amount</th>
+                                        <th>Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var donation in Model.RecentDonations)
+                                    {
+                                        var typeLabel = donation.DonationType == "Recurring"
+                                            ? donation.RecurringFrequency ?? "Recurring"
+                                            : "One-time";
+                                        <tr>
+                                            <td>@donation.DonationDate.ToString("d MMM yyyy")</td>
+                                            <td><strong>@donation.DonorName</strong></td>
+                                            <td>@donation.Currency @donation.Amount.ToString("N0")</td>
+                                            <td>
+                                                <span class="status-badge @(donation.DonationType == "Recurring" ? "pending" : "completed")">
+                                                    @typeLabel
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
                     </div>
                 </div>
             </div>
@@ -224,5 +270,3 @@
         </div>
     </div>
 </div>
-
-<script src="~/js/site.js"></script>

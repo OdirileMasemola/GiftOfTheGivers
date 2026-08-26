@@ -16,6 +16,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
+    options.LoginPath = "/Login";
     options.AccessDeniedPath = "/AccessDenied";
 });
 
@@ -55,6 +56,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();

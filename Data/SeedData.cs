@@ -31,6 +31,10 @@ namespace GiftOfTheGivers.Data
                     EmailConfirmed = true
                 };
                 await userManager.CreateAsync(employeeUser, "Employee@123");
+            }
+
+            if (!await userManager.IsInRoleAsync(employeeUser, "Employee"))
+            {
                 await userManager.AddToRoleAsync(employeeUser, "Employee");
             }
 
@@ -88,6 +92,98 @@ namespace GiftOfTheGivers.Data
                 {
                     context.ReliefProjects.Add(project);
                 }
+                await context.SaveChangesAsync();
+            }
+
+            if (!context.Volunteers.Any())
+            {
+                context.Volunteers.AddRange(
+                    new Volunteer
+                    {
+                        Name = "Sarah Johnson",
+                        Email = "sarah.johnson@test.local",
+                        Skills = "Medical, First Aid",
+                        Availability = "Weekends",
+                        RegistrationDate = DateTime.Now.AddDays(-1),
+                        Status = "Pending"
+                    },
+                    new Volunteer
+                    {
+                        Name = "Marcus Chen",
+                        Email = "marcus.chen@test.local",
+                        Skills = "Construction, Logistics",
+                        Availability = "Full-time Available",
+                        RegistrationDate = DateTime.Now.AddDays(-2),
+                        Status = "Pending"
+                    },
+                    new Volunteer
+                    {
+                        Name = "Emma Williams",
+                        Email = "emma.williams@test.local",
+                        Skills = "Education, Counselling",
+                        Availability = "Evenings",
+                        RegistrationDate = DateTime.Now.AddDays(-3),
+                        Status = "Approved"
+                    },
+                    new Volunteer
+                    {
+                        Name = "David Okonkwo",
+                        Email = "david.okonkwo@test.local",
+                        Skills = "Translation, Administration",
+                        Availability = "Weekends",
+                        RegistrationDate = DateTime.Now.AddDays(-4),
+                        Status = "Active"
+                    }
+                );
+                await context.SaveChangesAsync();
+            }
+
+            if (!context.Donations.Any())
+            {
+                context.Donations.AddRange(
+                    new Donation
+                    {
+                        DonorName = "Thandi Nkosi",
+                        DonorEmail = "donor@test.local",
+                        Amount = 5000,
+                        Currency = "ZAR",
+                        DonationType = "OneTime",
+                        DonationDate = DateTime.Now.AddDays(-1),
+                        CertificateNumber = $"CERT-{DateTime.Now:yyyyMMdd}-A1B2C3D4"
+                    },
+                    new Donation
+                    {
+                        DonorName = "James Peterson",
+                        DonorEmail = "james.peterson@test.local",
+                        Amount = 1500,
+                        Currency = "ZAR",
+                        DonationType = "Recurring",
+                        RecurringFrequency = "Monthly",
+                        DonationDate = DateTime.Now.AddDays(-3),
+                        CertificateNumber = $"CERT-{DateTime.Now.AddDays(-3):yyyyMMdd}-E5F6G7H8"
+                    },
+                    new Donation
+                    {
+                        DonorName = "Amina Patel",
+                        DonorEmail = "amina.patel@test.local",
+                        Amount = 2500,
+                        Currency = "ZAR",
+                        DonationType = "OneTime",
+                        DonationDate = DateTime.Now.AddDays(-8),
+                        CertificateNumber = $"CERT-{DateTime.Now.AddDays(-8):yyyyMMdd}-I9J0K1L2"
+                    },
+                    new Donation
+                    {
+                        DonorName = "Lerato Mokoena",
+                        DonorEmail = "lerato.mokoena@test.local",
+                        Amount = 750,
+                        Currency = "ZAR",
+                        DonationType = "Recurring",
+                        RecurringFrequency = "Quarterly",
+                        DonationDate = DateTime.Now.AddDays(-20),
+                        CertificateNumber = $"CERT-{DateTime.Now.AddDays(-20):yyyyMMdd}-M3N4O5P6"
+                    }
+                );
                 await context.SaveChangesAsync();
             }
         }

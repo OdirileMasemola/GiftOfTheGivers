@@ -1,28 +1,69 @@
+using GiftOfTheGivers.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 
 namespace GiftOfTheGivers.Pages.Dashboards
 {
+    [Authorize(Roles = "Employee")]
     public class EmployeeModel : PageModel
     {
         private readonly ILogger<EmployeeModel> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public EmployeeModel(ILogger<EmployeeModel> logger)
+        public EmployeeModel(ILogger<EmployeeModel> logger, ApplicationDbContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
-        public void OnGet()
+        public int ActiveOperations { get; set; }
+        public int PendingVolunteers { get; set; }
+        public int TotalVolunteers { get; set; }
+        public decimal MonthDonationsZar { get; set; }
+        public int CommunitiesSupported { get; set; }
+        public List<ReliefProject> Operations { get; set; } = new();
+        public List<Volunteer> RecentVolunteers { get; set; } = new();
+        public List<Donation> RecentDonations { get; set; } = new();
+
+        public async Task OnGetAsync()
         {
+            var monthStart = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+
+            ActiveOperations = await _context.ReliefProjects
+                .CountAsync(p => p.Status == "Active" || p.Status == "Planning");
+
+            PendingVolunteers = await _context.Volunteers
+                .CountAsync(v => v.Status == "Pending");
+
+            TotalVolunteers = await _context.Volunteers.CountAsync();
+
+            MonthDonationsZar = await _context.Donations
+                .Where(d => d.Currency == "ZAR" && d.DonationDate >= monthStart)
+                .SumAsync(d => (decimal?)d.Amount) ?? 0;
+
+            CommunitiesSupported = await _context.ReliefProjects.CountAsync();
+
+            Operations = await _context.ReliefProjects
+                .OrderByDescending(p => p.CreatedDate)
+                .Take(8)
+                .ToListAsync();
+
+            RecentVolunteers = await _context.Volunteers
+                .OrderByDescending(v => v.RegistrationDate)
+                .Take(8)
+                .ToListAsync();
+
+            RecentDonations = await _context.Donations
+                .OrderByDescending(d => d.DonationDate)
+                .Take(8)
+                .ToListAsync();
         }
 
         public IActionResult OnPost(string operation, string title, string description)
         {
-            // For Part 1 prototype, simply log and redirect
-            _logger.LogInformation($"Relief update posted for operation: {operation}");
-
-            // In production, this would save to database
-            // For now, just redirect back to dashboard
+            _logger.LogInformation("Relief update posted for operation: {Operation}", operation);
             return RedirectToPage();
         }
     }
