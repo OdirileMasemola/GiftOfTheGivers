@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace GiftOfTheGivers.Pages.Dashboards
 {
+    [Authorize(Roles = "Employee")]
     public class EmployeeModel : PageModel
     {
         private readonly ILogger<EmployeeModel> _logger;
@@ -18,11 +20,7 @@ namespace GiftOfTheGivers.Pages.Dashboards
 
         public IActionResult OnPost(string operation, string title, string description)
         {
-            // For Part 1 prototype, simply log and redirect
-            _logger.LogInformation($"Relief update posted for operation: {operation}");
-
-            // In production, this would save to database
-            // For now, just redirect back to dashboard
+            _logger.LogInformation("Relief update posted for operation: {Operation}", operation);
             return RedirectToPage();
         }
     }

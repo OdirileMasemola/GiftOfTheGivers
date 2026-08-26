@@ -5,98 +5,85 @@
 @{
     var currentUser = await UserManager.GetUserAsync(User);
     var roles = currentUser != null ? await UserManager.GetRolesAsync(currentUser) : new List<string>();
+    var path = Context.Request.Path.Value ?? string.Empty;
+
+    string NavClass(string href) =>
+        path.Equals(href, StringComparison.OrdinalIgnoreCase)
+            ? "sidebar-nav-link active"
+            : "sidebar-nav-link";
 }
 
 <aside class="dashboard-sidebar">
-    <!-- Brand -->
     <a href="/" class="sidebar-brand">
         <div class="sidebar-brand-icon">G</div>
         <div class="sidebar-brand-text">Gift of the Givers</div>
     </a>
 
-    <!-- Navigation -->
-    <nav class="sidebar-nav">
-        <!-- Dashboard Link (All Roles) -->
-        <li class="sidebar-nav-item">
-            <a href="#" class="sidebar-nav-link active">
-                <span class="sidebar-nav-icon">─</span>
-                <span>Dashboard</span>
-            </a>
-        </li>
+    <nav>
+        <ul class="sidebar-nav">
+            @if (roles.Contains("Employee"))
+            {
+                <li class="sidebar-nav-item">
+                    <a href="/Dashboards/Employee" class="@NavClass("/Dashboards/Employee")">
+                        <span class="sidebar-nav-icon"><i class="bi bi-speedometer2" aria-hidden="true"></i></span>
+                        <span>Overview</span>
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="/Dashboards/Operations" class="@NavClass("/Dashboards/Operations")">
+                        <span class="sidebar-nav-icon"><i class="bi bi-flag" aria-hidden="true"></i></span>
+                        <span>Relief Operations</span>
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="/Dashboards/Volunteers" class="@NavClass("/Dashboards/Volunteers")">
+                        <span class="sidebar-nav-icon"><i class="bi bi-people" aria-hidden="true"></i></span>
+                        <span>Volunteers</span>
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="/Dashboards/Donations" class="@NavClass("/Dashboards/Donations")">
+                        <span class="sidebar-nav-icon"><i class="bi bi-cash-stack" aria-hidden="true"></i></span>
+                        <span>Donations</span>
+                    </a>
+                </li>
+            }
 
-        <!-- Employee Navigation -->
-        @if (roles.Contains("Employee"))
-        {
-            <li class="sidebar-nav-item">
-                <a href="#" class="sidebar-nav-link">
-                    <span class="sidebar-nav-icon">⬤</span>
-                    <span>Relief Operations</span>
-                </a>
-            </li>
-            <li class="sidebar-nav-item">
-                <a href="#" class="sidebar-nav-link">
-                    <span class="sidebar-nav-icon">□</span>
-                    <span>Volunteers</span>
-                </a>
-            </li>
-            <li class="sidebar-nav-item">
-                <a href="#" class="sidebar-nav-link">
-                    <span class="sidebar-nav-icon">◆</span>
-                    <span>Donations</span>
-                </a>
-            </li>
-        }
+            @if (roles.Contains("Donor"))
+            {
+                <li class="sidebar-nav-item">
+                    <a href="/Dashboards/Donor" class="@NavClass("/Dashboards/Donor")">
+                        <span class="sidebar-nav-icon"><i class="bi bi-heart" aria-hidden="true"></i></span>
+                        <span>My Donations</span>
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="/Donate" class="@NavClass("/Donate")">
+                        <span class="sidebar-nav-icon"><i class="bi bi-gift" aria-hidden="true"></i></span>
+                        <span>Make a Donation</span>
+                    </a>
+                </li>
+            }
 
-        <!-- Donor Navigation -->
-        @if (roles.Contains("Donor"))
-        {
-            <li class="sidebar-nav-item">
-                <a href="#" class="sidebar-nav-link">
-                    <span class="sidebar-nav-icon">◈</span>
-                    <span>My Donations</span>
-                </a>
-            </li>
-            <li class="sidebar-nav-item">
-                <a href="/Donate" class="sidebar-nav-link">
-                    <span class="sidebar-nav-icon">⊕</span>
-                    <span>Make a Donation</span>
-                </a>
-            </li>
-        }
+            @if (roles.Contains("Volunteer"))
+            {
+                <li class="sidebar-nav-item">
+                    <a href="/Dashboards/Volunteer" class="@NavClass("/Dashboards/Volunteer")">
+                        <span class="sidebar-nav-icon"><i class="bi bi-person" aria-hidden="true"></i></span>
+                        <span>My Profile</span>
+                    </a>
+                </li>
+            }
 
-        <!-- Volunteer Navigation -->
-        @if (roles.Contains("Volunteer"))
-        {
             <li class="sidebar-nav-item">
-                <a href="#" class="sidebar-nav-link">
-                    <span class="sidebar-nav-icon">○</span>
-                    <span>My Profile</span>
+                <a href="/Identity/Account/Manage" class="sidebar-nav-link">
+                    <span class="sidebar-nav-icon"><i class="bi bi-gear" aria-hidden="true"></i></span>
+                    <span>Settings</span>
                 </a>
             </li>
-            <li class="sidebar-nav-item">
-                <a href="#" class="sidebar-nav-link">
-                    <span class="sidebar-nav-icon">◇</span>
-                    <span>Availability</span>
-                </a>
-            </li>
-            <li class="sidebar-nav-item">
-                <a href="#" class="sidebar-nav-link">
-                    <span class="sidebar-nav-icon">✓</span>
-                    <span>My Assignments</span>
-                </a>
-            </li>
-        }
-
-        <!-- Common Settings -->
-        <li class="sidebar-nav-item">
-            <a href="#" class="sidebar-nav-link">
-                <span class="sidebar-nav-icon">⚙</span>
-                <span>Settings</span>
-            </a>
-        </li>
+        </ul>
     </nav>
 
-    <!-- User Profile Section -->
     <div class="sidebar-profile">
         @if (currentUser != null)
         {
@@ -104,11 +91,9 @@
             <div class="sidebar-profile-role">@(roles.Count > 0 ? string.Join(", ", roles) : "User")</div>
         }
 
-        <!-- Sign Out Form -->
-        <form method="post" action="/Identity/Account/Logout">
-            <input type="hidden" name="returnUrl" value="/Login" />
+        <form method="post" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/">
             <button type="submit" class="sidebar-sign-out">
-                <span style="font-size: 0.95rem;">⤴</span>
+                <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
                 <span>Sign Out</span>
             </button>
         </form>

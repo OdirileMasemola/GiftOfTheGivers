@@ -1,0 +1,29 @@
+@page "/Dashboards/Operations"
+@model GiftOfTheGivers.Pages.Dashboards.OperationsModel
+@{
+    ViewData["Title"] = "Relief Operations - Gift of the Givers";
+}
+
+<link rel="stylesheet" href="~/css/dashboard.css" />
+
+<div class="dashboard-wrapper">
+    <partial name="Shared/_DashboardSidebar" />
+
+    <div class="dashboard-main">
+        <div class="dashboard-header">
+            <h1 class="dashboard-header-title">Relief Operations</h1>
+            <p class="dashboard-header-subtitle">Track and coordinate active disaster relief work</p>
+        </div>
+
+        <div class="dashboard-content">
+            <div class="dashboard-placeholder">
+                <div class="dashboard-placeholder-icon">
+                    <i class="bi bi-flag" aria-hidden="true"></i>
+                </div>
+                <h2>Operations workspace</h2>
+                <p>This page is ready for operation management. Use Overview for the current snapshot.</p>
+                <a href="/Dashboards/Employee" class="btn btn-primary">Back to overview</a>
+            </div>
+        </div>
+    </div>
+</div>

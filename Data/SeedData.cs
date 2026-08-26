@@ -31,6 +31,10 @@ namespace GiftOfTheGivers.Data
                     EmailConfirmed = true
                 };
                 await userManager.CreateAsync(employeeUser, "Employee@123");
+            }
+
+            if (!await userManager.IsInRoleAsync(employeeUser, "Employee"))
+            {
                 await userManager.AddToRoleAsync(employeeUser, "Employee");
             }
 
