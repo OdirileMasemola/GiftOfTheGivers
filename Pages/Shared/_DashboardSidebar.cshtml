@@ -1,11 +1,8 @@
-@using Microsoft.AspNetCore.Identity
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
-
 @{
-    var currentUser = await UserManager.GetUserAsync(User);
-    var roles = currentUser != null ? await UserManager.GetRolesAsync(currentUser) : new List<string>();
+    // Get user role from claims (custom authentication)
+    var userRole = User?.FindFirst("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")?.Value ?? "Donor";
     var path = Context.Request.Path.Value ?? string.Empty;
+    var userName = User?.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value ?? "Guest User";
 
     string NavClass(string href) =>
         path.Equals(href, StringComparison.OrdinalIgnoreCase)
@@ -21,7 +18,7 @@
 
     <nav>
         <ul class="sidebar-nav">
-            @if (roles.Contains("Employee"))
+            @if (userRole == "Employee")
             {
                 <li class="sidebar-nav-item">
                     <a href="/Dashboards/Employee" class="@NavClass("/Dashboards/Employee")">
@@ -49,7 +46,7 @@
                 </li>
             }
 
-            @if (roles.Contains("Donor"))
+            @if (userRole == "Donor")
             {
                 <li class="sidebar-nav-item">
                     <a href="/Dashboards/Donor" class="@NavClass("/Dashboards/Donor")">
@@ -65,7 +62,7 @@
                 </li>
             }
 
-            @if (roles.Contains("Volunteer"))
+            @if (userRole == "Volunteer" || userRole == "Donor")
             {
                 <li class="sidebar-nav-item">
                     <a href="/Dashboards/Volunteer" class="@NavClass("/Dashboards/Volunteer")">
@@ -85,11 +82,8 @@
     </nav>
 
     <div class="sidebar-profile">
-        @if (currentUser != null)
-        {
-            <div class="sidebar-profile-name">@currentUser.UserName</div>
-            <div class="sidebar-profile-role">@(roles.Count > 0 ? string.Join(", ", roles) : "User")</div>
-        }
+        <div class="sidebar-profile-name">@userName</div>
+        <div class="sidebar-profile-role">@userRole</div>
 
         <form method="post" asp-page="/Logout" asp-route-returnUrl="/">
             <button type="submit" class="sidebar-sign-out">

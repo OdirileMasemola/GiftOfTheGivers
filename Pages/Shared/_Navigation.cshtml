@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
+@*
+    Navigation - Removed Identity service injections since we now use custom authentication
+*@
 
 <nav class="navbar">
 
@@ -61,7 +62,7 @@
                 </li>
 
 
-                @if (SignInManager.IsSignedIn(User))
+                @if (User.Identity?.IsAuthenticated ?? false)
                 {
                     @if (User.IsInRole("Employee"))
                     {
@@ -80,7 +81,7 @@
             <!-- AUTHENTICATION -->
             <div class="nav-auth">
 
-                @if (SignInManager.IsSignedIn(User))
+                @if (User.Identity?.IsAuthenticated ?? false)
                 {
                     <div class="nav-user">
 

@@ -15,13 +15,35 @@
         <div>
             <div class="form-container" style="background-color: var(--color-white); border: 1px solid var(--color-grey-200); border-radius: var(--radius-md); padding: var(--spacing-2xl); box-shadow: var(--shadow-xs);">
                 <h2 style="margin: 0 0 var(--spacing-lg) 0; font-size: 1.5rem; color: var(--color-dark);">Sign Up</h2>
-                <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                @if (TempData["RegistrationError"] is string error)
+                {
+                    <div class="alert alert-danger" role="alert">@error</div>
+                }
+                <form method="post">
                     <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                    <div class="form-group">
+                        <label asp-for="Input.FirstName" class="form-label"></label>
+                        <input asp-for="Input.FirstName" class="form-control" placeholder="John" />
+                        <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Input.LastName" class="form-label"></label>
+                        <input asp-for="Input.LastName" class="form-control" placeholder="Doe" />
+                        <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                    </div>
 
                     <div class="form-group">
                         <label asp-for="Input.Email" class="form-label"></label>
                         <input asp-for="Input.Email" class="form-control" placeholder="your@email.com" />
                         <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Input.PhoneNumber" class="form-label"></label>
+                        <input asp-for="Input.PhoneNumber" class="form-control" placeholder="+27555000000" />
+                        <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
                     </div>
 
                     <div class="form-group">

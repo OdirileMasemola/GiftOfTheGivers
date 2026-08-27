@@ -1,12 +1,10 @@
 using GiftOfTheGivers.Data;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace GiftOfTheGivers.Pages.Dashboards
 {
-    [Authorize(Roles = "Employee")]
     public class EmployeeModel : PageModel
     {
         private readonly ILogger<EmployeeModel> _logger;
@@ -23,7 +21,7 @@ namespace GiftOfTheGivers.Pages.Dashboards
         public int TotalVolunteers { get; set; }
         public decimal MonthDonationsZar { get; set; }
         public int CommunitiesSupported { get; set; }
-        public List<ReliefProject> Operations { get; set; } = new();
+        public List<ReliefOperation> Operations { get; set; } = new();
         public List<Volunteer> RecentVolunteers { get; set; } = new();
         public List<Donation> RecentDonations { get; set; } = new();
 
@@ -31,8 +29,8 @@ namespace GiftOfTheGivers.Pages.Dashboards
         {
             var monthStart = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
 
-            ActiveOperations = await _context.ReliefProjects
-                .CountAsync(p => p.Status == "Active" || p.Status == "Planning");
+            ActiveOperations = await _context.ReliefOperations
+                .CountAsync(o => o.Status == "Active" || o.Status == "Planning");
 
             PendingVolunteers = await _context.Volunteers
                 .CountAsync(v => v.Status == "Pending");
@@ -43,10 +41,11 @@ namespace GiftOfTheGivers.Pages.Dashboards
                 .Where(d => d.Currency == "ZAR" && d.DonationDate >= monthStart)
                 .SumAsync(d => (decimal?)d.Amount) ?? 0;
 
-            CommunitiesSupported = await _context.ReliefProjects.CountAsync();
+            CommunitiesSupported = await _context.ReliefOperations.CountAsync();
 
-            Operations = await _context.ReliefProjects
-                .OrderByDescending(p => p.CreatedDate)
+            Operations = await _context.ReliefOperations
+                .Include(o => o.ReliefRequest)
+                .OrderByDescending(o => o.StartDate)
                 .Take(8)
                 .ToListAsync();
 

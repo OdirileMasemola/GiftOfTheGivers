@@ -10,11 +10,11 @@ namespace GiftOfTheGivers.Pages
         private readonly ILogger<IndexModel> _logger;
         private readonly ApplicationDbContext _context;
 
-        public int ActiveProjects { get; set; }
+        public int ActiveOperations { get; set; }
         public int RegisteredVolunteers { get; set; }
         public decimal TotalDonations { get; set; }
-        public int CommunitiesSupported { get; set; }
-        public List<ReliefProject> RecentProjects { get; set; } = new();
+        public int OperationsSupported { get; set; }
+        public List<ReliefOperation> RecentOperations { get; set; } = new();
 
         public IndexModel(ILogger<IndexModel> logger, ApplicationDbContext context)
         {
@@ -24,23 +24,39 @@ namespace GiftOfTheGivers.Pages
 
         public async Task OnGetAsync()
         {
-            // Get statistics
-            ActiveProjects = await _context.ReliefProjects
-                .CountAsync(p => p.Status == "Active" || p.Status == "Planning");
+            try
+            {
+                // Get count of active relief operations
+                ActiveOperations = await _context.ReliefOperations
+                    .CountAsync(o => o.Status == "Active" || o.Status == "Planning");
 
-            RegisteredVolunteers = await _context.Volunteers.CountAsync();
+                // Get count of registered volunteers
+                RegisteredVolunteers = await _context.Volunteers.CountAsync();
 
-            TotalDonations = await _context.Donations
-                .Where(d => d.Currency == "ZAR")
-                .SumAsync(d => d.Amount);
+                // Get total donations in ZAR
+                TotalDonations = await _context.Donations
+                    .Where(d => d.Currency == "ZAR" && d.PaymentStatus == "Completed")
+                    .SumAsync(d => d.Amount);
 
-            CommunitiesSupported = await _context.ReliefProjects.CountAsync();
+                // Get count of relief operations (communities/operations supported)
+                OperationsSupported = await _context.ReliefOperations.CountAsync();
 
-            // Get recent projects
-            RecentProjects = await _context.ReliefProjects
-                .OrderByDescending(p => p.CreatedDate)
-                .Take(6)
-                .ToListAsync();
+                // Get recent relief operations
+                RecentOperations = await _context.ReliefOperations
+                    .Include(o => o.ReliefRequest)
+                    .OrderByDescending(o => o.StartDate)
+                    .Take(6)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading homepage data");
+                // Set defaults if there's an error
+                ActiveOperations = 0;
+                RegisteredVolunteers = 0;
+                TotalDonations = 0;
+                OperationsSupported = 0;
+            }
         }
     }
 }

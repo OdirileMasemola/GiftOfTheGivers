@@ -1,190 +1,142 @@
-using Microsoft.AspNetCore.Identity;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace GiftOfTheGivers.Data
 {
     public class SeedData
     {
+        /// <summary>
+        /// Initialize seed data for the custom Users table (not ASP.NET Identity).
+        /// Creates demo users if they don't already exist.
+        /// Does NOT create ReliefProject data as ReliefProjects table does not exist in Azure.
+        /// </summary>
         public static async Task Initialize(IServiceProvider serviceProvider)
         {
-            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
-
-            // Ensure roles exist
-            string[] roleNames = { "Employee", "Donor" };
-            foreach (var roleName in roleNames)
-            {
-                if (!await roleManager.RoleExistsAsync(roleName))
-                {
-                    await roleManager.CreateAsync(new IdentityRole(roleName));
-                }
-            }
-
-            // Create test Employee user
-            var employeeEmail = "employee@test.local";
-            var employeeUser = await userManager.FindByEmailAsync(employeeEmail);
-            if (employeeUser == null)
-            {
-                employeeUser = new IdentityUser
-                {
-                    UserName = employeeEmail,
-                    Email = employeeEmail,
-                    EmailConfirmed = true
-                };
-                await userManager.CreateAsync(employeeUser, "Employee@123");
-            }
-
-            if (!await userManager.IsInRoleAsync(employeeUser, "Employee"))
-            {
-                await userManager.AddToRoleAsync(employeeUser, "Employee");
-            }
-
-            // Create test Donor user
-            var donorEmail = "donor@test.local";
-            var donorUser = await userManager.FindByEmailAsync(donorEmail);
-            if (donorUser == null)
-            {
-                donorUser = new IdentityUser
-                {
-                    UserName = donorEmail,
-                    Email = donorEmail,
-                    EmailConfirmed = true
-                };
-                await userManager.CreateAsync(donorUser, "Donor@123");
-                await userManager.AddToRoleAsync(donorUser, "Donor");
-            }
-
-            // Create sample relief projects
             var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
-            if (!context.ReliefProjects.Any())
+
+            // Ensure database tables exist
+            try
             {
-                var projects = new[]
+                await context.Database.EnsureCreatedAsync();
+            }
+            catch (Exception ex)
+            {
+                var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "Error ensuring database is created.");
+                return;
+            }
+
+            // Seed demo users into the custom Users table only if they don't exist
+            if (!context.Users.Any(u => u.Email == "employee@test.local"))
+            {
+                var employeeUser = new User
                 {
-                    new ReliefProject
-                    {
-                        Name = "Flood Relief - KwaZulu-Natal",
-                        Location = "KwaZulu-Natal",
-                        Description = "Emergency relief efforts for flood-affected communities.",
-                        Status = "Active",
-                        StartDate = DateTime.Now.AddMonths(-2),
-                        CreatedDate = DateTime.Now.AddMonths(-2)
-                    },
-                    new ReliefProject
-                    {
-                        Name = "Drought Assistance Program",
-                        Location = "Limpopo",
-                        Description = "Water supply and food distribution in drought-stricken areas.",
-                        Status = "Active",
-                        StartDate = DateTime.Now.AddMonths(-1),
-                        CreatedDate = DateTime.Now.AddMonths(-1)
-                    },
-                    new ReliefProject
-                    {
-                        Name = "Emergency Medical Support",
-                        Location = "Eastern Cape",
-                        Description = "Medical supplies and healthcare support for affected regions.",
-                        Status = "Planning",
-                        StartDate = DateTime.Now.AddDays(7),
-                        CreatedDate = DateTime.Now
-                    }
+                    FirstName = "Employee",
+                    LastName = "Demo",
+                    Email = "employee@test.local",
+                    PasswordHash = HashPassword("Employee@123"),
+                    PhoneNumber = "+27555000001",
+                    Role = "Employee",
+                    CreatedAt = DateTime.Now
                 };
+                context.Users.Add(employeeUser);
+            }
 
-                foreach (var project in projects)
+            if (!context.Users.Any(u => u.Email == "donor@test.local"))
+            {
+                var donorUser = new User
                 {
-                    context.ReliefProjects.Add(project);
+                    FirstName = "Donor",
+                    LastName = "Demo",
+                    Email = "donor@test.local",
+                    PasswordHash = HashPassword("Donor@123"),
+                    PhoneNumber = "+27555000002",
+                    Role = "Donor",
+                    CreatedAt = DateTime.Now
+                };
+                context.Users.Add(donorUser);
+            }
+
+            if (!context.Users.Any(u => u.Email == "volunteer@test.local"))
+            {
+                var volunteerUser = new User
+                {
+                    FirstName = "Volunteer",
+                    LastName = "Demo",
+                    Email = "volunteer@test.local",
+                    PasswordHash = HashPassword("Volunteer@123"),
+                    PhoneNumber = "+27555000003",
+                    Role = "Donor", // Volunteers can also donate
+                    CreatedAt = DateTime.Now
+                };
+                context.Users.Add(volunteerUser);
+            }
+
+            await context.SaveChangesAsync();
+
+            // Note: ReliefProject seeding removed because ReliefProjects table does not exist in Azure
+            // Instead, the application should work with ReliefRequests and ReliefOperations.
+            // If demo relief data is needed, it should be created in ReliefRequests/ReliefOperations tables.
+        }
+
+        /// <summary>
+        /// Hash a password using PBKDF2 with SHA256.
+        /// This is a simple implementation; for production, consider using BCrypt or Argon2.
+        /// </summary>
+        public static string HashPassword(string password)
+        {
+            const int iterations = 10000;
+            const int keySize = 32; // 256 bits
+            const int saltSize = 16; // 128 bits
+
+            using (var algorithm = new Rfc2898DeriveBytes(password, saltSize, iterations, HashAlgorithmName.SHA256))
+            {
+                var key = algorithm.GetBytes(keySize);
+                var salt = algorithm.Salt;
+
+                // Combine salt + hash into a single string
+                var hashBytes = new byte[saltSize + keySize];
+                Array.Copy(salt, 0, hashBytes, 0, saltSize);
+                Array.Copy(key, 0, hashBytes, saltSize, keySize);
+
+                return Convert.ToBase64String(hashBytes);
+            }
+        }
+
+        /// <summary>
+        /// Verify a password against a hash created by HashPassword.
+        /// </summary>
+        public static bool VerifyPassword(string password, string hash)
+        {
+            try
+            {
+                var hashBytes = Convert.FromBase64String(hash);
+
+                // Extract salt from the combined hash
+                const int saltSize = 16;
+                const int keySize = 32;
+                const int iterations = 10000;
+
+                var salt = new byte[saltSize];
+                Array.Copy(hashBytes, 0, salt, 0, saltSize);
+
+                using (var algorithm = new Rfc2898DeriveBytes(password, salt, iterations, HashAlgorithmName.SHA256))
+                {
+                    var key = algorithm.GetBytes(keySize);
+
+                    // Compare computed hash with stored hash
+                    for (int i = 0; i < keySize; i++)
+                    {
+                        if (hashBytes[i + saltSize] != key[i])
+                            return false;
+                    }
+
+                    return true;
                 }
-                await context.SaveChangesAsync();
             }
-
-            if (!context.Volunteers.Any())
+            catch
             {
-                context.Volunteers.AddRange(
-                    new Volunteer
-                    {
-                        Name = "Sarah Johnson",
-                        Email = "sarah.johnson@test.local",
-                        Skills = "Medical, First Aid",
-                        Availability = "Weekends",
-                        RegistrationDate = DateTime.Now.AddDays(-1),
-                        Status = "Pending"
-                    },
-                    new Volunteer
-                    {
-                        Name = "Marcus Chen",
-                        Email = "marcus.chen@test.local",
-                        Skills = "Construction, Logistics",
-                        Availability = "Full-time Available",
-                        RegistrationDate = DateTime.Now.AddDays(-2),
-                        Status = "Pending"
-                    },
-                    new Volunteer
-                    {
-                        Name = "Emma Williams",
-                        Email = "emma.williams@test.local",
-                        Skills = "Education, Counselling",
-                        Availability = "Evenings",
-                        RegistrationDate = DateTime.Now.AddDays(-3),
-                        Status = "Approved"
-                    },
-                    new Volunteer
-                    {
-                        Name = "David Okonkwo",
-                        Email = "david.okonkwo@test.local",
-                        Skills = "Translation, Administration",
-                        Availability = "Weekends",
-                        RegistrationDate = DateTime.Now.AddDays(-4),
-                        Status = "Active"
-                    }
-                );
-                await context.SaveChangesAsync();
-            }
-
-            if (!context.Donations.Any())
-            {
-                context.Donations.AddRange(
-                    new Donation
-                    {
-                        DonorName = "Thandi Nkosi",
-                        DonorEmail = "donor@test.local",
-                        Amount = 5000,
-                        Currency = "ZAR",
-                        DonationType = "OneTime",
-                        DonationDate = DateTime.Now.AddDays(-1),
-                        CertificateNumber = $"CERT-{DateTime.Now:yyyyMMdd}-A1B2C3D4"
-                    },
-                    new Donation
-                    {
-                        DonorName = "James Peterson",
-                        DonorEmail = "james.peterson@test.local",
-                        Amount = 1500,
-                        Currency = "ZAR",
-                        DonationType = "Recurring",
-                        RecurringFrequency = "Monthly",
-                        DonationDate = DateTime.Now.AddDays(-3),
-                        CertificateNumber = $"CERT-{DateTime.Now.AddDays(-3):yyyyMMdd}-E5F6G7H8"
-                    },
-                    new Donation
-                    {
-                        DonorName = "Amina Patel",
-                        DonorEmail = "amina.patel@test.local",
-                        Amount = 2500,
-                        Currency = "ZAR",
-                        DonationType = "OneTime",
-                        DonationDate = DateTime.Now.AddDays(-8),
-                        CertificateNumber = $"CERT-{DateTime.Now.AddDays(-8):yyyyMMdd}-I9J0K1L2"
-                    },
-                    new Donation
-                    {
-                        DonorName = "Lerato Mokoena",
-                        DonorEmail = "lerato.mokoena@test.local",
-                        Amount = 750,
-                        Currency = "ZAR",
-                        DonationType = "Recurring",
-                        RecurringFrequency = "Quarterly",
-                        DonationDate = DateTime.Now.AddDays(-20),
-                        CertificateNumber = $"CERT-{DateTime.Now.AddDays(-20):yyyyMMdd}-M3N4O5P6"
-                    }
-                );
-                await context.SaveChangesAsync();
+                return false;
             }
         }
     }

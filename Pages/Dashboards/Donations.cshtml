@@ -2,12 +2,6 @@
 @model GiftOfTheGivers.Pages.Dashboards.DonationsModel
 @{
     ViewData["Title"] = "Donations - Gift of the Givers";
-
-    string FormatAmount(Donation donation) => $"{donation.Currency} {donation.Amount:N0}";
-    string FormatType(Donation donation) =>
-        donation.DonationType == "Recurring"
-            ? donation.RecurringFrequency ?? "Recurring"
-            : "One-time";
 }
 
 <link rel="stylesheet" href="~/css/dashboard.css" />
@@ -39,9 +33,9 @@
                     <span class="stat-meta">Recorded donations</span>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-label">Recurring</span>
+                    <span class="stat-label">Active Schedules</span>
                     <span class="stat-value">@Model.RecurringCount</span>
-                    <span class="stat-meta">Monthly or quarterly</span>
+                    <span class="stat-meta">Recurring donations</span>
                 </div>
             </div>
 
@@ -64,28 +58,37 @@
                                         <th>Date</th>
                                         <th>Donor</th>
                                         <th>Amount</th>
-                                        <th>Type</th>
+                                        <th>Status</th>
                                         <th>Reference</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach (var donation in Model.Donations)
                                     {
+                                        var donorName = donation.User != null ? $"{donation.User.FirstName} {donation.User.LastName}" : "Anonymous";
+                                        var donorEmail = donation.User?.Email ?? "";
                                         <tr>
                                             <td>@donation.DonationDate.ToString("d MMM yyyy")</td>
                                             <td>
-                                                <strong>@donation.DonorName</strong>
+                                                <strong>@donorName</strong>
                                                 <div class="table-muted">
-                                                    <a href="mailto:@donation.DonorEmail">@donation.DonorEmail</a>
+                                                    @if (!string.IsNullOrEmpty(donorEmail))
+                                                    {
+                                                        <a href="mailto:@donorEmail">@donorEmail</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>Anonymous</span>
+                                                    }
                                                 </div>
                                             </td>
-                                            <td>@FormatAmount(donation)</td>
+                                            <td>@donation.Currency @donation.Amount.ToString("N0")</td>
                                             <td>
-                                                <span class="status-badge @(donation.DonationType == "Recurring" ? "pending" : "completed")">
-                                                    @FormatType(donation)
+                                                <span class="status-badge @(donation.PaymentStatus == "Completed" ? "completed" : "pending")">
+                                                    @donation.PaymentStatus
                                                 </span>
                                             </td>
-                                            <td><span class="mono-ref">@donation.CertificateNumber</span></td>
+                                            <td><span class="mono-ref">@(donation.PaymentReference ?? "N/A")</span></td>
                                         </tr>
                                     }
                                 </tbody>

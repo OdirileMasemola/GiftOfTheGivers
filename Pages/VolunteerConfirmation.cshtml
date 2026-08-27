@@ -15,11 +15,11 @@
         <div class="volunteer-details">
             <div class="detail-item">
                 <span class="detail-label">Name:</span>
-                <span class="detail-value">@Model.Volunteer?.Name</span>
+                <span class="detail-value">@Model.Volunteer?.User?.FirstName @Model.Volunteer?.User?.LastName</span>
             </div>
             <div class="detail-item">
                 <span class="detail-label">Email:</span>
-                <span class="detail-value">@Model.Volunteer?.Email</span>
+                <span class="detail-value">@Model.Volunteer?.User?.Email</span>
             </div>
             <div class="detail-item">
                 <span class="detail-label">Availability:</span>

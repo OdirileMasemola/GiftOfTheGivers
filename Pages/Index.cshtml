@@ -159,7 +159,7 @@
 
         <div class="impact-metrics">
             <div class="impact-metric">
-                <span class="impact-number">@Model.ActiveProjects</span>
+                <span class="impact-number">@Model.ActiveOperations</span>
                 <span class="impact-label">Active operations</span>
             </div>
             <div class="impact-metric">
@@ -171,7 +171,7 @@
                 <span class="impact-label">Funds received</span>
             </div>
             <div class="impact-metric">
-                <span class="impact-number">@Model.CommunitiesSupported</span>
+                <span class="impact-number">@Model.OperationsSupported</span>
                 <span class="impact-label">Communities served</span>
             </div>
         </div>
@@ -194,10 +194,10 @@
             </p>
         </div>
 
-        @if (Model.RecentProjects != null && Model.RecentProjects.Any())
+        @if (Model.RecentOperations != null && Model.RecentOperations.Any())
         {
-            var featuredProject = Model.RecentProjects.First();
-            var otherProjects = Model.RecentProjects.Skip(1).ToList();
+            var featuredProject = Model.RecentOperations.First();
+            var otherProjects = Model.RecentOperations.Skip(1).ToList();
 
             <article class="operation-featured">
                 <div class="operation-featured-media">
@@ -211,8 +211,8 @@
                         <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
                         @featuredProject.Location
                     </span>
-                    <h3>@featuredProject.Name</h3>
-                    <p>@featuredProject.Description</p>
+                    <h3>@(featuredProject.ReliefRequest?.RequestType ?? "Relief Operation")</h3>
+                    <p>@(featuredProject.ReliefRequest?.Description ?? featuredProject.Notes ?? "Learn more about this operation")</p>
                     <a href="/Donate" class="btn btn-primary">Support this operation</a>
                 </div>
             </article>
@@ -226,7 +226,7 @@
                         <li class="operation-row">
                             <span class="operation-index">@((i + 2).ToString("00"))</span>
                             <div class="operation-row-copy">
-                                <h3>@project.Name</h3>
+                                <h3>@(featuredProject.ReliefRequest?.RequestType ?? "Relief Operation")</h3>
                                 <p>
                                     <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
                                     @project.Location

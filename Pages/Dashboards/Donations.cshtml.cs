@@ -1,11 +1,9 @@
 using GiftOfTheGivers.Data;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace GiftOfTheGivers.Pages.Dashboards
 {
-    [Authorize(Roles = "Employee")]
     public class DonationsModel : PageModel
     {
         private readonly ApplicationDbContext _context;
@@ -25,18 +23,21 @@ namespace GiftOfTheGivers.Pages.Dashboards
             var monthStart = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
 
             Donations = await _context.Donations
+                .Include(d => d.User)
                 .OrderByDescending(d => d.DonationDate)
                 .ToListAsync();
 
             ThisMonthZar = Donations
-                .Where(d => d.Currency == "ZAR" && d.DonationDate >= monthStart)
+                .Where(d => d.Currency == "ZAR" && d.DonationDate >= monthStart && d.PaymentStatus == "Completed")
                 .Sum(d => d.Amount);
 
             AllTimeZar = Donations
-                .Where(d => d.Currency == "ZAR")
+                .Where(d => d.Currency == "ZAR" && d.PaymentStatus == "Completed")
                 .Sum(d => d.Amount);
 
-            RecurringCount = Donations.Count(d => d.DonationType == "Recurring");
+            // Recurring donations based on DonationSchedules
+            RecurringCount = await _context.DonationSchedules
+                .CountAsync(ds => ds.Status == "Active");
         }
     }
 }

@@ -1,12 +1,10 @@
 using GiftOfTheGivers.Data;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace GiftOfTheGivers.Pages.Dashboards
 {
-    [Authorize(Roles = "Employee")]
     public class VolunteersModel : PageModel
     {
         private static readonly string[] AllowedStatuses = { "Pending", "Approved", "Active", "Rejected" };
@@ -36,7 +34,9 @@ namespace GiftOfTheGivers.Pages.Dashboards
                 return RedirectToPage();
             }
 
-            var volunteer = await _context.Volunteers.FindAsync(id);
+            var volunteer = await _context.Volunteers
+                .Include(v => v.User)
+                .FirstOrDefaultAsync(v => v.VolunteerId == id);
             if (volunteer == null)
             {
                 return NotFound();
@@ -45,13 +45,17 @@ namespace GiftOfTheGivers.Pages.Dashboards
             volunteer.Status = status;
             await _context.SaveChangesAsync();
 
+            var volunteerName = volunteer.User != null 
+                ? $"{volunteer.User.FirstName} {volunteer.User.LastName}" 
+                : "Volunteer";
+
             TempData["VolunteersMessage"] = status switch
             {
-                "Approved" => $"{volunteer.Name} has been approved.",
-                "Active" => $"{volunteer.Name} is now active.",
-                "Rejected" => $"{volunteer.Name} has been rejected.",
-                "Pending" => $"{volunteer.Name} was moved back to pending.",
-                _ => $"{volunteer.Name} updated."
+                "Approved" => $"{volunteerName} has been approved.",
+                "Active" => $"{volunteerName} is now active.",
+                "Rejected" => $"{volunteerName} has been rejected.",
+                "Pending" => $"{volunteerName} was moved back to pending.",
+                _ => $"{volunteerName} updated."
             };
 
             return RedirectToPage();
@@ -60,6 +64,7 @@ namespace GiftOfTheGivers.Pages.Dashboards
         private async Task LoadAsync()
         {
             Volunteers = await _context.Volunteers
+                .Include(v => v.User)
                 .OrderByDescending(v => v.Status == "Pending")
                 .ThenByDescending(v => v.RegistrationDate)
                 .ToListAsync();

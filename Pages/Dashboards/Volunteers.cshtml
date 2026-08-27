@@ -2,15 +2,6 @@
 @model GiftOfTheGivers.Pages.Dashboards.VolunteersModel
 @{
     ViewData["Title"] = "Volunteers - Gift of the Givers";
-
-    string BadgeClass(string status) => status switch
-    {
-        "Active" => "active",
-        "Approved" => "active",
-        "Pending" => "pending",
-        "Rejected" => "rejected",
-        _ => "inactive"
-    };
 }
 
 <link rel="stylesheet" href="~/css/dashboard.css" />
@@ -21,51 +12,42 @@
     <div class="dashboard-main">
         <div class="dashboard-header">
             <h1 class="dashboard-header-title">Volunteers</h1>
-            <p class="dashboard-header-subtitle">Review volunteer registrations and availability</p>
+            <p class="dashboard-header-subtitle">Manage volunteer applications and assignments</p>
         </div>
 
         <div class="dashboard-content">
-            @if (TempData["VolunteersMessage"] is string successMessage)
-            {
-                <div class="alert alert-success" role="status">@successMessage</div>
-            }
-            @if (TempData["VolunteersError"] is string errorMessage)
-            {
-                <div class="alert alert-danger" role="alert">@errorMessage</div>
-            }
-
             <div class="stats-grid">
                 <div class="stat-card">
-                    <span class="stat-label">Pending review</span>
+                    <span class="stat-label">Pending</span>
                     <span class="stat-value">@Model.PendingCount</span>
-                    <span class="stat-meta">Waiting for a decision</span>
+                    <span class="stat-meta">Applications</span>
                 </div>
                 <div class="stat-card">
                     <span class="stat-label">Approved</span>
                     <span class="stat-value">@Model.ApprovedCount</span>
-                    <span class="stat-meta">Accepted, not yet active</span>
+                    <span class="stat-meta">Verified volunteers</span>
                 </div>
                 <div class="stat-card">
                     <span class="stat-label">Active</span>
                     <span class="stat-value">@Model.ActiveCount</span>
-                    <span class="stat-meta">Ready for assignments</span>
+                    <span class="stat-meta">Currently serving</span>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-label">All sign-ups</span>
-                    <span class="stat-value">@Model.Volunteers.Count</span>
-                    <span class="stat-meta">@(Model.RejectedCount) rejected</span>
+                    <span class="stat-label">Rejected</span>
+                    <span class="stat-value">@Model.RejectedCount</span>
+                    <span class="stat-meta">Not accepted</span>
                 </div>
             </div>
 
             <div class="dashboard-section">
-                <h2 class="dashboard-section-title">Registrations</h2>
+                <h2 class="dashboard-section-title">Volunteer list</h2>
                 <div class="dashboard-table">
                     <div class="dashboard-table-wrapper">
                         @if (Model.Volunteers.Count == 0)
                         {
                             <div class="empty-state">
-                                <p class="empty-state-title">No volunteer sign-ups yet</p>
-                                <p class="empty-state-text">New applications from the Volunteer page will show up here.</p>
+                                <p class="empty-state-title">No volunteers yet</p>
+                                <p class="empty-state-text">Volunteers will appear here after they register.</p>
                             </div>
                         }
                         else
@@ -74,9 +56,8 @@
                                 <thead>
                                     <tr>
                                         <th>Name</th>
+                                        <th>Email</th>
                                         <th>Skills</th>
-                                        <th>Availability</th>
-                                        <th>Registered</th>
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
@@ -84,53 +65,56 @@
                                 <tbody>
                                     @foreach (var volunteer in Model.Volunteers)
                                     {
+                                        var volunteerName = volunteer.User != null ? $"{volunteer.User.FirstName} {volunteer.User.LastName}" : "Unknown";
+                                        var volunteerEmail = volunteer.User?.Email ?? "N/A";
                                         <tr>
                                             <td>
-                                                <strong>@volunteer.Name</strong>
-                                                <div class="table-muted">
-                                                    <a href="mailto:@volunteer.Email">@volunteer.Email</a>
-                                                </div>
-                                            </td>
-                                            <td>@(string.IsNullOrWhiteSpace(volunteer.Skills) ? "—" : volunteer.Skills)</td>
-                                            <td>@(string.IsNullOrWhiteSpace(volunteer.Availability) ? "—" : volunteer.Availability)</td>
-                                            <td>@volunteer.RegistrationDate.ToString("d MMM yyyy")</td>
-                                            <td>
-                                                <span class="status-badge @BadgeClass(volunteer.Status)">@volunteer.Status</span>
+                                                <strong>@volunteerName</strong>
                                             </td>
                                             <td>
-                                                <div class="row-actions">
+                                                @if (!string.IsNullOrEmpty(volunteerEmail) && volunteerEmail != "N/A")
+                                                {
+                                                    <a href="mailto:@volunteerEmail">@volunteerEmail</a>
+                                                }
+                                                else
+                                                {
+                                                    <span>N/A</span>
+                                                }
+                                            </td>
+                                            <td>@(volunteer.Skills ?? "No skills listed")</td>
+                                            <td>
+                                                <span class="status-badge @volunteer.Status.ToLower()">@volunteer.Status</span>
+                                            </td>
+                                            <td>
+                                                <div class="action-buttons">
                                                     @if (volunteer.Status == "Pending")
                                                     {
-                                                        <form method="post" asp-page-handler="UpdateStatus">
-                                                            <input type="hidden" name="id" value="@volunteer.Id" />
+                                                        <form method="post" style="display: inline;">
+                                                            <input type="hidden" name="id" value="@volunteer.VolunteerId" />
                                                             <input type="hidden" name="status" value="Approved" />
-                                                            <button type="submit" class="btn btn-primary btn-compact">Approve</button>
+                                                            <button type="submit" asp-page-handler="UpdateStatus" class="btn btn-sm btn-success">Approve</button>
                                                         </form>
-                                                        <form method="post" asp-page-handler="UpdateStatus">
-                                                            <input type="hidden" name="id" value="@volunteer.Id" />
+                                                        <form method="post" style="display: inline;">
+                                                            <input type="hidden" name="id" value="@volunteer.VolunteerId" />
                                                             <input type="hidden" name="status" value="Rejected" />
-                                                            <button type="submit" class="btn btn-reject btn-compact">Reject</button>
+                                                            <button type="submit" asp-page-handler="UpdateStatus" class="btn btn-sm btn-danger">Reject</button>
                                                         </form>
                                                     }
-                                                    else if (volunteer.Status == "Approved")
+                                                    @if (volunteer.Status == "Approved")
                                                     {
-                                                        <form method="post" asp-page-handler="UpdateStatus">
-                                                            <input type="hidden" name="id" value="@volunteer.Id" />
+                                                        <form method="post" style="display: inline;">
+                                                            <input type="hidden" name="id" value="@volunteer.VolunteerId" />
                                                             <input type="hidden" name="status" value="Active" />
-                                                            <button type="submit" class="btn btn-primary btn-compact">Mark active</button>
+                                                            <button type="submit" asp-page-handler="UpdateStatus" class="btn btn-sm btn-primary">Activate</button>
                                                         </form>
                                                     }
-                                                    else if (volunteer.Status == "Rejected")
+                                                    @if (volunteer.Status == "Active")
                                                     {
-                                                        <form method="post" asp-page-handler="UpdateStatus">
-                                                            <input type="hidden" name="id" value="@volunteer.Id" />
+                                                        <form method="post" style="display: inline;">
+                                                            <input type="hidden" name="id" value="@volunteer.VolunteerId" />
                                                             <input type="hidden" name="status" value="Pending" />
-                                                            <button type="submit" class="btn btn-secondary btn-compact">Reopen</button>
+                                                            <button type="submit" asp-page-handler="UpdateStatus" class="btn btn-sm btn-secondary">Deactivate</button>
                                                         </form>
-                                                    }
-                                                    else
-                                                    {
-                                                        <span class="table-muted">No action needed</span>
                                                     }
                                                 </div>
                                             </td>
