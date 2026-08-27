@@ -19,7 +19,7 @@ namespace GiftOfTheGivers.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configure Donation.Amount to handle currency values properly
+            // Configure the Donation.Amount to handle currency values properly
             modelBuilder.Entity<Donation>()
                 .Property(d => d.Amount)
                 .HasColumnType("decimal(18, 2)");
