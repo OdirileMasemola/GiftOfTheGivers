@@ -1,4 +1,4 @@
 <Solution>
-  <Project Path="../GiftOfTheGivers.Functions/GiftOfTheGivers.Functions.csproj" Id="6c5e1a9c-7ac3-483c-bb65-7c73151e3db3" />
   <Project Path="GiftOfTheGivers.csproj" />
+  <Project Path="GiftOfTheGivers.Functions/GiftOfTheGivers.Functions.csproj" />
 </Solution>
