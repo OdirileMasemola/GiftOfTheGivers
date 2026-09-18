@@ -23,4 +23,8 @@
 		<None Remove="GiftOfTheGivers.Functions\**" />
 	</ItemGroup>
 
+<<<<<<< HEAD
 </Project>	
+=======
+</Project>
+>>>>>>> origin/master
