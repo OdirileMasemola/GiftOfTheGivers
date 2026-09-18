@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using GiftOfTheGivers.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -7,20 +9,28 @@ namespace GiftOfTheGivers.Pages
 {
     public class DonateModel : PageModel
     {
+        private const decimal MaxDonationAmount = 1_000_000m;
+        private static readonly HashSet<string> AllowedCurrencies = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "ZAR", "USD", "EUR"
+        };
+
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<DonateModel> _logger;
 
         [BindProperty]
-        public decimal Amount { get; set; }
+        [Required(ErrorMessage = "Please enter a donation amount.")]
+        [Range(0.01, 1_000_000, ErrorMessage = "Amount must be greater than 0 and at most 1,000,000.")]
+        public decimal? Amount { get; set; }
 
         [BindProperty]
+        [Required(ErrorMessage = "Please select a currency.")]
         public string Currency { get; set; } = "ZAR";
 
-        [BindProperty]
-        public string? Notes { get; set; }
-
-        public DonateModel(ApplicationDbContext context)
+        public DonateModel(ApplicationDbContext context, ILogger<DonateModel> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public void OnGet()
@@ -29,69 +39,152 @@ namespace GiftOfTheGivers.Pages
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid || Amount <= 0)
+            ValidateDonationInput();
+
+            if (!ModelState.IsValid)
             {
-                ModelState.AddModelError("Amount", "Please enter a valid donation amount.");
                 return Page();
             }
 
             try
             {
-                // Get or create donor user
-                // For demo purposes, use a default donor or the authenticated user
-                // In production, this would be the logged-in user
-                var donorUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == "donor@test.local");
-                if (donorUser == null)
+                var donorUser = await ResolveDonorUserAsync();
+                if (donorUser is null)
                 {
-                    // Create a basic donor user if it doesn't exist
-                    donorUser = new User
-                    {
-                        FirstName = "Anonymous",
-                        LastName = "Donor",
-                        Email = "anonymous@donor.local",
-                        PasswordHash = "", // No password for anonymous donations
-                        Role = "Donor",
-                        CreatedAt = DateTime.Now
-                    };
-                    _context.Users.Add(donorUser);
-                    await _context.SaveChangesAsync();
+                    ModelState.AddModelError(string.Empty, "Unable to attribute this donation. Please try again or sign in.");
+                    return Page();
                 }
 
-                // Create donation record
+                var amount = Amount!.Value;
+                var currency = Currency.Trim().ToUpperInvariant();
+
+                // Simulated payment model: record as Completed. UI copy must stay honest.
                 var donation = new Donation
                 {
                     UserId = donorUser.UserId,
-                    Amount = Amount,
-                    Currency = Currency,
+                    Amount = amount,
+                    Currency = currency,
                     DonationDate = DateTime.Now,
-                    PaymentStatus = "Completed", // Assume completed for demo
-                    PaymentReference = $"PAY-{DateTime.Now:yyyyMMddHHmmss}-{Guid.NewGuid().ToString().Substring(0, 8).ToUpper()}"
+                    PaymentStatus = "Completed",
+                    PaymentReference = $"PAY-{DateTime.Now:yyyyMMddHHmmss}-{Guid.NewGuid().ToString()[..8].ToUpperInvariant()}"
                 };
 
                 _context.Donations.Add(donation);
                 await _context.SaveChangesAsync();
 
-                // Optionally create a tax certificate
-                var taxCertificate = new TaxCertificate
-                {
-                    DonationId = donation.DonationId,
-                    CertificateNumber = $"CERT-{DateTime.Now:yyyyMMdd}-{Guid.NewGuid().ToString().Substring(0, 8).ToUpper()}",
-                    IssueDate = DateTime.Today,
-                    CertificateAmount = Amount,
-                    CreatedAt = DateTime.Now
-                };
+                await EnsureTaxCertificateAsync(donation);
 
-                _context.TaxCertificates.Add(taxCertificate);
-                await _context.SaveChangesAsync();
+                TempData["DonationMessage"] =
+                    $"Donation recorded: {amount:N2} {currency}. Reference {donation.PaymentReference}. No real payment was processed.";
+                TempData["DonationSuccess"] = true;
 
-                TempData["DonationMessage"] = $"Thank you for your donation of {Amount} {Currency}!";
-                return RedirectToPage("/Index");
+                // PRG: redirect after successful POST to avoid duplicate submits on refresh.
+                return RedirectToPage("/Donate");
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, $"Error processing donation: {ex.Message}");
+                _logger.LogError(ex, "Error processing donation");
+                ModelState.AddModelError(string.Empty, "We could not record your donation right now. Please try again.");
                 return Page();
             }
+        }
+
+        private void ValidateDonationInput()
+        {
+            if (Amount is null)
+            {
+                ModelState.AddModelError(nameof(Amount), "Please enter a donation amount.");
+            }
+            else if (Amount <= 0)
+            {
+                ModelState.AddModelError(nameof(Amount), "Amount must be greater than 0.");
+            }
+            else if (Amount > MaxDonationAmount)
+            {
+                ModelState.AddModelError(nameof(Amount), $"Amount must be at most {MaxDonationAmount:N0}.");
+            }
+
+            if (string.IsNullOrWhiteSpace(Currency) || !AllowedCurrencies.Contains(Currency.Trim()))
+            {
+                ModelState.AddModelError(nameof(Currency), "Please select a valid currency (ZAR, USD, or EUR).");
+            }
+        }
+
+        /// <summary>
+        /// Prefer the signed-in user (ClaimTypes.NameIdentifier → Users.UserId).
+        /// Anonymous guests keep an intentional public donate path via a single
+        /// shared guest account (anonymous@donor.local). Signed-in donors are never
+        /// forced onto donor@test.local.
+        /// </summary>
+        private async Task<User?> ResolveDonorUserAsync()
+        {
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                var idValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (int.TryParse(idValue, out var userId) && userId > 0)
+                {
+                    var authenticated = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+                    if (authenticated is not null)
+                    {
+                        return authenticated;
+                    }
+
+                    _logger.LogWarning(
+                        "Authenticated donation with NameIdentifier '{Id}' did not match a Users.UserId row.",
+                        idValue);
+                }
+            }
+
+            const string guestEmail = "anonymous@donor.local";
+            var guest = await _context.Users.FirstOrDefaultAsync(u => u.Email == guestEmail);
+            if (guest is not null)
+            {
+                return guest;
+            }
+
+            guest = new User
+            {
+                FirstName = "Anonymous",
+                LastName = "Donor",
+                Email = guestEmail,
+                PasswordHash = string.Empty,
+                Role = "Donor",
+                CreatedAt = DateTime.Now
+            };
+            _context.Users.Add(guest);
+            await _context.SaveChangesAsync();
+            return guest;
+        }
+
+        /// <summary>
+        /// One certificate per donation (same uniqueness rule as GenerateTaxCertificate Function).
+        /// Only for Completed donations; skip if a cert already exists.
+        /// </summary>
+        private async Task EnsureTaxCertificateAsync(Donation donation)
+        {
+            if (!string.Equals(donation.PaymentStatus, "Completed", StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            var exists = await _context.TaxCertificates
+                .AnyAsync(tc => tc.DonationId == donation.DonationId);
+            if (exists)
+            {
+                return;
+            }
+
+            var taxCertificate = new TaxCertificate
+            {
+                DonationId = donation.DonationId,
+                CertificateNumber = $"CERT-{DateTime.Now:yyyyMMdd}-{Guid.NewGuid().ToString()[..8].ToUpperInvariant()}",
+                IssueDate = DateTime.Today,
+                CertificateAmount = donation.Amount,
+                CreatedAt = DateTime.Now
+            };
+
+            _context.TaxCertificates.Add(taxCertificate);
+            await _context.SaveChangesAsync();
         }
     }
 }

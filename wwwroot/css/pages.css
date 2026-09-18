@@ -748,3 +748,45 @@ body > main > .row {
         grid-template-columns: 1fr !important;
     }
 }
+
+/* Donation form helpers */
+.amount-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+}
+
+.amount-button {
+    min-width: 4.5rem;
+    padding: 0.65rem 1rem;
+    border: 1px solid var(--color-grey-300);
+    border-radius: var(--radius-sm);
+    background: var(--color-white);
+    color: var(--color-dark);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.amount-button:hover,
+.amount-button.active {
+    border-color: var(--color-red);
+    color: var(--color-red);
+    background: #fff5f5;
+}
+
+.submit-section {
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-2xl);
+}
+
+@media (max-width: 640px) {
+    .amount-options {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .amount-button {
+        width: 100%;
+    }
+}
