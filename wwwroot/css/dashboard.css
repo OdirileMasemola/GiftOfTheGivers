@@ -758,3 +758,17 @@
         margin-left: 0;
     }
 }
+
+/* Donor dashboard helpers */
+.donor-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.btn-sm {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.85rem;
+    line-height: 1.2;
+}

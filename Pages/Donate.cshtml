@@ -2,6 +2,8 @@
 @model DonateModel
 @{
     ViewData["Title"] = "Donate - Gift of the Givers";
+    var successMessage = TempData["DonationMessage"] as string;
+    var isSuccess = TempData["DonationSuccess"] as bool? == true;
 }
 
 <partial name="Shared/_Navigation" />
@@ -12,65 +14,77 @@
         <p>Your support helps us provide relief to affected communities.</p>
     </div>
 
+    @if (!string.IsNullOrWhiteSpace(successMessage))
+    {
+        <div class="alert @(isSuccess ? "alert-success" : "alert-info")" role="status">
+            <strong>Donation recorded.</strong> @successMessage
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <div style="margin-top: 0.75rem;">
+                    <a href="/Dashboards/Donor" class="btn btn-secondary">View donor dashboard</a>
+                </div>
+            }
+        </div>
+    }
+
     <div class="alert alert-info">
-        <strong>Prototype Notice:</strong> This is a demonstration system. No real payment processing occurs. Donations are recorded for tracking purposes only.
+        <strong>Recording only:</strong> This demonstration system does not process real card or bank payments.
+        Submitted amounts are stored as completed donation records for tracking and tax-certificate demos.
     </div>
 
-    <form method="post" id="donationForm">
+    <form method="post" id="donationForm" novalidate>
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-        <!-- Currency & Amount Section -->
         <div class="form-section">
-            <div class="form-section-title">Amount & Currency</div>
+            <div class="form-section-title">Amount and currency</div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label class="form-label" for="Currency">Currency</label>
-                    <select class="form-control" id="Currency" name="Currency" asp-for="Currency">
+                    <label class="form-label" asp-for="Currency">Currency</label>
+                    <select class="form-control" asp-for="Currency">
                         <option value="ZAR">South African Rand (ZAR)</option>
                         <option value="USD">US Dollar (USD)</option>
                         <option value="EUR">Euro (EUR)</option>
                     </select>
+                    <span asp-validation-for="Currency" class="field-validation-error"></span>
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="form-label">Select Amount</label>
+                <label class="form-label">Quick amounts</label>
                 <div class="amount-options">
                     <button type="button" class="amount-button" data-amount="500" onclick="selectAmount(this, 500)">500</button>
                     <button type="button" class="amount-button" data-amount="1000" onclick="selectAmount(this, 1000)">1000</button>
                     <button type="button" class="amount-button" data-amount="2500" onclick="selectAmount(this, 2500)">2500</button>
                     <button type="button" class="amount-button" data-amount="5000" onclick="selectAmount(this, 5000)">5000</button>
                 </div>
-                <p class="help-text">Or enter a custom amount below</p>
+                <p class="form-help-text">Or enter a custom amount below. Maximum 1,000,000.</p>
             </div>
 
             <div class="form-group">
-                <label class="form-label" for="Amount">Custom Amount</label>
-                <input type="number" class="form-control" id="Amount" name="Amount"
-                       placeholder="Enter amount" step="0.01" min="1" asp-for="Amount" required>
-                <span class="invalid-feedback" id="amountError"></span>
+                <label class="form-label" asp-for="Amount">Donation amount</label>
+                <input class="form-control" asp-for="Amount" type="number" inputmode="decimal"
+                       placeholder="Enter amount" step="0.01" min="0.01" max="1000000" required />
+                <span asp-validation-for="Amount" class="field-validation-error"></span>
             </div>
         </div>
 
-        <!-- Submit -->
         <div class="submit-section">
-            <button type="submit" class="btn btn-primary btn-large">Proceed to Donation</button>
+            <button type="submit" class="btn btn-primary btn-large">Record donation</button>
+            @if (User.Identity?.IsAuthenticated != true)
+            {
+                <p class="form-help-text" style="margin-top: 1rem;">
+                    You can donate as a guest. Sign in first if you want this gift on your donor dashboard.
+                    <a href="/Login">Sign in</a>
+                </p>
+            }
         </div>
     </form>
 </div>
 
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
     <script>
-        function handleDonationTypeChange() {
-            const isRecurring = document.getElementById('donationType_Recurring').checked;
-            const recurringOptions = document.getElementById('recurringOptions');
-            if (isRecurring) {
-                recurringOptions.classList.add('show');
-            } else {
-                recurringOptions.classList.remove('show');
-            }
-        }
-
         function selectAmount(button, amount) {
             document.querySelectorAll('.amount-button').forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
@@ -78,11 +92,11 @@
         }
 
         document.getElementById('donationForm').addEventListener('submit', function (e) {
-            const amount = parseFloat(document.getElementById('Amount').value);
-            if (!amount || amount <= 0) {
+            const amountInput = document.getElementById('Amount');
+            const amount = parseFloat(amountInput.value);
+            if (!amount || amount <= 0 || amount > 1000000) {
                 e.preventDefault();
-                document.getElementById('amountError').textContent = 'Please enter a valid amount greater than 0';
-                document.getElementById('Amount').classList.add('is-invalid');
+                amountInput.classList.add('is-invalid');
             }
         });
     </script>
