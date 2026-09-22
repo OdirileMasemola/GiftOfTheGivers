@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using GiftOfTheGivers.Data;
+using GiftOfTheGivers.Validation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -9,13 +10,8 @@ namespace GiftOfTheGivers.Pages
 {
     public class DonateModel : PageModel
     {
-        private const decimal MaxDonationAmount = 1_000_000m;
-        private static readonly HashSet<string> AllowedCurrencies = new(StringComparer.OrdinalIgnoreCase)
-        {
-            "ZAR", "USD", "EUR"
-        };
 
-        private readonly ApplicationDbContext _context;
+private readonly ApplicationDbContext _context;
         private readonly ILogger<DonateModel> _logger;
 
         [BindProperty]
@@ -91,22 +87,14 @@ namespace GiftOfTheGivers.Pages
 
         private void ValidateDonationInput()
         {
-            if (Amount is null)
+            if (!DonationRules.IsValidAmount(Amount, out var amountError))
             {
-                ModelState.AddModelError(nameof(Amount), "Please enter a donation amount.");
-            }
-            else if (Amount <= 0)
-            {
-                ModelState.AddModelError(nameof(Amount), "Amount must be greater than 0.");
-            }
-            else if (Amount > MaxDonationAmount)
-            {
-                ModelState.AddModelError(nameof(Amount), $"Amount must be at most {MaxDonationAmount:N0}.");
+                ModelState.AddModelError(nameof(Amount), amountError!);
             }
 
-            if (string.IsNullOrWhiteSpace(Currency) || !AllowedCurrencies.Contains(Currency.Trim()))
+            if (!DonationRules.IsValidCurrency(Currency, out var currencyError))
             {
-                ModelState.AddModelError(nameof(Currency), "Please select a valid currency (ZAR, USD, or EUR).");
+                ModelState.AddModelError(nameof(Currency), currencyError!);
             }
         }
 
@@ -162,7 +150,7 @@ namespace GiftOfTheGivers.Pages
         /// </summary>
         private async Task EnsureTaxCertificateAsync(Donation donation)
         {
-            if (!string.Equals(donation.PaymentStatus, "Completed", StringComparison.OrdinalIgnoreCase))
+            if (!DonationRules.CanIssueTaxCertificate(donation.PaymentStatus))
             {
                 return;
             }

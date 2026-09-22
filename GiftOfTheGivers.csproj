@@ -5,6 +5,7 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UserSecretsId>aspnet-GiftOfTheGivers-9511e248-4454-4955-8725-ba01ca8fede8</UserSecretsId>
+		<DefaultItemExcludes>$(DefaultItemExcludes);GiftOfTheGivers.Functions\**;GiftOfTheGivers.Tests\**</DefaultItemExcludes>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -19,8 +20,16 @@
 
 	<ItemGroup>
 		<Compile Remove="GiftOfTheGivers.Functions\**" />
+		<Content Remove="GiftOfTheGivers.Functions\**" />
 		<EmbeddedResource Remove="GiftOfTheGivers.Functions\**" />
 		<None Remove="GiftOfTheGivers.Functions\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Remove="GiftOfTheGivers.Tests\**" />
+		<Content Remove="GiftOfTheGivers.Tests\**" />
+		<EmbeddedResource Remove="GiftOfTheGivers.Tests\**" />
+		<None Remove="GiftOfTheGivers.Tests\**" />
 	</ItemGroup>
 
 </Project>
