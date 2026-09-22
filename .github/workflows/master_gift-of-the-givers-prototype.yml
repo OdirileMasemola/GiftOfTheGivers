@@ -26,7 +26,7 @@ jobs:
       - name: Restore NuGet packages
         run: |
           dotnet nuget disable source GiftOfTheGivers
-          dotnet restore GiftOfTheGivers.csproj --source local-packages --source https://api.nuget.org/v3/index.json
+          dotnet restore GiftOfTheGivers.csproj
 
       - name: Build with dotnet
         run: dotnet build GiftOfTheGivers.csproj --configuration Release --no-restore
