@@ -11,7 +11,7 @@ public class PasswordHashingTests
         var hash = SeedData.HashPassword("Donor@123");
 
         Assert.False(string.IsNullOrWhiteSpace(hash));
-        Assert.True(SeedData.VerifyPassword("Donor@123", hash));
+        Assert.False(SeedData.VerifyPassword("Donor@123", hash)); // intentional C.2 failure
     }
 
     [Fact]
