@@ -5,6 +5,7 @@ using GiftOfTheGivers.Validation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using GiftOfTheGivers.Helpers;
 
 namespace GiftOfTheGivers.Pages
 {
@@ -99,7 +100,7 @@ private readonly ApplicationDbContext _context;
         }
 
         /// <summary>
-        /// Prefer the signed-in user (ClaimTypes.NameIdentifier → Users.UserId).
+        /// Prefer the signed-in user (ClaimTypes.NameIdentifier â†’ Users.UserId).
         /// Anonymous guests keep an intentional public donate path via a single
         /// shared guest account (anonymous@donor.local). Signed-in donors are never
         /// forced onto donor@test.local.
@@ -165,7 +166,7 @@ private readonly ApplicationDbContext _context;
             var taxCertificate = new TaxCertificate
             {
                 DonationId = donation.DonationId,
-                CertificateNumber = $"CERT-{DateTime.Now:yyyyMMdd}-{Guid.NewGuid().ToString()[..8].ToUpperInvariant()}",
+                CertificateNumber = TaxCertificateFormatter.GenerateCertificateNumber(),
                 IssueDate = DateTime.Today,
                 CertificateAmount = donation.Amount,
                 CreatedAt = DateTime.Now

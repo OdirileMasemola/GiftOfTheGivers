@@ -1,5 +1,6 @@
-<Solution>
+﻿<Solution>
   <Project Path="GiftOfTheGivers.csproj" />
   <Project Path="GiftOfTheGivers.Functions/GiftOfTheGivers.Functions.csproj" />
   <Project Path="GiftOfTheGivers.Tests/GiftOfTheGivers.Tests.csproj" />
+  <Project Path="../GiftOfTheGivers.Helpers/GiftOfTheGivers.Helpers.csproj" />
 </Solution>

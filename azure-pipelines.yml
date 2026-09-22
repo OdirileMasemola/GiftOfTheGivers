@@ -32,6 +32,8 @@ stages:
               packageType: 'sdk'
               version: '$(dotnetSdkVersion)'
 
+          - task: NuGetAuthenticate@1
+            displayName: 'Authenticate Azure Artifacts feed'
           - task: DotNetCoreCLI@2
             displayName: 'dotnet restore (web)'
             inputs:

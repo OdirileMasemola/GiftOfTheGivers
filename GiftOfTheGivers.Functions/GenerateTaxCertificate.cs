@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using GiftOfTheGivers.Helpers;
 
 namespace GiftOfTheGivers.Functions;
 
@@ -112,7 +113,7 @@ public class GenerateTaxCertificate
             var certificate = new TaxCertificate
             {
                 DonationId = donation.DonationId,
-                CertificateNumber = $"CERT-{DateTime.Now:yyyyMMdd}-{Guid.NewGuid().ToString()[..8].ToUpperInvariant()}",
+                CertificateNumber = TaxCertificateFormatter.GenerateCertificateNumber(),
                 IssueDate = DateTime.Today,
                 CertificateAmount = donation.Amount,
                 CreatedAt = DateTime.Now
