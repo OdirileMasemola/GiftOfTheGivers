@@ -1,5 +1,6 @@
 # Continuous integration for Gift of the Givers (Azure Repos)
 # Trigger: pushes to main
+# C.2 commit trigger: CI runs automatically on push from Visual Studio / local git
 # Stages: Restore → Build → Test
 
 trigger:
