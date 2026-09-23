@@ -1,5 +1,6 @@
 using GiftOfTheGivers.Data;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ namespace GiftOfTheGivers.Pages
     public class VolunteerModel : PageModel
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<VolunteerModel> _logger;
 
         [BindProperty]
         [Required(ErrorMessage = "First name is required.")]
@@ -36,9 +38,10 @@ namespace GiftOfTheGivers.Pages
         [Required(ErrorMessage = "Select your availability.")]
         public string Availability { get; set; } = string.Empty;
 
-        public VolunteerModel(ApplicationDbContext context)
+        public VolunteerModel(ApplicationDbContext context, ILogger<VolunteerModel> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public void OnGet()
@@ -71,29 +74,38 @@ namespace GiftOfTheGivers.Pages
 
             try
             {
-                // Check if user already exists
-                var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == Email);
+                var normalizedEmail = Email.ToUpperInvariant();
+                var existingUser = await _context.Users
+                    .Include(user => user.Volunteers)
+                    .FirstOrDefaultAsync(user => user.Email.ToUpper() == normalizedEmail);
 
                 User volunteerUser;
                 if (existingUser == null)
                 {
-                    // Create a new user for the volunteer
+                    // Public applicants receive no login credential until an activation flow exists.
                     volunteerUser = new User
                     {
                         FirstName = FirstName.Trim(),
                         LastName = LastName.Trim(),
                         Email = Email.Trim(),
                         PhoneNumber = string.IsNullOrWhiteSpace(PhoneNumber) ? null : PhoneNumber.Trim(),
-                        PasswordHash = "", // User can set password later
-                        Role = "Donor", // Volunteers can also be donors
+                        PasswordHash = SeedData.HashPassword(Convert.ToBase64String(RandomNumberGenerator.GetBytes(32))),
+                        Role = "Volunteer",
                         CreatedAt = DateTime.Now
                     };
                     _context.Users.Add(volunteerUser);
-                    await _context.SaveChangesAsync();
                 }
                 else
                 {
                     volunteerUser = existingUser;
+                    if (existingUser.Volunteers.Any())
+                    {
+                        ModelState.AddModelError(string.Empty, "An application already exists for this email address. Please contact support if you need to update it.");
+                        return Page();
+                    }
+
+                    volunteerUser.FirstName = FirstName;
+                    volunteerUser.LastName = LastName;
                     if (!string.IsNullOrWhiteSpace(PhoneNumber))
                     {
                         volunteerUser.PhoneNumber = PhoneNumber.Trim();
@@ -119,7 +131,8 @@ namespace GiftOfTheGivers.Pages
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, $"Error registering volunteer: {ex.Message}");
+                _logger.LogError(ex, "Error registering volunteer application for {Email}", Email);
+                ModelState.AddModelError(string.Empty, "We could not submit your application right now. Please try again.");
                 return Page();
             }
         }
