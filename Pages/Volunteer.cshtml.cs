@@ -1,4 +1,5 @@
 using GiftOfTheGivers.Data;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -10,18 +11,29 @@ namespace GiftOfTheGivers.Pages
         private readonly ApplicationDbContext _context;
 
         [BindProperty]
+        [Required(ErrorMessage = "First name is required.")]
         public string FirstName { get; set; } = string.Empty;
 
         [BindProperty]
+        [Required(ErrorMessage = "Last name is required.")]
         public string LastName { get; set; } = string.Empty;
 
         [BindProperty]
+        [Required(ErrorMessage = "Email address is required.")]
+        [EmailAddress(ErrorMessage = "Enter a valid email address.")]
         public string Email { get; set; } = string.Empty;
+
+        [BindProperty]
+        public string? PhoneNumber { get; set; }
 
         [BindProperty]
         public string Skills { get; set; } = string.Empty;
 
         [BindProperty]
+        public string[] SelectedSkills { get; set; } = Array.Empty<string>();
+
+        [BindProperty]
+        [Required(ErrorMessage = "Select your availability.")]
         public string Availability { get; set; } = string.Empty;
 
         public VolunteerModel(ApplicationDbContext context)
@@ -35,9 +47,25 @@ namespace GiftOfTheGivers.Pages
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid || string.IsNullOrWhiteSpace(FirstName) || string.IsNullOrWhiteSpace(LastName))
+            FirstName = FirstName.Trim();
+            LastName = LastName.Trim();
+            Email = Email.Trim();
+            Availability = Availability.Trim();
+            Skills = Skills.Trim();
+
+            var combinedSkills = SelectedSkills
+                .Where(skill => !string.IsNullOrWhiteSpace(skill))
+                .Select(skill => skill.Trim())
+                .Concat(string.IsNullOrWhiteSpace(Skills) ? Array.Empty<string>() : new[] { Skills })
+                .ToArray();
+
+            if (combinedSkills.Length == 0)
             {
-                ModelState.AddModelError(string.Empty, "First name, last name, and other required fields are required.");
+                ModelState.AddModelError(nameof(Skills), "Select at least one skill or describe your other skills.");
+            }
+
+            if (!ModelState.IsValid)
+            {
                 return Page();
             }
 
@@ -55,6 +83,7 @@ namespace GiftOfTheGivers.Pages
                         FirstName = FirstName.Trim(),
                         LastName = LastName.Trim(),
                         Email = Email.Trim(),
+                        PhoneNumber = string.IsNullOrWhiteSpace(PhoneNumber) ? null : PhoneNumber.Trim(),
                         PasswordHash = "", // User can set password later
                         Role = "Donor", // Volunteers can also be donors
                         CreatedAt = DateTime.Now
@@ -65,13 +94,17 @@ namespace GiftOfTheGivers.Pages
                 else
                 {
                     volunteerUser = existingUser;
+                    if (!string.IsNullOrWhiteSpace(PhoneNumber))
+                    {
+                        volunteerUser.PhoneNumber = PhoneNumber.Trim();
+                    }
                 }
 
                 // Create volunteer record linked to the user
                 var volunteer = new Volunteer
                 {
                     UserId = volunteerUser.UserId,
-                    Skills = Skills.Trim(),
+                    Skills = string.Join(", ", combinedSkills),
                     Availability = Availability.Trim(),
                     RegistrationDate = DateTime.Now,
                     Status = "Pending"
