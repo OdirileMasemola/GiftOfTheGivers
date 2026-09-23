@@ -2,6 +2,12 @@
 @model GiftOfTheGivers.Pages.Dashboards.DonationsModel
 @{
     ViewData["Title"] = "Donations - Gift of the Givers";
+    string StatusClass(string status) => status?.ToLowerInvariant() switch
+    {
+        "completed" => "completed",
+        "failed" => "rejected",
+        _ => "pending"
+    };
 }
 
 <link rel="stylesheet" href="~/css/dashboard.css" />
@@ -11,8 +17,8 @@
 
     <div class="dashboard-main">
         <div class="dashboard-header">
-            <h1 class="dashboard-header-title">Donations</h1>
-            <p class="dashboard-header-subtitle">Monitor incoming support for relief work</p>
+            <h1 class="dashboard-header-title">Donation Management</h1>
+            <p class="dashboard-header-subtitle">Search, filter, and report on donations for relief operations</p>
         </div>
 
         <div class="dashboard-content">
@@ -20,17 +26,17 @@
                 <div class="stat-card">
                     <span class="stat-label">This month</span>
                     <span class="stat-value">ZAR @Model.ThisMonthZar.ToString("N0")</span>
-                    <span class="stat-meta">ZAR received</span>
+                    <span class="stat-meta">Completed ZAR</span>
                 </div>
                 <div class="stat-card">
                     <span class="stat-label">All time</span>
                     <span class="stat-value">ZAR @Model.AllTimeZar.ToString("N0")</span>
-                    <span class="stat-meta">ZAR received</span>
+                    <span class="stat-meta">Completed ZAR</span>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-label">Gifts</span>
-                    <span class="stat-value">@Model.Donations.Count</span>
-                    <span class="stat-meta">Recorded donations</span>
+                    <span class="stat-label">Completed</span>
+                    <span class="stat-value">@Model.CompletedCount</span>
+                    <span class="stat-meta">@Model.PendingCount pending / @Model.FailedCount failed</span>
                 </div>
                 <div class="stat-card">
                     <span class="stat-label">Active Schedules</span>
@@ -40,14 +46,46 @@
             </div>
 
             <div class="dashboard-section">
-                <h2 class="dashboard-section-title">All donations</h2>
+                <div class="dashboard-section-header">
+                    <h2 class="dashboard-section-title">All donations</h2>
+                    <span class="table-muted">@Model.FilteredTotal matching</span>
+                </div>
+
+                <form method="get" class="filter-bar" asp-page="/Dashboards/Donations">
+                    <div class="form-group-dashboard">
+                        <label for="Search">Search</label>
+                        <input id="Search" name="Search" type="text" value="@Model.Search" placeholder="Email, name, or reference" />
+                    </div>
+                    <div class="form-group-dashboard">
+                        <label for="Status">Status</label>
+                        <select id="Status" name="Status">
+                            <option value="">All statuses</option>
+                            @if (Model.Status == "Completed") { <option value="Completed" selected>Completed</option> } else { <option value="Completed">Completed</option> }
+                            @if (Model.Status == "Pending") { <option value="Pending" selected>Pending</option> } else { <option value="Pending">Pending</option> }
+                            @if (Model.Status == "Failed") { <option value="Failed" selected>Failed</option> } else { <option value="Failed">Failed</option> }
+                        </select>
+                    </div>
+                    <div class="form-group-dashboard">
+                        <label for="From">From</label>
+                        <input id="From" name="From" type="date" value="@(Model.From?.ToString("yyyy-MM-dd"))" />
+                    </div>
+                    <div class="form-group-dashboard">
+                        <label for="To">To</label>
+                        <input id="To" name="To" type="date" value="@(Model.To?.ToString("yyyy-MM-dd"))" />
+                    </div>
+                    <div class="filter-actions">
+                        <button type="submit" class="btn btn-compact">Apply</button>
+                        <a class="btn btn-compact btn-reject" href="/Dashboards/Donations">Clear</a>
+                    </div>
+                </form>
+
                 <div class="dashboard-table">
                     <div class="dashboard-table-wrapper">
                         @if (Model.Donations.Count == 0)
                         {
                             <div class="empty-state">
-                                <p class="empty-state-title">No donations yet</p>
-                                <p class="empty-state-text">Gifts from the public Donate page will show up here.</p>
+                                <p class="empty-state-title">No donations match</p>
+                                <p class="empty-state-text">Try clearing filters or wait for new gifts from the public Donate page.</p>
                             </div>
                         }
                         else
@@ -59,36 +97,156 @@
                                         <th>Donor</th>
                                         <th>Amount</th>
                                         <th>Status</th>
+                                        <th>Certificate</th>
                                         <th>Reference</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach (var donation in Model.Donations)
                                     {
-                                        var donorName = donation.User != null ? $"{donation.User.FirstName} {donation.User.LastName}" : "Anonymous";
-                                        var donorEmail = donation.User?.Email ?? "";
+                                        var donorName = string.IsNullOrWhiteSpace(donation.DonorName) ? "Unknown" : donation.DonorName;
                                         <tr>
                                             <td>@donation.DonationDate.ToString("d MMM yyyy")</td>
                                             <td>
                                                 <strong>@donorName</strong>
                                                 <div class="table-muted">
-                                                    @if (!string.IsNullOrEmpty(donorEmail))
+                                                    @if (!string.IsNullOrEmpty(donation.DonorEmail))
                                                     {
-                                                        <a href="mailto:@donorEmail">@donorEmail</a>
+                                                        <a href="mailto:@donation.DonorEmail">@donation.DonorEmail</a>
                                                     }
                                                     else
                                                     {
-                                                        <span>Anonymous</span>
+                                                        <span>No email on file</span>
                                                     }
                                                 </div>
                                             </td>
-                                            <td>@donation.Currency @donation.Amount.ToString("N0")</td>
+                                            <td>@donation.Currency @donation.Amount.ToString("N2")</td>
                                             <td>
-                                                <span class="status-badge @(donation.PaymentStatus == "Completed" ? "completed" : "pending")">
+                                                <span class="status-badge @StatusClass(donation.PaymentStatus)">
                                                     @donation.PaymentStatus
                                                 </span>
                                             </td>
+                                            <td>@(donation.HasCertificate ? "Yes" : "No")</td>
                                             <td><span class="mono-ref">@(donation.PaymentReference ?? "N/A")</span></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                </div>
+
+                @if (Model.TotalPages > 1)
+                {
+                    <div class="pagination-bar">
+                        @if (Model.PageNumber > 1)
+                        {
+                            <a class="btn btn-compact"
+                               asp-page="/Dashboards/Donations"
+                               asp-route-PageIndex="@(Model.PageNumber - 1)"
+                               asp-route-Status="@Model.Status"
+                               asp-route-Search="@Model.Search"
+                               asp-route-From="@(Model.From?.ToString("yyyy-MM-dd"))"
+                               asp-route-To="@(Model.To?.ToString("yyyy-MM-dd"))">Previous</a>
+                        }
+                        <span class="table-muted">Page @Model.PageNumber of @Model.TotalPages</span>
+                        @if (Model.PageNumber < Model.TotalPages)
+                        {
+                            <a class="btn btn-compact"
+                               asp-page="/Dashboards/Donations"
+                               asp-route-PageIndex="@(Model.PageNumber + 1)"
+                               asp-route-Status="@Model.Status"
+                               asp-route-Search="@Model.Search"
+                               asp-route-From="@(Model.From?.ToString("yyyy-MM-dd"))"
+                               asp-route-To="@(Model.To?.ToString("yyyy-MM-dd"))">Next</a>
+                        }
+                    </div>
+                }
+            </div>
+
+            <div class="dashboard-section">
+                <div class="dashboard-section-header">
+                    <h2 class="dashboard-section-title">Recent allocations</h2>
+                </div>
+                <div class="dashboard-table">
+                    <div class="dashboard-table-wrapper">
+                        @if (Model.RecentAllocations.Count == 0)
+                        {
+                            <div class="empty-state">
+                                <p class="empty-state-title">No allocations yet</p>
+                                <p class="empty-state-text">Allocated donation amounts will appear here when linked to relief operations.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Donor</th>
+                                        <th>Amount</th>
+                                        <th>Operation</th>
+                                        <th>Donation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var row in Model.RecentAllocations)
+                                    {
+                                        <tr>
+                                            <td>@row.AllocationDate.ToString("d MMM yyyy")</td>
+                                            <td><strong>@row.DonorName</strong></td>
+                                            <td>ZAR @row.AmountAllocated.ToString("N2")</td>
+                                            <td>
+                                                <strong>@row.OperationType</strong>
+                                                <div class="table-muted">@row.OperationLocation</div>
+                                            </td>
+                                            <td><span class="mono-ref">#@row.DonationId</span></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-section">
+                <div class="dashboard-section-header">
+                    <h2 class="dashboard-section-title">Active recurring schedules</h2>
+                </div>
+                <div class="dashboard-table">
+                    <div class="dashboard-table-wrapper">
+                        @if (Model.ActiveSchedules.Count == 0)
+                        {
+                            <div class="empty-state">
+                                <p class="empty-state-title">No active schedules</p>
+                                <p class="empty-state-text">Recurring donation schedules with Active status will show here.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Donor</th>
+                                        <th>Amount</th>
+                                        <th>Frequency</th>
+                                        <th>Start</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var row in Model.ActiveSchedules)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@row.DonorName</strong>
+                                                <div class="table-muted">@(row.DonorEmail ?? "No email")</div>
+                                            </td>
+                                            <td>@row.Currency @row.Amount.ToString("N2")</td>
+                                            <td>@row.Frequency</td>
+                                            <td>@row.StartDate.ToString("d MMM yyyy")</td>
+                                            <td><span class="status-badge active">@row.Status</span></td>
                                         </tr>
                                     }
                                 </tbody>
