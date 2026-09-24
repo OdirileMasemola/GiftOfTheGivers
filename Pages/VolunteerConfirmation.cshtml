@@ -4,46 +4,75 @@
     ViewData["Title"] = "Thank You - Gift of the Givers";
 }
 
-<div class="confirmation-container">
-    <div class="confirmation-box">
-        <div class="success-icon">✓</div>
-        <h1 class="confirmation-title">Thank You for Volunteering!</h1>
-        <p class="confirmation-subtitle">
-            Your application has been received. We've recorded your registration and will review your information shortly.
-        </p>
+<partial name="Shared/_Navigation" />
 
-        <div class="volunteer-details">
-            <div class="detail-item">
-                <span class="detail-label">Name:</span>
-                <span class="detail-value">@Model.Volunteer?.User?.FirstName @Model.Volunteer?.User?.LastName</span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Email:</span>
-                <span class="detail-value">@Model.Volunteer?.User?.Email</span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Availability:</span>
-                <span class="detail-value">@Model.Volunteer?.Availability</span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Registration Date:</span>
-                <span class="detail-value">@Model.Volunteer?.RegistrationDate.ToString("d MMMM yyyy")</span>
+<main class="confirmation-container">
+    @if (Model.IsUnavailable)
+    {
+        <div class="confirmation-box">
+            <h1 class="confirmation-title">Application not found</h1>
+            <p class="confirmation-subtitle">We could not find that volunteer application. Please return to the volunteer page and try again.</p>
+            <div class="action-buttons">
+                <a href="/Volunteer" class="btn btn-primary btn-large">Apply to Volunteer</a>
+                <a href="/" class="btn btn-secondary btn-large">Return to Home</a>
             </div>
         </div>
+    }
+    else
+    {
+        <div class="confirmation-box">
+            <div class="success-icon">✓</div>
+            <h1 class="confirmation-title">Thank You for Volunteering!</h1>
+            <p class="confirmation-subtitle">
+                @(Model.SuccessMessage ?? "Your application has been received and is pending review. Our team will contact you about suitable opportunities and next steps.")
+            </p>
 
-        <div class="next-steps">
-            <h3>What Happens Next?</h3>
-            <ol>
-                <li>Our team reviews your application and skills</li>
-                <li>We match you with suitable relief opportunities</li>
-                <li>We contact you via email with volunteer opportunities</li>
-                <li>You can accept or decline opportunities as they arise</li>
-            </ol>
-        </div>
+            <div class="volunteer-details">
+                <div class="detail-item">
+                    <span class="detail-label">Application ID:</span>
+                    <span class="detail-value">@Model.Volunteer?.VolunteerId</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Name:</span>
+                    <span class="detail-value">@Model.Volunteer?.User?.FirstName @Model.Volunteer?.User?.LastName</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Email:</span>
+                    <span class="detail-value">@Model.Volunteer?.User?.Email</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Skills:</span>
+                    <span class="detail-value">@Model.Volunteer?.Skills</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Availability:</span>
+                    <span class="detail-value">@Model.Volunteer?.Availability</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Registration Date:</span>
+                    <span class="detail-value">@Model.Volunteer?.RegistrationDate.ToString("d MMMM yyyy")</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Status:</span>
+                    <span class="detail-value">@Model.Volunteer?.Status</span>
+                </div>
+            </div>
 
-        <div class="action-buttons">
-            <a href="/" class="btn btn-primary btn-large">Return to Home</a>
-            <a href="/Donate" class="btn btn-secondary btn-large">Make a Donation</a>
+            <div class="next-steps">
+                <h3>What Happens Next?</h3>
+                <ol>
+                    <li>Our team reviews your application and skills</li>
+                    <li>We match you with suitable relief opportunities</li>
+                    <li>We contact you via email with volunteer opportunities</li>
+                </ol>
+            </div>
+
+            <div class="action-buttons">
+                <a href="/" class="btn btn-primary btn-large">Return to Home</a>
+                <a href="/Donate" class="btn btn-secondary btn-large">Make a Donation</a>
+            </div>
         </div>
-    </div>
-</div>
+    }
+</main>
+
+<partial name="Shared/_Footer" />

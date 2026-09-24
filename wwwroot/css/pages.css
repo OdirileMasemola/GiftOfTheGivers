@@ -375,6 +375,8 @@
 
 .detail-value {
     color: var(--color-grey-600);
+    overflow-wrap: anywhere;
+    text-align: right;
 }
 
 .next-steps {
@@ -535,6 +537,16 @@
 
 /* Footer Responsive */
 @media (max-width: 768px) {
+    .detail-item {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+
+    .detail-value {
+        text-align: left;
+    }
+
     .footer-grid {
         grid-template-columns: 1fr;
         gap: var(--spacing-lg);

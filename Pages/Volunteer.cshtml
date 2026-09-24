@@ -6,40 +6,49 @@
 
 <partial name="Shared/_Navigation" />
 
-<div class="form-container" style="margin-top: 3rem;">
-    <section class="page-header">
-        <h1>Volunteer With Us</h1>
-        <p>Join our team and help make a difference in disaster relief efforts.</p>
+<section class="page-header volunteer-hero">
+    <h1>Volunteer With Us</h1>
+    <p>Support disaster relief efforts with your time, skills, and compassion.</p>
+</section>
+
+<main class="volunteer-page">
+    <section class="volunteer-intro">
+        <h2>Help communities recover</h2>
+        <p>Tell us how you can help. Our team reviews every application and will contact you about suitable opportunities and next steps.</p>
     </section>
 
-    <div class="alert alert-info">
-        <strong>Get Involved:</strong> We're always looking for dedicated volunteers. After you register, our team will review your application and contact you with opportunities that match your skills and availability.
-    </div>
+    <div class="form-container">
+        <form method="post" id="volunteerForm">
+            <div asp-validation-summary="ModelOnly" class="validation-summary" role="alert"></div>
 
-    <form method="post" id="volunteerForm">
         <!-- Personal Information -->
         <div class="form-section">
             <div class="form-section-title">Personal Information</div>
 
-            <div class="form-group">
-                <label class="form-label" for="FirstName">First Name *</label>
-                <input type="text" class="form-control" id="FirstName" name="FirstName"
-                       placeholder="Your first name" asp-for="FirstName" required>
-                <span asp-validation-for="FirstName" class="invalid-feedback"></span>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" asp-for="FirstName">First Name *</label>
+                    <input class="form-control" placeholder="Your first name" asp-for="FirstName" />
+                    <span asp-validation-for="FirstName" class="invalid-feedback"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" asp-for="LastName">Last Name *</label>
+                    <input class="form-control" placeholder="Your last name" asp-for="LastName" />
+                    <span asp-validation-for="LastName" class="invalid-feedback"></span>
+                </div>
             </div>
 
             <div class="form-group">
-                <label class="form-label" for="LastName">Last Name *</label>
-                <input type="text" class="form-control" id="LastName" name="LastName"
-                       placeholder="Your last name" asp-for="LastName" required>
-                <span asp-validation-for="LastName" class="invalid-feedback"></span>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label" for="Email">Email Address *</label>
-                <input type="email" class="form-control" id="Email" name="Email"
-                       placeholder="your@email.com" asp-for="Email" required>
+                <label class="form-label" asp-for="Email">Email Address *</label>
+                <input class="form-control" placeholder="your@email.com" asp-for="Email" />
                 <span asp-validation-for="Email" class="invalid-feedback"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" asp-for="PhoneNumber">Phone Number</label>
+                <input class="form-control" placeholder="Your phone number" asp-for="PhoneNumber" />
+                <span asp-validation-for="PhoneNumber" class="invalid-feedback"></span>
             </div>
         </div>
 
@@ -51,27 +60,27 @@
 
             <div class="skill-checkboxes">
                 <div class="form-check">
-                    <input type="checkbox" id="skill_medical" name="SelectedSkills" value="Medical" class="form-check-input" />
+                    <input type="checkbox" id="skill_medical" asp-for="SelectedSkills" value="Medical" class="form-check-input" />
                     <label for="skill_medical" class="form-check-label">Medical / Healthcare</label>
                 </div>
                 <div class="form-check">
-                    <input type="checkbox" id="skill_logistics" name="SelectedSkills" value="Logistics" class="form-check-input" />
+                    <input type="checkbox" id="skill_logistics" asp-for="SelectedSkills" value="Logistics" class="form-check-input" />
                     <label for="skill_logistics" class="form-check-label">Logistics</label>
                 </div>
                 <div class="form-check">
-                    <input type="checkbox" id="skill_communications" name="SelectedSkills" value="Communications" class="form-check-input" />
+                    <input type="checkbox" id="skill_communications" asp-for="SelectedSkills" value="Communications" class="form-check-input" />
                     <label for="skill_communications" class="form-check-label">Communications</label>
                 </div>
                 <div class="form-check">
-                    <input type="checkbox" id="skill_construction" name="SelectedSkills" value="Construction" class="form-check-input" />
+                    <input type="checkbox" id="skill_construction" asp-for="SelectedSkills" value="Construction" class="form-check-input" />
                     <label for="skill_construction" class="form-check-label">Construction</label>
                 </div>
                 <div class="form-check">
-                    <input type="checkbox" id="skill_counselling" name="SelectedSkills" value="Counselling" class="form-check-input" />
+                    <input type="checkbox" id="skill_counselling" asp-for="SelectedSkills" value="Counselling" class="form-check-input" />
                     <label for="skill_counselling" class="form-check-label">Counselling</label>
                 </div>
                 <div class="form-check">
-                    <input type="checkbox" id="skill_administration" name="SelectedSkills" value="Administration" class="form-check-input" />
+                    <input type="checkbox" id="skill_administration" asp-for="SelectedSkills" value="Administration" class="form-check-input" />
                     <label for="skill_administration" class="form-check-label">Administration</label>
                 </div>
             </div>
@@ -80,7 +89,7 @@
                 <label class="form-label" for="Skills">Other Skills or Experience *</label>
                 <textarea class="form-control" id="Skills" name="Skills" rows="4"
                           placeholder="Describe any other relevant skills, certifications, or experience (e.g., First Aid, Heavy Equipment Operation, etc.)"
-                          asp-for="Skills" required></textarea>
+                          asp-for="Skills"></textarea>
                 <span asp-validation-for="Skills" class="invalid-feedback"></span>
             </div>
         </div>
@@ -94,22 +103,22 @@
             <div class="availability-options">
                 <div class="form-check">
                     <input type="radio" id="avail_fulltime" name="Availability" value="Full-time"
-                           asp-for="Availability" class="form-check-input" required />
+                           asp-for="Availability" class="form-check-input" />
                     <label for="avail_fulltime" class="form-check-label">Full-time</label>
                 </div>
                 <div class="form-check">
                     <input type="radio" id="avail_parttime" name="Availability" value="Part-time"
-                           asp-for="Availability" class="form-check-input" required />
+                           asp-for="Availability" class="form-check-input" />
                     <label for="avail_parttime" class="form-check-label">Part-time</label>
                 </div>
                 <div class="form-check">
                     <input type="radio" id="avail_weekends" name="Availability" value="Weekends only"
-                           asp-for="Availability" class="form-check-input" required />
+                           asp-for="Availability" class="form-check-input" />
                     <label for="avail_weekends" class="form-check-label">Weekends only</label>
                 </div>
                 <div class="form-check">
                     <input type="radio" id="avail_occasional" name="Availability" value="Occasional"
-                           asp-for="Availability" class="form-check-input" required />
+                           asp-for="Availability" class="form-check-input" />
                     <label for="avail_occasional" class="form-check-label">Occasional</label>
                 </div>
             </div>
@@ -121,14 +130,13 @@
         <div class="submit-section">
             <button type="submit" class="btn btn-primary btn-large">Submit Application</button>
         </div>
-    </form>
-</div>
+        </form>
+    </div>
+</main>
 
 <div style="margin-bottom: 3rem;"></div>
 
 <partial name="Shared/_Footer" />
-
-<script src="~/js/site.js"></script>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
