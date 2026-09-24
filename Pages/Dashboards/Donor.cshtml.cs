@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using GiftOfTheGivers.Helpers;
 
 namespace GiftOfTheGivers.Pages.Dashboards
 {
@@ -96,7 +97,7 @@ namespace GiftOfTheGivers.Pages.Dashboards
             var certificate = new TaxCertificate
             {
                 DonationId = donation.DonationId,
-                CertificateNumber = $"CERT-{DateTime.Now:yyyyMMdd}-{Guid.NewGuid().ToString()[..8].ToUpperInvariant()}",
+                CertificateNumber = TaxCertificateFormatter.GenerateCertificateNumber(),
                 IssueDate = DateTime.Today,
                 CertificateAmount = donation.Amount,
                 CreatedAt = DateTime.Now

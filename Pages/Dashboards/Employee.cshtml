@@ -1,26 +1,29 @@
-@page "/Dashboards/Employee"
+﻿@page "/Dashboards/Employee"
 @model GiftOfTheGivers.Pages.Dashboards.EmployeeModel
 @{
     ViewData["Title"] = "Employee Dashboard - Gift of the Givers";
+    string StatusClass(string status) => status?.ToLowerInvariant() switch
+    {
+        "completed" => "completed",
+        "failed" => "rejected",
+        "active" => "active",
+        "planning" => "pending",
+        _ => "pending"
+    };
 }
 
 <link rel="stylesheet" href="~/css/dashboard.css" />
 
 <div class="dashboard-wrapper">
-    <!-- Sidebar -->
     <partial name="Shared/_DashboardSidebar" />
 
-    <!-- Main Content -->
     <div class="dashboard-main">
-        <!-- Header -->
         <div class="dashboard-header">
             <h1 class="dashboard-header-title">Employee Dashboard</h1>
             <p class="dashboard-header-subtitle">Monitor relief operations, volunteers and donation activity</p>
         </div>
 
-        <!-- Content -->
         <div class="dashboard-content">
-            <!-- Statistics Grid -->
             <div class="stats-grid">
                 <div class="stat-card">
                     <span class="stat-label">Active Relief Operations</span>
@@ -35,16 +38,21 @@
                 <div class="stat-card">
                     <span class="stat-label">Donations Received</span>
                     <span class="stat-value">ZAR @Model.MonthDonationsZar.ToString("N0")</span>
-                    <span class="stat-meta">This month</span>
+                    <span class="stat-meta">
+                        Completed this month
+                        @if (Model.PendingDonations > 0)
+                        {
+                            <text> · @Model.PendingDonations pending</text>
+                        }
+                    </span>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-label">Operations Managed</span>
-                    <span class="stat-value">@Model.CommunitiesSupported</span>
-                    <span class="stat-meta">Active regions</span>
+                    <span class="stat-label">Relief Operations</span>
+                    <span class="stat-value">@Model.TotalOperations</span>
+                    <span class="stat-meta">All operations on record</span>
                 </div>
             </div>
 
-            <!-- Active Relief Operations Section -->
             <div class="dashboard-section">
                 <div class="dashboard-section-header">
                     <h2 class="dashboard-section-title">Relief Operations</h2>
@@ -79,7 +87,7 @@
                                             </td>
                                             <td>@operation.Location</td>
                                             <td>
-                                                <span class="status-badge @operation.Status.ToLower()">@operation.Status</span>
+                                                <span class="status-badge @StatusClass(operation.Status)">@operation.Status</span>
                                             </td>
                                             <td>@operation.StartDate.ToString("d MMM yyyy")</td>
                                         </tr>
@@ -91,7 +99,6 @@
                 </div>
             </div>
 
-            <!-- Recent Volunteers Section -->
             <div class="dashboard-section">
                 <div class="dashboard-section-header">
                     <h2 class="dashboard-section-title">Recent Volunteers</h2>
@@ -121,7 +128,9 @@
                                 <tbody>
                                     @foreach (var volunteer in Model.RecentVolunteers)
                                     {
-                                        var volunteerName = volunteer.User != null ? $"{volunteer.User.FirstName} {volunteer.User.LastName}" : "Unknown";
+                                        var volunteerName = volunteer.User != null
+                                            ? $"{volunteer.User.FirstName} {volunteer.User.LastName}".Trim()
+                                            : "Unknown";
                                         var volunteerEmail = volunteer.User?.Email ?? "N/A";
                                         <tr>
                                             <td>
@@ -139,7 +148,7 @@
                                             </td>
                                             <td>@(volunteer.Skills ?? "No skills listed")</td>
                                             <td>
-                                                <span class="status-badge @volunteer.Status.ToLower()">@volunteer.Status</span>
+                                                <span class="status-badge @StatusClass(volunteer.Status)">@volunteer.Status</span>
                                             </td>
                                             <td>@volunteer.RegistrationDate.ToString("d MMM yyyy")</td>
                                         </tr>
@@ -151,10 +160,20 @@
                 </div>
             </div>
 
-            <!-- Recent Donations Section -->
             <div class="dashboard-section">
                 <div class="dashboard-section-header">
                     <h2 class="dashboard-section-title">Recent Donations</h2>
+                    <div class="row-actions">
+                        @if (Model.PendingDonations > 0)
+                        {
+                            <span class="status-badge pending">@Model.PendingDonations pending</span>
+                        }
+                        @if (Model.ActiveSchedules > 0)
+                        {
+                            <span class="table-muted">@Model.ActiveSchedules active schedules</span>
+                        }
+                        <a class="btn btn-compact" href="/Dashboards/Donations">View all</a>
+                    </div>
                 </div>
 
                 <div class="dashboard-table">
@@ -180,15 +199,23 @@
                                 <tbody>
                                     @foreach (var donation in Model.RecentDonations)
                                     {
-                                        var donorName = donation.User != null ? $"{donation.User.FirstName} {donation.User.LastName}" : "Anonymous";
+                                        var donorName = string.IsNullOrWhiteSpace(donation.DonorName)
+                                            ? "Unknown"
+                                            : donation.DonorName;
                                         <tr>
                                             <td>@donation.DonationDate.ToString("d MMM yyyy")</td>
                                             <td>
                                                 <strong>@donorName</strong>
+                                                @if (!string.IsNullOrEmpty(donation.DonorEmail))
+                                                {
+                                                    <div class="table-muted">
+                                                        <a href="mailto:@donation.DonorEmail">@donation.DonorEmail</a>
+                                                    </div>
+                                                }
                                             </td>
-                                            <td>@donation.Currency @donation.Amount.ToString("N0")</td>
+                                            <td>@donation.Currency @donation.Amount.ToString("N2")</td>
                                             <td>
-                                                <span class="status-badge @(donation.PaymentStatus == "Completed" ? "completed" : "pending")">
+                                                <span class="status-badge @StatusClass(donation.PaymentStatus)">
                                                     @donation.PaymentStatus
                                                 </span>
                                             </td>
