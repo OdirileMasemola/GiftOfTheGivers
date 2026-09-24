@@ -115,6 +115,7 @@ namespace GiftOfTheGivers.Pages
                 // Create volunteer record linked to the user
                 var volunteer = new Volunteer
                 {
+                    User = volunteerUser,
                     UserId = volunteerUser.UserId,
                     Skills = string.Join(", ", combinedSkills),
                     Availability = Availability.Trim(),
