@@ -1,10 +1,12 @@
 using GiftOfTheGivers.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace GiftOfTheGivers.Pages.Dashboards
 {
+    [Authorize(Roles = "Employee")]
     public class VolunteersModel : PageModel
     {
         private static readonly string[] AllowedStatuses = { "Pending", "Approved", "Active", "Rejected" };
@@ -76,3 +78,4 @@ namespace GiftOfTheGivers.Pages.Dashboards
         }
     }
 }
+
