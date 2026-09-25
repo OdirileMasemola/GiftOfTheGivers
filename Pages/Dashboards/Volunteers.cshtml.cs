@@ -39,7 +39,12 @@ namespace GiftOfTheGivers.Pages.Dashboards
             if (!AllowedStatuses.Contains(status))
             {
                 TempData["VolunteersError"] = "That status is not valid.";
-                return RedirectToPage();
+
+                return RedirectToPage(new
+                {
+                    Search,
+                    StatusFilter
+                });
             }
 
             var volunteer = await _context.Volunteers
