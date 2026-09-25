@@ -145,6 +145,11 @@
                                     <td>@volunteer.RegistrationDate.ToString("dd MMM yyyy")</td>
                                     <td>
                                         <div class="action-buttons">
+                                            <a asp-page="/Dashboards/VolunteerDetails"
+                                               asp-route-id="@volunteer.VolunteerId"
+                                               class="btn btn-sm btn-secondary">
+                                                Details
+                                            </a>
                                             @if (volunteer.Status == "Pending")
                                                     {
                                             <form method="post" style="display: inline;">

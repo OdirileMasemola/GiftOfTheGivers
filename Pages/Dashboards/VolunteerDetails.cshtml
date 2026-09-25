@@ -1,0 +1,128 @@
+@page "{id:int}"
+@model GiftOfTheGivers.Pages.Dashboards.VolunteerDetailsModel
+@{
+    ViewData["Title"] = "Volunteer Details - Gift of the Givers";
+
+    var volunteer = Model.Volunteer!;
+    var volunteerName = volunteer.User != null
+        ? $"{volunteer.User.FirstName} {volunteer.User.LastName}"
+        : "Unknown Volunteer";
+}
+
+<link rel="stylesheet" href="~/css/dashboard.css" />
+
+<div class="dashboard-wrapper">
+    <partial name="Shared/_DashboardSidebar" />
+
+    <div class="dashboard-main">
+
+        <div class="dashboard-header">
+            <h1 class="dashboard-header-title">Volunteer Details</h1>
+            <p class="dashboard-header-subtitle">
+                View volunteer information and relief operation assignments
+            </p>
+        </div>
+
+        <div class="dashboard-content">
+
+            <div class="dashboard-section">
+                <h2 class="dashboard-section-title">@volunteerName</h2>
+
+                <div class="volunteer-details">
+                    <p>
+                        <strong>Email:</strong>
+                        @(volunteer.User?.Email ?? "N/A")
+                    </p>
+
+                    <p>
+                        <strong>Phone:</strong>
+                        @(volunteer.User?.PhoneNumber ?? "Not provided")
+                    </p>
+
+                    <p>
+                        <strong>Skills:</strong>
+                        @(volunteer.Skills ?? "No skills listed")
+                    </p>
+
+                    <p>
+                        <strong>Availability:</strong>
+                        @(string.IsNullOrWhiteSpace(volunteer.Availability)
+                            ? "Not specified"
+                            : volunteer.Availability)
+                    </p>
+
+                    <p>
+                        <strong>Status:</strong>
+                        <span class="status-badge @volunteer.Status.ToLower()">
+                            @volunteer.Status
+                        </span>
+                    </p>
+
+                    <p>
+                        <strong>Registration Date:</strong>
+                        @volunteer.RegistrationDate.ToString("dd MMM yyyy")
+                    </p>
+                </div>
+            </div>
+
+            <div class="dashboard-section">
+                <h2 class="dashboard-section-title">Relief Operation Assignments</h2>
+
+                @if (volunteer.VolunteerAssignments.Count == 0)
+                {
+                <div class="empty-state">
+                    <p class="empty-state-title">No assignments yet</p>
+                    <p class="empty-state-text">
+                        This volunteer has not been assigned to a relief operation.
+                    </p>
+                </div>
+                }
+                else
+                {
+                <div class="dashboard-table">
+                    <div class="dashboard-table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Operation</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th>Assigned Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var assignment in volunteer.VolunteerAssignments)
+                                    {
+                                <tr>
+                                    <td>
+                                        @(assignment.ReliefOperation?.OperationType ?? "Unknown")
+                                    </td>
+
+                                    <td>
+                                        @(assignment.ReliefOperation?.Location ?? "N/A")
+                                    </td>
+
+                                    <td>
+                                        @(assignment.ReliefOperation?.Status ?? "N/A")
+                                    </td>
+
+                                    <td>
+                                        @assignment.AssignedDate.ToString("dd MMM yyyy")
+                                    </td>
+                                </tr>
+                                    }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                }
+            </div>
+
+            <a asp-page="/Dashboards/Volunteers"
+               class="btn btn-secondary">
+                Back to Volunteers
+            </a>
+
+        </div>
+    </div>
+</div>
