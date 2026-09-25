@@ -23,6 +23,12 @@ namespace GiftOfTheGivers.Pages.Dashboards
         public int ActiveCount { get; set; }
         public int RejectedCount { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public string? Search { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public string StatusFilter { get; set; } = "All";
+
         public async Task OnGetAsync()
         {
             await LoadAsync();
@@ -60,22 +66,54 @@ namespace GiftOfTheGivers.Pages.Dashboards
                 _ => $"{volunteerName} updated."
             };
 
-            return RedirectToPage();
+            return RedirectToPage(new
+            {
+                Search,
+                StatusFilter
+            });
         }
 
         private async Task LoadAsync()
         {
-            Volunteers = await _context.Volunteers
+            var query = _context.Volunteers
                 .Include(v => v.User)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(Search))
+            {
+                var search = Search.Trim();
+
+                query = query.Where(v =>
+                    (v.User != null &&
+                     (v.User.FirstName.Contains(search) ||
+                      v.User.LastName.Contains(search) ||
+                      v.User.Email.Contains(search))) ||
+                    (v.Skills != null &&
+                     v.Skills.Contains(search)));
+            }
+
+            if (StatusFilter != "All" &&
+                AllowedStatuses.Contains(StatusFilter))
+            {
+                query = query.Where(
+                    v => v.Status == StatusFilter);
+            }
+
+            Volunteers = await query
                 .OrderByDescending(v => v.Status == "Pending")
                 .ThenByDescending(v => v.RegistrationDate)
                 .ToListAsync();
-
-            PendingCount = Volunteers.Count(v => v.Status == "Pending");
-            ApprovedCount = Volunteers.Count(v => v.Status == "Approved");
-            ActiveCount = Volunteers.Count(v => v.Status == "Active");
-            RejectedCount = Volunteers.Count(v => v.Status == "Rejected");
+            PendingCount = await _context.Volunteers.CountAsync(v => v.Status == "Pending");
+            ApprovedCount = await _context.Volunteers.CountAsync(v => v.Status == "Approved");
+            ActiveCount = await _context.Volunteers.CountAsync(v => v.Status == "Active");
+            RejectedCount = await _context.Volunteers.CountAsync(v => v.Status == "Rejected");
         }
     }
 }
+
+
+
+
+
+
 
