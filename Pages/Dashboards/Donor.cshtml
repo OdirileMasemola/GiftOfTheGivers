@@ -1,5 +1,6 @@
 @page "/Dashboards/Donor"
 @model GiftOfTheGivers.Pages.Dashboards.DonorModel
+@using GiftOfTheGivers.Helpers
 @{
     ViewData["Title"] = "Donor Dashboard - Gift of the Givers";
     var displayName = Model.CurrentUser is null
@@ -109,7 +110,7 @@
                                         var badgeClass = isCompleted ? "completed" : "pending";
                                         <tr>
                                             <td>@donation.DonationDate.ToString("yyyy-MM-dd")</td>
-                                            <td>@donation.Currency @donation.Amount.ToString("N2")</td>
+                                            <td>@TaxCertificateFormatter.FormatAmount(donation.Amount, donation.Currency)</td>
                                             <td><span class="status-badge @badgeClass">@donation.PaymentStatus</span></td>
                                             <td>@(donation.PaymentReference ?? "-")</td>
                                             <td>

@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>true</IsPackable>
+    <PackageId>GiftOfTheGivers.Helpers</PackageId>
+    <Version>1.0.1</Version>
+    <Authors>OdirileMasemola</Authors>
+    <Description>Reusable helper utilities for the Gift of the Givers Disaster Relief System, including tax certificate number and amount formatting.</Description>
+    <PackageReleaseNotes>1.0.1: Added FormatAmount so certificate amounts show the same way on every server.</PackageReleaseNotes>
+    <PackageTags>giftofthegivers;helpers;tax-certificate</PackageTags>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+</Project>

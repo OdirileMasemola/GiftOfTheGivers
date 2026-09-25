@@ -23,6 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="GiftOfTheGivers.Helpers" Version="1.0.0" />
+    <PackageReference Include="GiftOfTheGivers.Helpers" Version="1.0.1" />
   </ItemGroup>
 </Project>

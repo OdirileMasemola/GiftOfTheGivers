@@ -224,6 +224,26 @@ The web Donate page can also create tax certificate rows when recording a donati
 
 ---
 
+## Helpers package: versioning and retention
+
+`GiftOfTheGivers.Helpers` (source in `GiftOfTheGivers.Helpers/`) is published to the `GiftOfTheGivers` feed in Azure Artifacts (organisation `ST10441421`). The web app and the Functions project install it with a normal `PackageReference`, and `nuget.config` maps `GiftOfTheGivers.*` to that feed so the package is always restored from Azure Artifacts.
+
+- Versions follow Semantic Versioning (MAJOR.MINOR.PATCH): a patch for fixes and small additions that do not break callers, a minor version for bigger new features, and a major version for breaking changes.
+- Every change to the library gets a new version. A published version is never overwritten; bump `<Version>` in the csproj, pack, push, then update the `PackageReference` in both projects.
+- 1.0.0: `GenerateCertificateNumber`. 1.0.1: added `FormatAmount` for certificate amounts.
+- Retention: the feed keeps the 10 most recent versions of each package, so old versions are cleaned up automatically.
+
+Publish a new version:
+
+```bash
+dotnet pack GiftOfTheGivers.Helpers/GiftOfTheGivers.Helpers.csproj -c Release -o artifacts
+dotnet nuget push artifacts/GiftOfTheGivers.Helpers.<version>.nupkg --source GiftOfTheGivers --api-key az
+```
+
+The GitHub Actions deploy workflow cannot sign in to the private feed, so it restores from the copies in `local-packages` through `.github/nuget.github.config`. Copy each new `.nupkg` into `local-packages` when you publish it.
+
+---
+
 ## Authentication and Security
 
 | Topic | Current implementation |

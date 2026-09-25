@@ -5,11 +5,11 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UserSecretsId>aspnet-GiftOfTheGivers-9511e248-4454-4955-8725-ba01ca8fede8</UserSecretsId>
-		<DefaultItemExcludes>$(DefaultItemExcludes);GiftOfTheGivers.Functions\**;GiftOfTheGivers.Tests\**</DefaultItemExcludes>
+		<DefaultItemExcludes>$(DefaultItemExcludes);GiftOfTheGivers.Functions\**;GiftOfTheGivers.Tests\**;GiftOfTheGivers.Helpers\**</DefaultItemExcludes>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="GiftOfTheGivers.Helpers" Version="1.0.0" />
+		<PackageReference Include="GiftOfTheGivers.Helpers" Version="1.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.30" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.30" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.30" />
@@ -31,6 +31,13 @@
 		<Content Remove="GiftOfTheGivers.Tests\**" />
 		<EmbeddedResource Remove="GiftOfTheGivers.Tests\**" />
 		<None Remove="GiftOfTheGivers.Tests\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Remove="GiftOfTheGivers.Helpers\**" />
+		<Content Remove="GiftOfTheGivers.Helpers\**" />
+		<EmbeddedResource Remove="GiftOfTheGivers.Helpers\**" />
+		<None Remove="GiftOfTheGivers.Helpers\**" />
 	</ItemGroup>
 
 </Project>
