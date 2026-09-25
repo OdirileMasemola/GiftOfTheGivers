@@ -25,6 +25,21 @@
 
         <div class="dashboard-content">
 
+            @if (TempData["VolunteersMessage"] != null)
+            {
+            <div class="alert alert-success">
+                @TempData["VolunteersMessage"]
+            </div>
+            }
+
+            @if (TempData["VolunteersError"] != null)
+            {
+            <div class="alert alert-danger">
+                @TempData["VolunteersError"]
+            </div>
+            }
+
+            <!-- Volunteer Information -->
             <div class="dashboard-section">
                 <h2 class="dashboard-section-title">@volunteerName</h2>
 
@@ -65,15 +80,94 @@
                 </div>
             </div>
 
+            <!-- Assign Volunteer -->
             <div class="dashboard-section">
-                <h2 class="dashboard-section-title">Relief Operation Assignments</h2>
+                <h2 class="dashboard-section-title">
+                    Assign to Relief Operation
+                </h2>
+
+                @if (volunteer.Status == "Approved" ||
+                     volunteer.Status == "Active")
+                {
+                if (Model.AvailableOperations.Count == 0)
+                    {
+                <div class="empty-state">
+                    <p class="empty-state-title">
+                        No eligible operations
+                    </p>
+                    <p class="empty-state-text">
+                        There are currently no Planning or Active
+                        relief operations available.
+                    </p>
+                </div>
+                    }
+                    else
+                    {
+                <form method="post"
+                      asp-page-handler="Assign"
+                      asp-route-id="@volunteer.VolunteerId">
+
+                    <div class="filter-group">
+                        <label asp-for="ReliefOperationId">
+                            Relief Operation
+                        </label>
+
+                        <select asp-for="ReliefOperationId"
+                                class="form-control"
+                                required>
+                            <option value="">
+                                Select a relief operation
+                            </option>
+
+                            @foreach (var operation in Model.AvailableOperations)
+                                    {
+                            <option value="@operation.ReliefOperationId">
+                                @operation.OperationType -
+                                @operation.Location
+                                (@operation.Status)
+                            </option>
+                                    }
+                        </select>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button type="submit"
+                                class="btn btn-primary">
+                            Assign Volunteer
+                        </button>
+                    </div>
+                </form>
+                    }
+                }
+                else
+                {
+                <div class="empty-state">
+                    <p class="empty-state-title">
+                        Volunteer not eligible
+                    </p>
+                    <p class="empty-state-text">
+                        This volunteer must be Approved or Active
+                        before being assigned to a relief operation.
+                    </p>
+                </div>
+                }
+            </div>
+
+            <!-- Existing Assignments -->
+            <div class="dashboard-section">
+                <h2 class="dashboard-section-title">
+                    Relief Operation Assignments
+                </h2>
 
                 @if (volunteer.VolunteerAssignments.Count == 0)
                 {
                 <div class="empty-state">
-                    <p class="empty-state-title">No assignments yet</p>
+                    <p class="empty-state-title">
+                        No assignments yet
+                    </p>
                     <p class="empty-state-text">
-                        This volunteer has not been assigned to a relief operation.
+                        This volunteer has not been assigned
+                        to a relief operation.
                     </p>
                 </div>
                 }
@@ -90,20 +184,25 @@
                                     <th>Assigned Date</th>
                                 </tr>
                             </thead>
+
                             <tbody>
-                                @foreach (var assignment in volunteer.VolunteerAssignments)
+                                @foreach (var assignment in
+                                        volunteer.VolunteerAssignments)
                                     {
                                 <tr>
                                     <td>
-                                        @(assignment.ReliefOperation?.OperationType ?? "Unknown")
+                                        @(assignment.ReliefOperation?.OperationType
+                                                    ?? "Unknown")
                                     </td>
 
                                     <td>
-                                        @(assignment.ReliefOperation?.Location ?? "N/A")
+                                        @(assignment.ReliefOperation?.Location
+                                                    ?? "N/A")
                                     </td>
 
                                     <td>
-                                        @(assignment.ReliefOperation?.Status ?? "N/A")
+                                        @(assignment.ReliefOperation?.Status
+                                                    ?? "N/A")
                                     </td>
 
                                     <td>
