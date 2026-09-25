@@ -2,6 +2,7 @@
 # Trigger: pushes to main
 # C.2 commit trigger: CI runs automatically on push from Visual Studio / local git
 # Stages: Restore → Build → Test
+# GiftOfTheGivers.Helpers is restored from the GiftOfTheGivers Azure Artifacts feed (see nuget.config)
 
 trigger:
   - main
@@ -34,23 +35,33 @@ stages:
 
           - task: NuGetAuthenticate@1
             displayName: 'Authenticate Azure Artifacts feed'
+
           - task: DotNetCoreCLI@2
             displayName: 'dotnet restore (web)'
             inputs:
               command: 'restore'
               projects: '$(webProject)'
+              feedsToUse: 'config'
+              nugetConfigPath: 'nuget.config'
+              verbosityRestore: 'Normal'
 
           - task: DotNetCoreCLI@2
             displayName: 'dotnet restore (functions)'
             inputs:
               command: 'restore'
               projects: '$(functionsProject)'
+              feedsToUse: 'config'
+              nugetConfigPath: 'nuget.config'
+              verbosityRestore: 'Normal'
 
           - task: DotNetCoreCLI@2
             displayName: 'dotnet restore (tests)'
             inputs:
               command: 'restore'
               projects: '$(testProject)'
+              feedsToUse: 'config'
+              nugetConfigPath: 'nuget.config'
+              verbosityRestore: 'Normal'
 
   - stage: Build
     displayName: 'Build'
@@ -64,6 +75,9 @@ stages:
             inputs:
               packageType: 'sdk'
               version: '$(dotnetSdkVersion)'
+
+          - task: NuGetAuthenticate@1
+            displayName: 'Authenticate Azure Artifacts feed'
 
           - task: DotNetCoreCLI@2
             displayName: 'dotnet build (web)'
@@ -91,6 +105,9 @@ stages:
             inputs:
               packageType: 'sdk'
               version: '$(dotnetSdkVersion)'
+
+          - task: NuGetAuthenticate@1
+            displayName: 'Authenticate Azure Artifacts feed'
 
           - task: DotNetCoreCLI@2
             displayName: 'dotnet test'

@@ -24,9 +24,7 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Restore NuGet packages
-        run: |
-          dotnet nuget disable source GiftOfTheGivers
-          dotnet restore GiftOfTheGivers.csproj
+        run: dotnet restore GiftOfTheGivers.csproj --configfile .github/nuget.github.config
 
       - name: Build with dotnet
         run: dotnet build GiftOfTheGivers.csproj --configuration Release --no-restore
