@@ -1,14 +1,19 @@
 # Continuous integration for Gift of the Givers (Azure Repos)
-# Trigger: pushes to main
-# C.2 commit trigger: CI runs automatically on push from Visual Studio / local git
-# Stages: Restore → Build → Test
-# GiftOfTheGivers.Helpers is restored from the GiftOfTheGivers Azure Artifacts feed (see nuget.config)
+# Every push and pull request to main runs this pipeline.
+#   Build: restores packages (GiftOfTheGivers.Helpers comes from the GiftOfTheGivers
+#          Azure Artifacts feed through nuget.config) and compiles the web app and Function.
+#   Test:  runs the unit tests and the integration tests in separate steps, then publishes
+#          the test results and code coverage to the build summary.
 
 trigger:
-  - main
+  branches:
+    include:
+      - main
 
 pr:
-  - main
+  branches:
+    include:
+      - main
 
 pool:
   vmImage: 'windows-latest'
@@ -16,59 +21,19 @@ pool:
 variables:
   buildConfiguration: 'Release'
   dotnetSdkVersion: '8.x'
+  nugetConfig: 'nuget.config'
+  runSettings: 'coverlet.runsettings'
   webProject: 'GiftOfTheGivers.csproj'
   functionsProject: 'GiftOfTheGivers.Functions/GiftOfTheGivers.Functions.csproj'
-  testProject: 'GiftOfTheGivers.Tests/GiftOfTheGivers.Tests.csproj'
+  unitTestProject: 'GiftOfTheGivers.Tests/GiftOfTheGivers.Tests.csproj'
+  integrationTestProject: 'GiftOfTheGivers.IntegrationTests/GiftOfTheGivers.IntegrationTests.csproj'
 
 stages:
-  - stage: Restore
-    displayName: 'Restore'
-    jobs:
-      - job: RestoreJob
-        displayName: 'Restore NuGet packages'
-        steps:
-          - task: UseDotNet@2
-            displayName: 'Use .NET SDK $(dotnetSdkVersion)'
-            inputs:
-              packageType: 'sdk'
-              version: '$(dotnetSdkVersion)'
-
-          - task: NuGetAuthenticate@1
-            displayName: 'Authenticate Azure Artifacts feed'
-
-          - task: DotNetCoreCLI@2
-            displayName: 'dotnet restore (web)'
-            inputs:
-              command: 'restore'
-              projects: '$(webProject)'
-              feedsToUse: 'config'
-              nugetConfigPath: 'nuget.config'
-              verbosityRestore: 'Normal'
-
-          - task: DotNetCoreCLI@2
-            displayName: 'dotnet restore (functions)'
-            inputs:
-              command: 'restore'
-              projects: '$(functionsProject)'
-              feedsToUse: 'config'
-              nugetConfigPath: 'nuget.config'
-              verbosityRestore: 'Normal'
-
-          - task: DotNetCoreCLI@2
-            displayName: 'dotnet restore (tests)'
-            inputs:
-              command: 'restore'
-              projects: '$(testProject)'
-              feedsToUse: 'config'
-              nugetConfigPath: 'nuget.config'
-              verbosityRestore: 'Normal'
-
   - stage: Build
     displayName: 'Build'
-    dependsOn: Restore
     jobs:
       - job: BuildJob
-        displayName: 'Build Release'
+        displayName: 'Restore and build'
         steps:
           - task: UseDotNet@2
             displayName: 'Use .NET SDK $(dotnetSdkVersion)'
@@ -77,28 +42,34 @@ stages:
               version: '$(dotnetSdkVersion)'
 
           - task: NuGetAuthenticate@1
-            displayName: 'Authenticate Azure Artifacts feed'
+            displayName: 'Authenticate to the Azure Artifacts feed'
 
           - task: DotNetCoreCLI@2
-            displayName: 'dotnet build (web)'
+            displayName: 'dotnet restore (feed from nuget.config)'
             inputs:
-              command: 'build'
-              projects: '$(webProject)'
-              arguments: '--configuration $(buildConfiguration)'
+              command: 'restore'
+              projects: |
+                $(webProject)
+                $(functionsProject)
+              feedsToUse: 'config'
+              nugetConfigPath: '$(nugetConfig)'
+              verbosityRestore: 'Normal'
 
           - task: DotNetCoreCLI@2
-            displayName: 'dotnet build (functions)'
+            displayName: 'dotnet build (web app and Function)'
             inputs:
               command: 'build'
-              projects: '$(functionsProject)'
-              arguments: '--configuration $(buildConfiguration)'
+              projects: |
+                $(webProject)
+                $(functionsProject)
+              arguments: '--configuration $(buildConfiguration) --no-restore'
 
   - stage: Test
     displayName: 'Test'
     dependsOn: Build
     jobs:
       - job: TestJob
-        displayName: 'Run unit tests'
+        displayName: 'Unit and integration tests'
         steps:
           - task: UseDotNet@2
             displayName: 'Use .NET SDK $(dotnetSdkVersion)'
@@ -107,12 +78,48 @@ stages:
               version: '$(dotnetSdkVersion)'
 
           - task: NuGetAuthenticate@1
-            displayName: 'Authenticate Azure Artifacts feed'
+            displayName: 'Authenticate to the Azure Artifacts feed'
 
           - task: DotNetCoreCLI@2
-            displayName: 'dotnet test'
+            displayName: 'dotnet restore (test projects)'
+            inputs:
+              command: 'restore'
+              projects: |
+                $(unitTestProject)
+                $(integrationTestProject)
+              feedsToUse: 'config'
+              nugetConfigPath: '$(nugetConfig)'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'dotnet build (test projects)'
+            inputs:
+              command: 'build'
+              projects: |
+                $(unitTestProject)
+                $(integrationTestProject)
+              arguments: '--configuration $(buildConfiguration) --no-restore'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Run unit tests'
             inputs:
               command: 'test'
-              projects: '$(testProject)'
-              arguments: '--configuration $(buildConfiguration) --logger trx'
+              projects: '$(unitTestProject)'
+              arguments: '--configuration $(buildConfiguration) --no-build --settings $(runSettings) --collect "XPlat Code Coverage" --logger "console;verbosity=normal"'
               publishTestResults: true
+              testRunTitle: 'Unit tests'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Run integration tests'
+            condition: succeededOrFailed()
+            inputs:
+              command: 'test'
+              projects: '$(integrationTestProject)'
+              arguments: '--configuration $(buildConfiguration) --no-build --settings $(runSettings) --collect "XPlat Code Coverage" --logger "console;verbosity=detailed"'
+              publishTestResults: true
+              testRunTitle: 'Integration tests'
+
+          - task: PublishCodeCoverageResults@2
+            displayName: 'Publish code coverage (Cobertura)'
+            condition: succeededOrFailed()
+            inputs:
+              summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
