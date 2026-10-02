@@ -28,8 +28,9 @@ namespace GiftOfTheGivers.Pages
         [BindProperty]
         public string? PhoneNumber { get; set; }
 
+        // Optional free-text box, so it may be posted empty.
         [BindProperty]
-        public string Skills { get; set; } = string.Empty;
+        public string? Skills { get; set; }
 
         [BindProperty]
         public string[] SelectedSkills { get; set; } = Array.Empty<string>();
@@ -50,11 +51,12 @@ namespace GiftOfTheGivers.Pages
 
         public async Task<IActionResult> OnPostAsync()
         {
-            FirstName = FirstName.Trim();
-            LastName = LastName.Trim();
-            Email = Email.Trim();
-            Availability = Availability.Trim();
-            Skills = Skills.Trim();
+            // Empty form fields bind as null, so trim safely and let validation report them.
+            FirstName = FirstName?.Trim() ?? string.Empty;
+            LastName = LastName?.Trim() ?? string.Empty;
+            Email = Email?.Trim() ?? string.Empty;
+            Availability = Availability?.Trim() ?? string.Empty;
+            Skills = Skills?.Trim() ?? string.Empty;
 
             var combinedSkills = SelectedSkills
                 .Where(skill => !string.IsNullOrWhiteSpace(skill))
