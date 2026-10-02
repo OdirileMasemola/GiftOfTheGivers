@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Code coverage settings used by Visual Studio, the command line and Azure Pipelines. -->
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat Code Coverage">
+        <Configuration>
+          <Format>cobertura</Format>
+          <!-- Measure the app, the Function and the Helpers library, not the tests. -->
+          <Include>[GiftOfTheGivers]*,[GiftOfTheGivers.Functions]*,[GiftOfTheGivers.Helpers]*</Include>
+          <!-- Razor view classes and EF migrations are generated code, so they are left out. -->
+          <Exclude>[GiftOfTheGivers]*.Pages_*,[GiftOfTheGivers]*.Areas_*,[GiftOfTheGivers]AspNetCoreGeneratedDocument.*,[GiftOfTheGivers]GiftOfTheGivers.Data.Migrations.*</Exclude>
+          <ExcludeByAttribute>GeneratedCodeAttribute,ExcludeFromCodeCoverageAttribute</ExcludeByAttribute>
+          <ExcludeByFile>**/Migrations/*.cs,**/obj/**/*.cs,**/*.cshtml</ExcludeByFile>
+          <SkipAutoProps>true</SkipAutoProps>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

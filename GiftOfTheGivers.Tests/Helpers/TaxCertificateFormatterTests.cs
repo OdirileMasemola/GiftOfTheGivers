@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using GiftOfTheGivers.Helpers;
 
-namespace GiftOfTheGivers.Tests;
+namespace GiftOfTheGivers.Tests.Helpers;
 
 public class TaxCertificateFormatterTests
 {

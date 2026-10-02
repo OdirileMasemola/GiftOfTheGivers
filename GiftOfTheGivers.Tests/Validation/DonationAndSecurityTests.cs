@@ -1,7 +1,7 @@
 using GiftOfTheGivers.Data;
 using GiftOfTheGivers.Validation;
 
-namespace GiftOfTheGivers.Tests;
+namespace GiftOfTheGivers.Tests.Validation;
 
 public class PasswordHashingTests
 {
