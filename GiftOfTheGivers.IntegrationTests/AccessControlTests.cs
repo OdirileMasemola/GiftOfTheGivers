@@ -22,7 +22,8 @@ public class AccessControlTests : IClassFixture<GiftOfTheGiversWebFactory>
     {
         "/Dashboards/Employee",
         "/Dashboards/Donations",
-        "/Dashboards/Volunteers"
+        "/Dashboards/Volunteers",
+        "/Dashboards/Operations"
     };
 
     [Theory]
@@ -118,5 +119,35 @@ public class AccessControlTests : IClassFixture<GiftOfTheGiversWebFactory>
         var response = await donor.Client.GetAsync("/AccessDenied");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Logout_EndsTheSession_SoTheDashboardNeedsLoginAgain()
+    {
+        var donor = new BrowserSession(_factory.CreateBrowserClient());
+        await donor.SignInAsync(DemoUsers.DonorEmail, DemoUsers.DonorPassword);
+        Assert.Equal(HttpStatusCode.OK, (await donor.Client.GetAsync("/Dashboards/Donor")).StatusCode);
+
+        // Same form the navigation bar posts.
+        var logout = await donor.SubmitFormAsync("/Donate", new Dictionary<string, string>(), "/Logout?returnUrl=%2F");
+
+        Assert.Equal(HttpStatusCode.Redirect, logout.StatusCode);
+        Assert.Equal("/", BrowserSession.PathOf(logout));
+        var afterLogout = await donor.Client.GetAsync("/Dashboards/Donor");
+        Assert.Equal(HttpStatusCode.Redirect, afterLogout.StatusCode);
+        Assert.StartsWith("/Login?ReturnUrl=", BrowserSession.PathOf(afterLogout));
+    }
+
+    [Fact]
+    public async Task Logout_IgnoresReturnUrlsToOtherSites()
+    {
+        var employee = new BrowserSession(_factory.CreateBrowserClient());
+        await employee.SignInAsync(DemoUsers.EmployeeEmail, DemoUsers.EmployeePassword);
+
+        var logout = await employee.Client.GetAsync("/Logout?returnUrl=https%3A%2F%2Fevil.example.com");
+
+        Assert.Equal(HttpStatusCode.Redirect, logout.StatusCode);
+        Assert.Equal("/", BrowserSession.PathOf(logout));
+        Assert.Equal(HttpStatusCode.Redirect, (await employee.Client.GetAsync("/Dashboards/Employee")).StatusCode);
     }
 }

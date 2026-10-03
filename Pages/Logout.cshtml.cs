@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -8,16 +9,36 @@ namespace GiftOfTheGivers.Pages
     [AllowAnonymous]
     public class LogoutModel : PageModel
     {
-        // GET covers a direct visit to /Logout.
-        public IActionResult OnGetAsync(string? returnUrl = null)
+        private readonly ILogger<LogoutModel> _logger;
+
+        public LogoutModel(ILogger<LogoutModel> logger)
         {
+            _logger = logger;
+        }
+
+        // GET covers a direct visit to /Logout.
+        public async Task<IActionResult> OnGetAsync(string? returnUrl = null)
+        {
+            await SignOutAsync();
             return RedirectHome(returnUrl);
         }
 
         // POST covers the nav/footer/dashboard logout forms.
-        public IActionResult OnPostAsync(string? returnUrl = null)
+        public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
         {
+            await SignOutAsync();
             return RedirectHome(returnUrl);
+        }
+
+        // Clears the "Cookies" auth cookie that Login issues.
+        private async Task SignOutAsync()
+        {
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                _logger.LogInformation("User {Name} logged out", User.Identity.Name);
+            }
+
+            await HttpContext.SignOutAsync("Cookies");
         }
 
         // Only follow returnUrl if it stays on this site.

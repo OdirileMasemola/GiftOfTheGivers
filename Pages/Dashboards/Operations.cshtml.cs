@@ -1,10 +1,13 @@
 using GiftOfTheGivers.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace GiftOfTheGivers.Pages.Dashboards
 {
+    // Operations are managed by staff only, same as the other employee dashboards.
+    [Authorize(Roles = "Employee")]
     public class OperationsModel : PageModel
     {
         private static readonly string[] AllowedStatuses = { "Planning", "Active", "Completed", "Paused" };
