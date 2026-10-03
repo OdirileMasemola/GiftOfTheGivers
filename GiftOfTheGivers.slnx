@@ -4,4 +4,5 @@
   <Project Path="GiftOfTheGivers.Helpers/GiftOfTheGivers.Helpers.csproj" />
   <Project Path="GiftOfTheGivers.Tests/GiftOfTheGivers.Tests.csproj" />
   <Project Path="GiftOfTheGivers.IntegrationTests/GiftOfTheGivers.IntegrationTests.csproj" />
+  <Project Path="GiftOfTheGivers.LoadTests/GiftOfTheGivers.LoadTests.csproj" />
 </Solution>

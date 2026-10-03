@@ -1,0 +1,15 @@
+{
+  "Targets": {
+    "live": {
+      "BaseUrl": "https://gift-of-the-givers-prototype-aweeh5f7g2czemdf.southafricanorth-01.azurewebsites.net",
+      "FunctionUrl": "https://giftofthegiversfunctions.azurewebsites.net/api/generatetaxcertificate"
+    },
+    "local": {
+      "BaseUrl": "http://localhost:5080",
+      "FunctionUrl": ""
+    }
+  },
+  "DonorEmail": "donor@test.local",
+  "DonorPassword": "Donor@123",
+  "UnknownDonationId": 999999
+}

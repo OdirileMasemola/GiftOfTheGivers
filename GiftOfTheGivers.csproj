@@ -5,7 +5,7 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UserSecretsId>aspnet-GiftOfTheGivers-9511e248-4454-4955-8725-ba01ca8fede8</UserSecretsId>
-		<DefaultItemExcludes>$(DefaultItemExcludes);GiftOfTheGivers.Functions\**;GiftOfTheGivers.Tests\**;GiftOfTheGivers.IntegrationTests\**;GiftOfTheGivers.Helpers\**</DefaultItemExcludes>
+		<DefaultItemExcludes>$(DefaultItemExcludes);GiftOfTheGivers.Functions\**;GiftOfTheGivers.Tests\**;GiftOfTheGivers.IntegrationTests\**;GiftOfTheGivers.LoadTests\**;GiftOfTheGivers.UiTests\**;GiftOfTheGivers.Helpers\**</DefaultItemExcludes>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -38,6 +38,14 @@
 		<Content Remove="GiftOfTheGivers.IntegrationTests\**" />
 		<EmbeddedResource Remove="GiftOfTheGivers.IntegrationTests\**" />
 		<None Remove="GiftOfTheGivers.IntegrationTests\**" />
+		<Compile Remove="GiftOfTheGivers.LoadTests\**" />
+		<Content Remove="GiftOfTheGivers.LoadTests\**" />
+		<EmbeddedResource Remove="GiftOfTheGivers.LoadTests\**" />
+		<None Remove="GiftOfTheGivers.LoadTests\**" />
+		<Compile Remove="GiftOfTheGivers.UiTests\**" />
+		<Content Remove="GiftOfTheGivers.UiTests\**" />
+		<EmbeddedResource Remove="GiftOfTheGivers.UiTests\**" />
+		<None Remove="GiftOfTheGivers.UiTests\**" />
 	</ItemGroup>
 
 	<ItemGroup>

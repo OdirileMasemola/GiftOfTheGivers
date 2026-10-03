@@ -1,10 +1,14 @@
 using GiftOfTheGivers.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace GiftOfTheGivers.Pages
 {
+    // Anonymous visitors get a copy cached for 60 seconds, so a busy home page does not run the five
+    // statistics queries on every request (see docs/performance-testing.md).
+    [OutputCache(PolicyName = "PublicPage")]
     public class IndexModel : PageModel
     {
         private readonly ILogger<IndexModel> _logger;

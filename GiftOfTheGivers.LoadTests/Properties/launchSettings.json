@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "Load test - live Azure site": {
+      "commandName": "Project",
+      "commandLineArgs": "--target live --profile load"
+    },
+    "Stress test - local Release run": {
+      "commandName": "Project",
+      "commandLineArgs": "--target local --profile stress"
+    },
+    "Stress test - live Azure site (bounded)": {
+      "commandName": "Project",
+      "commandLineArgs": "--target live --profile stress"
+    }
+  }
+}

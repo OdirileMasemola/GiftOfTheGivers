@@ -6,7 +6,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(connectionString, sql =>
+        // Azure SQL serverless pauses when idle and the first queries after that fail while it
+        // resumes (transient errors such as 40613). Retry those instead of showing an error page.
+        // -1 is added because a dropped connection ("physical connection is not usable") came back
+        // as error -1 in the fault test and is not on the built-in transient list.
+        sql.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(10), errorNumbersToAdd: new[] { -1 })));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // Use custom authentication with the Users table
@@ -22,6 +27,13 @@ builder.Services.AddAuthentication("Cookies")
 builder.Services.AddAuthorization();
 
 builder.Services.AddRazorPages();
+
+// Output caching for public, read-heavy pages (the home page runs five database queries per visit).
+// Only anonymous GET requests are cached; signed-in users always get a fresh page.
+builder.Services.AddOutputCache(options =>
+{
+    options.AddPolicy("PublicPage", policy => policy.Expire(TimeSpan.FromSeconds(60)).Tag("public"));
+});
 
 var app = builder.Build();
 
@@ -59,6 +71,7 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseOutputCache();
 
 app.MapRazorPages();
 
