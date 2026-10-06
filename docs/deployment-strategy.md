@@ -113,3 +113,14 @@ Note: a restored copy is a new database and is not covered by the free offer, so
 ## The old GitHub deployment
 
 Before this pipeline, the web app was deployed by GitHub Actions from the `master` branch of `OdirileMasemola/GiftOfTheGivers` (set up through the App Service Deployment Center). That workflow only runs on a push to `master`, and we no longer push to `master`, so it doesn't overwrite pipeline deployments. I left the Deployment Center connection in place. If GitHub `master` is ever pushed again, its workflow would deploy over the pipeline's version, so the Deployment Center source should be disconnected first (App Service > Deployment Center > Disconnect).
+
+## Real pipeline runs (Phase 3)
+
+| Run | Build id | What it did | Result |
+|---|---|---|---|
+| 20261006.1 | 19 | First full CD run after commit `c5f1b28`. Build, Test, Deploy SQL, Deploy Function, Deploy web app. Smoke tests passed. Live footer showed `Build 20261006.1`. | succeeded |
+| 20261006.2 | 20 | Manual rollback demo: `rollbackRunId=19`. Redeployed the web app and Function packages from run 19, smoke-tested the home page and GenerateTaxCertificate, republished artifacts. Footer still `Build 20261006.1`. | succeeded |
+
+SQL after run 19: `__EFMigrationsHistory` contains `InitialBaseline` and `AddDonationDonorDateIndex`. Index `IX_Donations_UserId_DonationDate` exists on `Donations (UserId, DonationDate DESC)`.
+
+Service connection used: `gotg-azure-wif` (workload identity federation). Environment: `production`. Variable group: `gotg-deploy-config` (no secrets).
