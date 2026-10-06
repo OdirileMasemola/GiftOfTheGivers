@@ -116,6 +116,42 @@ namespace GiftOfTheGivers.Pages.Dashboards
             return RedirectToPage();
         }
 
+        /// <summary>
+        /// Stops a recurring donation that belongs to the signed-in donor. Past gifts stay as they are.
+        /// </summary>
+        public async Task<IActionResult> OnPostCancelScheduleAsync(int scheduleId)
+        {
+            if (!TryGetCurrentUserId(out var userId))
+            {
+                return Challenge();
+            }
+
+            var schedule = await _context.DonationSchedules
+                .FirstOrDefaultAsync(s => s.DonationScheduleId == scheduleId);
+
+            if (schedule is null || schedule.DonorId != userId)
+            {
+                TempData["DonorStatusMessage"] = "That recurring donation was not found on your account.";
+                return RedirectToPage();
+            }
+
+            if (!string.Equals(schedule.Status, "Active", StringComparison.OrdinalIgnoreCase))
+            {
+                TempData["DonorStatusMessage"] = "That recurring donation is not active.";
+                return RedirectToPage();
+            }
+
+            schedule.Status = "Cancelled";
+            schedule.EndDate = DateTime.Today;
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Donor {UserId} cancelled donation schedule {ScheduleId}.", userId, scheduleId);
+
+            TempData["DonorStatusMessage"] =
+                $"Your {schedule.Frequency.ToLowerInvariant()} donation of {schedule.Currency} {schedule.Amount:N2} has been cancelled.";
+            return RedirectToPage();
+        }
+
         private async Task LoadDashboardAsync(int userId)
         {
             Donations = await _context.Donations

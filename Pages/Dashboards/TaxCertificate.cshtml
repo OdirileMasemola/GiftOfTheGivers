@@ -1,0 +1,57 @@
+@page "/Dashboards/TaxCertificate"
+@model GiftOfTheGivers.Pages.Dashboards.TaxCertificateModel
+@using GiftOfTheGivers.Helpers
+@{
+    ViewData["Title"] = "Tax Certificate - Gift of the Givers";
+    var donation = Model.Donation!;
+    var certificate = Model.Certificate!;
+    var donorName = Model.Donor is null ? "Donor" : $"{Model.Donor.FirstName} {Model.Donor.LastName}".Trim();
+}
+
+<style>
+    .certificate-card { border: 2px solid #c8102e; border-radius: 8px; padding: 2rem; background: #fff; }
+    .certificate-card h2 { margin-top: 0; }
+    .certificate-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+    .certificate-table th, .certificate-table td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #ddd; }
+    .certificate-table th { width: 40%; }
+    @@media print {
+        nav, header, footer, .no-print { display: none !important; }
+        .certificate-card { border-color: #000; }
+    }
+</style>
+
+<div class="no-print">
+    <partial name="Shared/_Navigation" />
+</div>
+
+<div class="form-container">
+    <div class="page-header no-print">
+        <h1>Tax Certificate</h1>
+        <p>Print this page, or choose "Save as PDF" in the print window to download a copy.</p>
+    </div>
+
+    <div class="certificate-card" id="certificate">
+        <h2>Gift of the Givers Foundation</h2>
+        <p><strong>Donation tax certificate</strong></p>
+        <table class="certificate-table">
+            <tr><th>Certificate number</th><td>@certificate.CertificateNumber</td></tr>
+            <tr><th>Issue date</th><td>@certificate.IssueDate.ToString("dd MMMM yyyy")</td></tr>
+            <tr><th>Donor</th><td>@donorName</td></tr>
+            <tr><th>Donor email</th><td>@(Model.Donor?.Email ?? "-")</td></tr>
+            <tr><th>Donation date</th><td>@donation.DonationDate.ToString("dd MMMM yyyy")</td></tr>
+            <tr><th>Payment reference</th><td>@(donation.PaymentReference ?? "-")</td></tr>
+            <tr><th>Amount</th><td>@TaxCertificateFormatter.FormatAmount(certificate.CertificateAmount, donation.Currency)</td></tr>
+        </table>
+        <p class="form-help-text">Demonstration certificate produced by the Gift of the Givers Disaster Relief System prototype.
+            It is not an official SARS section 18A receipt.</p>
+    </div>
+
+    <div class="submit-section no-print">
+        <button type="button" class="btn btn-primary" onclick="window.print()">Print or save as PDF</button>
+        <a href="/Dashboards/Donor" class="btn btn-secondary">Back to donor dashboard</a>
+    </div>
+</div>
+
+<div class="no-print">
+    <partial name="Shared/_Footer" />
+</div>

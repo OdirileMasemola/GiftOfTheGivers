@@ -117,6 +117,7 @@
                                                 @if (cert is not null)
                                                 {
                                                     <span class="status-badge active">@cert.CertificateNumber</span>
+                                                    <a href="/Dashboards/TaxCertificate?donationId=@donation.DonationId" class="btn btn-outline btn-sm">View / print</a>
                                                 }
                                                 else if (isCompleted)
                                                 {
@@ -153,6 +154,7 @@
                                         <th>Start</th>
                                         <th>End</th>
                                         <th>Status</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -167,6 +169,20 @@
                                             <td>@schedule.StartDate.ToString("yyyy-MM-dd")</td>
                                             <td>@(schedule.EndDate?.ToString("yyyy-MM-dd") ?? "-")</td>
                                             <td><span class="status-badge @scheduleBadge">@schedule.Status</span></td>
+                                            <td>
+                                                @if (scheduleBadge == "active")
+                                                {
+                                                    <form method="post" asp-page-handler="CancelSchedule" style="display:inline;"
+                                                          onsubmit="return confirm('Cancel this recurring donation? Gifts already recorded are not affected.');">
+                                                        <input type="hidden" name="scheduleId" value="@schedule.DonationScheduleId" />
+                                                        <button type="submit" class="btn btn-outline btn-sm">Cancel</button>
+                                                    </form>
+                                                }
+                                                else
+                                                {
+                                                    <span>-</span>
+                                                }
+                                            </td>
                                         </tr>
                                     }
                                 </tbody>

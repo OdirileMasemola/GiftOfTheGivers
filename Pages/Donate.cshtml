@@ -69,6 +69,31 @@
             </div>
         </div>
 
+        <div class="form-section">
+            <div class="form-section-title">How often?</div>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <div class="form-group">
+                    <label class="form-label" asp-for="Frequency">Donation frequency</label>
+                    <select class="form-control" asp-for="Frequency">
+                        <option value="Once">Once-off (just this gift)</option>
+                        <option value="Weekly">Every week</option>
+                        <option value="Monthly">Every month</option>
+                        <option value="Quarterly">Every three months</option>
+                        <option value="Yearly">Every year</option>
+                    </select>
+                    <span asp-validation-for="Frequency" class="field-validation-error"></span>
+                    <p class="form-help-text">Choosing a repeat option records this first gift now and adds a recurring schedule to your donor dashboard, where you can cancel it at any time.</p>
+                </div>
+            }
+            else
+            {
+                <input type="hidden" asp-for="Frequency" value="Once" />
+                <span asp-validation-for="Frequency" class="field-validation-error"></span>
+                <p class="form-help-text">Guests make a once-off gift. To give every month, <a href="/Login">sign in</a> or <a href="/Identity/Account/Register">create a donor account</a> first.</p>
+            }
+        </div>
+
         <div class="submit-section">
             <button type="submit" class="btn btn-primary btn-large">Record donation</button>
             @if (User.Identity?.IsAuthenticated != true)

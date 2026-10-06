@@ -24,6 +24,10 @@ private readonly ApplicationDbContext _context;
         [Required(ErrorMessage = "Please select a currency.")]
         public string Currency { get; set; } = "ZAR";
 
+        /// <summary>Once, Weekly, Monthly, Quarterly or Yearly. Recurring gifts need a signed-in donor.</summary>
+        [BindProperty]
+        public string Frequency { get; set; } = "Once";
+
         public DonateModel(ApplicationDbContext context, ILogger<DonateModel> logger)
         {
             _context = context;
@@ -71,8 +75,29 @@ private readonly ApplicationDbContext _context;
 
                 await EnsureTaxCertificateAsync(donation);
 
-                TempData["DonationMessage"] =
+                var message =
                     $"Donation recorded: {amount:N2} {currency}. Reference {donation.PaymentReference}. No real payment was processed.";
+
+                var frequency = DonationRules.NormaliseFrequency(Frequency)!;
+                if (DonationRules.IsRecurring(frequency))
+                {
+                    // The first gift is recorded now; the schedule records the promise to repeat it.
+                    _context.DonationSchedules.Add(new DonationSchedule
+                    {
+                        DonorId = donorUser.UserId,
+                        Amount = amount,
+                        Currency = currency,
+                        Frequency = frequency,
+                        StartDate = DateTime.Today,
+                        Status = "Active",
+                        CreatedAt = DateTime.Now
+                    });
+                    await _context.SaveChangesAsync();
+
+                    message += $" A {frequency.ToLowerInvariant()} recurring donation has been set up on your donor dashboard.";
+                }
+
+                TempData["DonationMessage"] = message;
                 TempData["DonationSuccess"] = true;
 
                 // PRG: redirect after successful POST to avoid duplicate submits on refresh.
@@ -96,6 +121,16 @@ private readonly ApplicationDbContext _context;
             if (!DonationRules.IsValidCurrency(Currency, out var currencyError))
             {
                 ModelState.AddModelError(nameof(Currency), currencyError!);
+            }
+
+            if (!DonationRules.IsValidFrequency(Frequency, out var frequencyError))
+            {
+                ModelState.AddModelError(nameof(Frequency), frequencyError!);
+            }
+            else if (DonationRules.IsRecurring(Frequency) && User.Identity?.IsAuthenticated != true)
+            {
+                // Guests share one anonymous account, so a schedule could never be managed or cancelled.
+                ModelState.AddModelError(nameof(Frequency), "Please sign in to set up a recurring donation. Guests can make once-off gifts.");
             }
         }
 
