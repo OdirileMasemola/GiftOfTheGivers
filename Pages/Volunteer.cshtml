@@ -39,16 +39,18 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label class="form-label" asp-for="Email">Email Address *</label>
-                <input class="form-control" placeholder="your@email.com" asp-for="Email" />
-                <span asp-validation-for="Email" class="invalid-feedback"></span>
-            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" asp-for="Email">Email Address *</label>
+                    <input class="form-control" placeholder="your@email.com" asp-for="Email" />
+                    <span asp-validation-for="Email" class="invalid-feedback"></span>
+                </div>
 
-            <div class="form-group">
-                <label class="form-label" asp-for="PhoneNumber">Phone Number</label>
-                <input class="form-control" placeholder="Your phone number" asp-for="PhoneNumber" />
-                <span asp-validation-for="PhoneNumber" class="invalid-feedback"></span>
+                <div class="form-group">
+                    <label class="form-label" asp-for="PhoneNumber">Phone Number</label>
+                    <input class="form-control" placeholder="Your phone number" asp-for="PhoneNumber" />
+                    <span asp-validation-for="PhoneNumber" class="invalid-feedback"></span>
+                </div>
             </div>
         </div>
 

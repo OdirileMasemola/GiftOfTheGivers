@@ -809,3 +809,67 @@ body > main > .row {
         width: 100%;
     }
 }
+
+/* Volunteer application form */
+.volunteer-page {
+    width: 100%;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: var(--spacing-2xl) var(--spacing-lg) 0;
+}
+
+.volunteer-intro {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.volunteer-page .form-container {
+    width: 100%;
+    max-width: none;
+}
+
+.volunteer-page .form-section {
+    padding: var(--spacing-xl);
+}
+
+.volunteer-page .form-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: 0;
+}
+
+.volunteer-page .skill-checkboxes,
+.volunteer-page .availability-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-md) var(--spacing-xl);
+}
+
+.volunteer-page .submit-section {
+    text-align: center;
+}
+
+.volunteer-page .submit-section .btn {
+    min-width: 260px;
+}
+
+@media (max-width: 768px) {
+    .volunteer-page {
+        padding: var(--spacing-xl) var(--spacing-md) 0;
+    }
+
+    .volunteer-page .form-section {
+        padding: var(--spacing-lg);
+    }
+
+    .volunteer-page .form-row,
+    .volunteer-page .skill-checkboxes,
+    .volunteer-page .availability-options {
+        grid-template-columns: 1fr;
+    }
+
+    .volunteer-page .submit-section .btn {
+        width: 100%;
+        min-width: 0;
+    }
+}
