@@ -26,7 +26,7 @@ private readonly ApplicationDbContext _context;
 
         /// <summary>Once, Weekly, Monthly, Quarterly or Yearly. Recurring gifts need a signed-in donor.</summary>
         [BindProperty]
-        public string Frequency { get; set; } = "Once";
+        public string? Frequency { get; set; } = "Once";
 
         public DonateModel(ApplicationDbContext context, ILogger<DonateModel> logger)
         {
