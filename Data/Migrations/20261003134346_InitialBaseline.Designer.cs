@@ -4,6 +4,7 @@ using GiftOfTheGivers.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GiftOfTheGivers.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261003134346_InitialBaseline")]
+    partial class InitialBaseline
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -89,12 +92,7 @@ namespace GiftOfTheGivers.Data.Migrations
 
                     b.HasKey("DonationId");
 
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("IX_Donations_UserId");
-
-                    b.HasIndex("UserId", "DonationDate")
-                        .IsDescending(false, true)
-                        .HasDatabaseName("IX_Donations_UserId_DonationDate");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Donations", (string)null);
                 });

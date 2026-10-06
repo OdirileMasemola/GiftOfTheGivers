@@ -48,6 +48,17 @@ namespace GiftOfTheGivers.Data
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Index for the donor dashboard, which loads a donor's donations newest first
+            // (WHERE UserId = @id ORDER BY DonationDate DESC). Added by the AddDonationDonorDateIndex migration.
+            // The single-column IX_Donations_UserId already exists in Azure and is kept for the foreign key.
+            modelBuilder.Entity<Donation>()
+                .HasIndex(d => d.UserId)
+                .HasDatabaseName("IX_Donations_UserId");
+            modelBuilder.Entity<Donation>()
+                .HasIndex(d => new { d.UserId, d.DonationDate })
+                .HasDatabaseName("IX_Donations_UserId_DonationDate")
+                .IsDescending(false, true);
+
             // Configure Volunteers table
             modelBuilder.Entity<Volunteer>()
                 .HasKey(v => v.VolunteerId);

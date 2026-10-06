@@ -1,9 +1,23 @@
-# Continuous integration for Gift of the Givers (Azure Repos)
-# Every push and pull request to main runs this pipeline.
-#   Build: restores packages (GiftOfTheGivers.Helpers comes from the GiftOfTheGivers
-#          Azure Artifacts feed through nuget.config) and compiles the web app and Function.
-#   Test:  runs the unit tests and the integration tests in separate steps, then publishes
-#          the test results and code coverage to the build summary.
+# CI/CD for Gift of the Givers (Azure Repos)
+# Every push to main builds, tests and then deploys to Azure. Pull requests only build and test.
+#   Build:            restores packages (GiftOfTheGivers.Helpers comes from the Azure Artifacts feed),
+#                     builds, publishes the web app and Function as zip artifacts, and generates the
+#                     EF Core migration scripts (idempotent deploy script and rollback script).
+#   Test:             unit and integration tests, with test results and code coverage in the summary.
+#   Deploy_Database:  applies the idempotent migration script to Azure SQL, waiting for the
+#                     serverless database to wake up first.
+#   Deploy_Function:  checks the Function App settings, deploys GiftOfTheGiversFunctions and
+#                     smoke-tests GenerateTaxCertificate with the function key.
+#   Deploy_WebApp:    checks the web app settings, zip-deploys the web app, smoke-tests the home page
+#                     and, if the smoke test fails, redeploys the last successful build automatically.
+# Manual rollback: run this pipeline on main with "rollbackRunId" set to the ID of an earlier good run.
+# The full strategy is in docs/deployment-strategy.md.
+
+parameters:
+  - name: rollbackRunId
+    displayName: 'Rollback: redeploy the web app and Function from this earlier run ID (0 = normal build and deploy)'
+    type: number
+    default: 0
 
 trigger:
   branches:
@@ -19,107 +33,431 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  buildConfiguration: 'Release'
-  dotnetSdkVersion: '8.x'
-  nugetConfig: 'nuget.config'
-  runSettings: 'coverlet.runsettings'
-  webProject: 'GiftOfTheGivers.csproj'
-  functionsProject: 'GiftOfTheGivers.Functions/GiftOfTheGivers.Functions.csproj'
-  unitTestProject: 'GiftOfTheGivers.Tests/GiftOfTheGivers.Tests.csproj'
-  integrationTestProject: 'GiftOfTheGivers.IntegrationTests/GiftOfTheGivers.IntegrationTests.csproj'
+  # Names and URLs of the Azure resources (no secrets). See Pipelines > Library > gotg-deploy-config.
+  - group: gotg-deploy-config
+  # Azure Resource Manager service connection (workload identity federation, no stored secret).
+  - name: azureServiceConnection
+    value: 'gotg-azure-wif'
+  - name: buildConfiguration
+    value: 'Release'
+  - name: dotnetSdkVersion
+    value: '8.x'
+  - name: efToolVersion
+    value: '8.0.30'
+  - name: nugetConfig
+    value: 'nuget.config'
+  - name: runSettings
+    value: 'coverlet.runsettings'
+  - name: webProject
+    value: 'GiftOfTheGivers.csproj'
+  - name: functionsProject
+    value: 'GiftOfTheGivers.Functions/GiftOfTheGivers.Functions.csproj'
+  - name: unitTestProject
+    value: 'GiftOfTheGivers.Tests/GiftOfTheGivers.Tests.csproj'
+  - name: integrationTestProject
+    value: 'GiftOfTheGivers.IntegrationTests/GiftOfTheGivers.IntegrationTests.csproj'
 
 stages:
-  - stage: Build
-    displayName: 'Build'
-    jobs:
-      - job: BuildJob
-        displayName: 'Restore and build'
-        steps:
-          - task: UseDotNet@2
-            displayName: 'Use .NET SDK $(dotnetSdkVersion)'
-            inputs:
-              packageType: 'sdk'
-              version: '$(dotnetSdkVersion)'
+  - ${{ if eq(parameters.rollbackRunId, 0) }}:
+    - stage: Build
+      displayName: 'Build'
+      jobs:
+        - job: BuildJob
+          displayName: 'Restore, build and publish'
+          steps:
+            - task: UseDotNet@2
+              displayName: 'Use .NET SDK $(dotnetSdkVersion)'
+              inputs:
+                packageType: 'sdk'
+                version: '$(dotnetSdkVersion)'
 
-          - task: NuGetAuthenticate@1
-            displayName: 'Authenticate to the Azure Artifacts feed'
+            - task: NuGetAuthenticate@1
+              displayName: 'Authenticate to the Azure Artifacts feed'
 
-          - task: DotNetCoreCLI@2
-            displayName: 'dotnet restore (feed from nuget.config)'
-            inputs:
-              command: 'restore'
-              projects: |
-                $(webProject)
-                $(functionsProject)
-              feedsToUse: 'config'
-              nugetConfigPath: '$(nugetConfig)'
-              verbosityRestore: 'Normal'
+            - task: DotNetCoreCLI@2
+              displayName: 'dotnet restore (feed from nuget.config)'
+              inputs:
+                command: 'restore'
+                projects: |
+                  $(webProject)
+                  $(functionsProject)
+                feedsToUse: 'config'
+                nugetConfigPath: '$(nugetConfig)'
+                verbosityRestore: 'Normal'
 
-          - task: DotNetCoreCLI@2
-            displayName: 'dotnet build (web app and Function)'
-            inputs:
-              command: 'build'
-              projects: |
-                $(webProject)
-                $(functionsProject)
-              arguments: '--configuration $(buildConfiguration) --no-restore'
+            # The build number goes into the web app's version, so the live footer shows which run is deployed.
+            - task: DotNetCoreCLI@2
+              displayName: 'dotnet build (web app and Function)'
+              inputs:
+                command: 'build'
+                projects: |
+                  $(webProject)
+                  $(functionsProject)
+                arguments: '--configuration $(buildConfiguration) --no-restore /p:InformationalVersion=$(Build.BuildNumber) /p:IncludeSourceRevisionInInformationalVersion=false'
 
-  - stage: Test
-    displayName: 'Test'
-    dependsOn: Build
-    jobs:
-      - job: TestJob
-        displayName: 'Unit and integration tests'
-        steps:
-          - task: UseDotNet@2
-            displayName: 'Use .NET SDK $(dotnetSdkVersion)'
-            inputs:
-              packageType: 'sdk'
-              version: '$(dotnetSdkVersion)'
+            - task: DotNetCoreCLI@2
+              displayName: 'dotnet publish web app'
+              inputs:
+                command: 'publish'
+                publishWebProjects: false
+                projects: '$(webProject)'
+                arguments: '--configuration $(buildConfiguration) --no-build --output $(Build.ArtifactStagingDirectory)/publish/webapp'
+                zipAfterPublish: false
+                modifyOutputPath: false
 
-          - task: NuGetAuthenticate@1
-            displayName: 'Authenticate to the Azure Artifacts feed'
+            - task: DotNetCoreCLI@2
+              displayName: 'dotnet publish Function'
+              inputs:
+                command: 'publish'
+                publishWebProjects: false
+                projects: '$(functionsProject)'
+                arguments: '--configuration $(buildConfiguration) --no-build --output $(Build.ArtifactStagingDirectory)/publish/functionapp'
+                zipAfterPublish: false
+                modifyOutputPath: false
 
-          - task: DotNetCoreCLI@2
-            displayName: 'dotnet restore (test projects)'
-            inputs:
-              command: 'restore'
-              projects: |
-                $(unitTestProject)
-                $(integrationTestProject)
-              feedsToUse: 'config'
-              nugetConfigPath: '$(nugetConfig)'
+            - task: ArchiveFiles@2
+              displayName: 'Zip web app package'
+              inputs:
+                rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/publish/webapp'
+                includeRootFolder: false
+                archiveType: 'zip'
+                archiveFile: '$(Build.ArtifactStagingDirectory)/webapp/GiftOfTheGivers.zip'
 
-          - task: DotNetCoreCLI@2
-            displayName: 'dotnet build (test projects)'
-            inputs:
-              command: 'build'
-              projects: |
-                $(unitTestProject)
-                $(integrationTestProject)
-              arguments: '--configuration $(buildConfiguration) --no-restore'
+            - task: ArchiveFiles@2
+              displayName: 'Zip Function package'
+              inputs:
+                rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/publish/functionapp'
+                includeRootFolder: false
+                archiveType: 'zip'
+                archiveFile: '$(Build.ArtifactStagingDirectory)/functionapp/GiftOfTheGivers.Functions.zip'
 
-          - task: DotNetCoreCLI@2
-            displayName: 'Run unit tests'
-            inputs:
-              command: 'test'
-              projects: '$(unitTestProject)'
-              arguments: '--configuration $(buildConfiguration) --no-build --settings $(runSettings) --collect "XPlat Code Coverage" --logger "console;verbosity=normal"'
-              publishTestResults: true
-              testRunTitle: 'Unit tests'
+            # EF Core migrations: an idempotent script to deploy, plus a script that undoes the newest migration.
+            - pwsh: |
+                $ErrorActionPreference = 'Stop'
+                $tools = "$(Agent.TempDirectory)/ef"
+                dotnet tool install dotnet-ef --version $(efToolVersion) --tool-path $tools
+                $ef = Join-Path $tools 'dotnet-ef'
+                $out = "$(Build.ArtifactStagingDirectory)/sql"
+                New-Item -ItemType Directory -Force -Path $out | Out-Null
+                $common = @('--project', '$(webProject)', '--configuration', '$(buildConfiguration)', '--no-build')
 
-          - task: DotNetCoreCLI@2
-            displayName: 'Run integration tests'
-            condition: succeededOrFailed()
-            inputs:
-              command: 'test'
-              projects: '$(integrationTestProject)'
-              arguments: '--configuration $(buildConfiguration) --no-build --settings $(runSettings) --collect "XPlat Code Coverage" --logger "console;verbosity=detailed"'
-              publishTestResults: true
-              testRunTitle: 'Integration tests'
+                & $ef migrations script --idempotent --output "$out/migrate-idempotent.sql" @common
+                if ($LASTEXITCODE -ne 0) { throw 'Idempotent script failed.' }
 
-          - task: PublishCodeCoverageResults@2
-            displayName: 'Publish code coverage (Cobertura)'
-            condition: succeededOrFailed()
-            inputs:
-              summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+                $list = & $ef migrations list --no-connect --json --prefix-output @common |
+                    Where-Object { $_ -like 'data:*' } | ForEach-Object { $_.Substring(5).Trim() }
+                $migrations = ($list -join "`n") | ConvertFrom-Json
+                $migrations | Select-Object id, name | Format-Table -AutoSize | Out-String | Write-Host
+                $migrations | ConvertTo-Json | Set-Content "$out/migrations.json"
+
+                if ($migrations.Count -ge 2) {
+                    $newest = $migrations[-1].name
+                    $previous = $migrations[-2].name
+                    & $ef migrations script $newest $previous --output "$out/rollback-latest-migration.sql" @common
+                    if ($LASTEXITCODE -ne 0) { throw 'Rollback script failed.' }
+                    Write-Host "Rollback script undoes $newest and returns the schema to $previous."
+                }
+
+                Copy-Item 'deploy/sql/baseline-existing-database.sql' $out
+                Get-ChildItem $out | Format-Table Name, Length -AutoSize | Out-String | Write-Host
+              displayName: 'Generate EF Core migration scripts (idempotent and rollback)'
+
+            - task: PublishPipelineArtifact@1
+              displayName: 'Publish artifact: webapp'
+              inputs:
+                targetPath: '$(Build.ArtifactStagingDirectory)/webapp'
+                artifact: 'webapp'
+
+            - task: PublishPipelineArtifact@1
+              displayName: 'Publish artifact: functionapp'
+              inputs:
+                targetPath: '$(Build.ArtifactStagingDirectory)/functionapp'
+                artifact: 'functionapp'
+
+            - task: PublishPipelineArtifact@1
+              displayName: 'Publish artifact: sql'
+              inputs:
+                targetPath: '$(Build.ArtifactStagingDirectory)/sql'
+                artifact: 'sql'
+
+            - task: PublishPipelineArtifact@1
+              displayName: 'Publish artifact: deploy (scripts)'
+              inputs:
+                targetPath: 'deploy/scripts'
+                artifact: 'deploy'
+
+    - stage: Test
+      displayName: 'Test'
+      dependsOn: Build
+      jobs:
+        - job: TestJob
+          displayName: 'Unit and integration tests'
+          steps:
+            - task: UseDotNet@2
+              displayName: 'Use .NET SDK $(dotnetSdkVersion)'
+              inputs:
+                packageType: 'sdk'
+                version: '$(dotnetSdkVersion)'
+
+            - task: NuGetAuthenticate@1
+              displayName: 'Authenticate to the Azure Artifacts feed'
+
+            - task: DotNetCoreCLI@2
+              displayName: 'dotnet restore (test projects)'
+              inputs:
+                command: 'restore'
+                projects: |
+                  $(unitTestProject)
+                  $(integrationTestProject)
+                feedsToUse: 'config'
+                nugetConfigPath: '$(nugetConfig)'
+
+            - task: DotNetCoreCLI@2
+              displayName: 'dotnet build (test projects)'
+              inputs:
+                command: 'build'
+                projects: |
+                  $(unitTestProject)
+                  $(integrationTestProject)
+                arguments: '--configuration $(buildConfiguration) --no-restore'
+
+            - task: DotNetCoreCLI@2
+              displayName: 'Run unit tests'
+              inputs:
+                command: 'test'
+                projects: '$(unitTestProject)'
+                arguments: '--configuration $(buildConfiguration) --no-build --settings $(runSettings) --collect "XPlat Code Coverage" --logger "console;verbosity=normal"'
+                publishTestResults: true
+                testRunTitle: 'Unit tests'
+
+            - task: DotNetCoreCLI@2
+              displayName: 'Run integration tests'
+              condition: succeededOrFailed()
+              inputs:
+                command: 'test'
+                projects: '$(integrationTestProject)'
+                arguments: '--configuration $(buildConfiguration) --no-build --settings $(runSettings) --collect "XPlat Code Coverage" --logger "console;verbosity=detailed"'
+                publishTestResults: true
+                testRunTitle: 'Integration tests'
+
+            - task: PublishCodeCoverageResults@2
+              displayName: 'Publish code coverage (Cobertura)'
+              condition: succeededOrFailed()
+              inputs:
+                summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+
+    # Deploy stages run only for pushes and manual runs on main, never for pull requests.
+    - stage: Deploy_Database
+      displayName: 'Deploy SQL schema'
+      dependsOn: Test
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables['Build.Reason'], 'PullRequest'))
+      jobs:
+        - deployment: MigrateDatabase
+          displayName: 'Apply EF Core migrations to Azure SQL'
+          environment: 'production'
+          strategy:
+            runOnce:
+              deploy:
+                steps:
+                  - download: current
+                    artifact: deploy
+                  - download: current
+                    artifact: sql
+
+                  - task: AzureCLI@2
+                    displayName: 'Apply idempotent migration script (waits for serverless DB)'
+                    inputs:
+                      azureSubscription: '$(azureServiceConnection)'
+                      scriptType: 'pscore'
+                      scriptLocation: 'scriptPath'
+                      scriptPath: '$(Pipeline.Workspace)/deploy/Apply-Migrations.ps1'
+                      arguments: '-ResourceGroup $(resourceGroup) -WebAppName $(webAppName) -SqlFolder $(Pipeline.Workspace)/sql'
+
+    - stage: Deploy_Function
+      displayName: 'Deploy Function App'
+      dependsOn: Deploy_Database
+      condition: succeeded()
+      jobs:
+        - deployment: DeployFunction
+          displayName: 'Deploy GiftOfTheGiversFunctions'
+          environment: 'production'
+          strategy:
+            runOnce:
+              deploy:
+                steps:
+                  - download: current
+                    artifact: deploy
+                  - download: current
+                    artifact: functionapp
+
+                  - task: AzureCLI@2
+                    displayName: 'Check Function App settings (names only)'
+                    inputs:
+                      azureSubscription: '$(azureServiceConnection)'
+                      scriptType: 'pscore'
+                      scriptLocation: 'scriptPath'
+                      scriptPath: '$(Pipeline.Workspace)/deploy/Assert-AppSettings.ps1'
+                      arguments: '-ResourceGroup $(resourceGroup) -AppName $(functionAppName) -Required FUNCTIONS_WORKER_RUNTIME,FUNCTIONS_EXTENSION_VERSION,AzureWebJobsStorage,APPLICATIONINSIGHTS_CONNECTION_STRING,ConnectionStrings__DefaultConnection'
+
+                  - task: AzureFunctionApp@2
+                    displayName: 'Deploy Function App (zip)'
+                    inputs:
+                      azureSubscription: '$(azureServiceConnection)'
+                      appType: 'functionApp'
+                      appName: '$(functionAppName)'
+                      package: '$(Pipeline.Workspace)/functionapp/GiftOfTheGivers.Functions.zip'
+                      deploymentMethod: 'auto'
+                      appSettings: '-FUNCTIONS_WORKER_RUNTIME dotnet-isolated -FUNCTIONS_EXTENSION_VERSION ~4'
+
+                  - task: AzureCLI@2
+                    displayName: 'Smoke test: GenerateTaxCertificate'
+                    inputs:
+                      azureSubscription: '$(azureServiceConnection)'
+                      scriptType: 'pscore'
+                      scriptLocation: 'scriptPath'
+                      scriptPath: '$(Pipeline.Workspace)/deploy/Test-Function.ps1'
+                      arguments: '-ResourceGroup $(resourceGroup) -FunctionAppName $(functionAppName) -BaseUrl $(functionAppUrl) -DonationId $(smokeDonationId)'
+
+    - stage: Deploy_WebApp
+      displayName: 'Deploy web app'
+      dependsOn: Deploy_Function
+      condition: succeeded()
+      jobs:
+        - deployment: DeployWebApp
+          displayName: 'Deploy Gift-of-the-givers-prototype'
+          environment: 'production'
+          strategy:
+            runOnce:
+              deploy:
+                steps:
+                  - download: current
+                    artifact: deploy
+                  - download: current
+                    artifact: webapp
+
+                  - task: AzureCLI@2
+                    displayName: 'Check web app settings (names only)'
+                    inputs:
+                      azureSubscription: '$(azureServiceConnection)'
+                      scriptType: 'pscore'
+                      scriptLocation: 'scriptPath'
+                      scriptPath: '$(Pipeline.Workspace)/deploy/Assert-AppSettings.ps1'
+                      arguments: '-ResourceGroup $(resourceGroup) -AppName $(webAppName) -Required ConnectionStrings__DefaultConnection'
+
+                  - task: AzureWebApp@1
+                    displayName: 'Deploy web app (zip deploy)'
+                    inputs:
+                      azureSubscription: '$(azureServiceConnection)'
+                      appType: 'webApp'
+                      appName: '$(webAppName)'
+                      package: '$(Pipeline.Workspace)/webapp/GiftOfTheGivers.zip'
+                      deploymentMethod: 'zipDeploy'
+
+                  - task: PowerShell@2
+                    displayName: 'Smoke test: home page shows build $(Build.BuildNumber)'
+                    inputs:
+                      targetType: 'filePath'
+                      filePath: '$(Pipeline.Workspace)/deploy/Test-WebApp.ps1'
+                      arguments: '-Url $(webAppUrl) -ExpectedBuild $(Build.BuildNumber)'
+                      pwsh: true
+
+                  # Automatic rollback: only runs if a step above failed. It redeploys the web app
+                  # package from the most recent successful run on main.
+                  - task: DownloadPipelineArtifact@2
+                    displayName: 'Rollback: download last good web app package'
+                    condition: failed()
+                    inputs:
+                      source: 'specific'
+                      project: '$(System.TeamProjectId)'
+                      pipeline: '$(System.DefinitionId)'
+                      runVersion: 'latestFromBranch'
+                      runBranch: 'refs/heads/main'
+                      artifact: 'webapp'
+                      path: '$(Pipeline.Workspace)/lastgood'
+
+                  - task: AzureWebApp@1
+                    displayName: 'Rollback: redeploy last good web app package'
+                    condition: failed()
+                    inputs:
+                      azureSubscription: '$(azureServiceConnection)'
+                      appType: 'webApp'
+                      appName: '$(webAppName)'
+                      package: '$(Pipeline.Workspace)/lastgood/GiftOfTheGivers.zip'
+                      deploymentMethod: 'zipDeploy'
+
+  # Manual rollback run: redeploys the web app and Function packages from an earlier run.
+  # The database is not rolled back here; see docs/deployment-strategy.md for the SQL rollback.
+  - ${{ if ne(parameters.rollbackRunId, 0) }}:
+    - stage: Rollback
+      displayName: 'Rollback to run ${{ parameters.rollbackRunId }}'
+      jobs:
+        - deployment: RollbackApps
+          displayName: 'Redeploy packages from run ${{ parameters.rollbackRunId }}'
+          environment: 'production'
+          strategy:
+            runOnce:
+              deploy:
+                steps:
+                  - download: none
+
+                  - ${{ each artifact in split('webapp,functionapp,deploy', ',') }}:
+                    - task: DownloadPipelineArtifact@2
+                      displayName: 'Download ${{ artifact }} from run ${{ parameters.rollbackRunId }}'
+                      inputs:
+                        source: 'specific'
+                        project: '$(System.TeamProjectId)'
+                        pipeline: '$(System.DefinitionId)'
+                        runVersion: 'specific'
+                        runId: '${{ parameters.rollbackRunId }}'
+                        artifact: '${{ artifact }}'
+                        path: '$(Pipeline.Workspace)/rollback/${{ artifact }}'
+
+                  - pwsh: |
+                      $uri = "$(System.CollectionUri)$(System.TeamProjectId)/_apis/build/builds/${{ parameters.rollbackRunId }}?api-version=7.1"
+                      $build = Invoke-RestMethod -Uri $uri -Headers @{ Authorization = "Bearer $(System.AccessToken)" }
+                      Write-Host "Rolling back to run ${{ parameters.rollbackRunId }} = build $($build.buildNumber), commit $($build.sourceVersion)"
+                      Write-Host "##vso[task.setvariable variable=rollbackBuildNumber]$($build.buildNumber)"
+                    displayName: 'Look up the build number of run ${{ parameters.rollbackRunId }}'
+
+                  - task: AzureWebApp@1
+                    displayName: 'Rollback: deploy web app package'
+                    inputs:
+                      azureSubscription: '$(azureServiceConnection)'
+                      appType: 'webApp'
+                      appName: '$(webAppName)'
+                      package: '$(Pipeline.Workspace)/rollback/webapp/GiftOfTheGivers.zip'
+                      deploymentMethod: 'zipDeploy'
+
+                  - task: AzureFunctionApp@2
+                    displayName: 'Rollback: deploy Function package'
+                    inputs:
+                      azureSubscription: '$(azureServiceConnection)'
+                      appType: 'functionApp'
+                      appName: '$(functionAppName)'
+                      package: '$(Pipeline.Workspace)/rollback/functionapp/GiftOfTheGivers.Functions.zip'
+                      deploymentMethod: 'auto'
+
+                  - task: PowerShell@2
+                    displayName: 'Smoke test: home page shows the rolled-back build number'
+                    inputs:
+                      targetType: 'filePath'
+                      filePath: '$(Pipeline.Workspace)/rollback/deploy/Test-WebApp.ps1'
+                      arguments: '-Url $(webAppUrl) -ExpectedBuild $(rollbackBuildNumber)'
+                      pwsh: true
+
+                  - task: AzureCLI@2
+                    displayName: 'Smoke test: GenerateTaxCertificate'
+                    inputs:
+                      azureSubscription: '$(azureServiceConnection)'
+                      scriptType: 'pscore'
+                      scriptLocation: 'scriptPath'
+                      scriptPath: '$(Pipeline.Workspace)/rollback/deploy/Test-Function.ps1'
+                      arguments: '-ResourceGroup $(resourceGroup) -FunctionAppName $(functionAppName) -BaseUrl $(functionAppUrl) -DonationId $(smokeDonationId)'
+
+                  # Republish the packages so this run also counts as a "last good" run for automatic rollback.
+                  - ${{ each artifact in split('webapp,functionapp,deploy', ',') }}:
+                    - task: PublishPipelineArtifact@1
+                      displayName: 'Republish ${{ artifact }}'
+                      inputs:
+                        targetPath: '$(Pipeline.Workspace)/rollback/${{ artifact }}'
+                        artifact: '${{ artifact }}'

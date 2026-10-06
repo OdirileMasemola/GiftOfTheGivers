@@ -535,6 +535,13 @@
     font-size: 0.85rem;
 }
 
+/* Build number of the deployed pipeline run (set by Azure DevOps) */
+.footer-build {
+    margin: 0.25rem 0 0;
+    color: #8a8a8a;
+    font-size: 0.75rem;
+}
+
 /* Footer Responsive */
 @media (max-width: 768px) {
     .detail-item {
